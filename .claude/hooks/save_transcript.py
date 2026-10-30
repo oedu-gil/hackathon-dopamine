@@ -3,8 +3,9 @@
 (hooks Stop e SessionEnd).
 
 Um arquivo por sessão: prompts/<data>_<session_id>.jsonl, sobrescrito a cada
-resposta para ficar sempre igual à conversa real. Depois da cópia, um processo
-em segundo plano faz commit só de prompts/ e push, para não atrasar a sessão.
+resposta (Stop) para ficar sempre igual à conversa real. No fim da sessão
+(SessionEnd, inclusive /clear), um processo em segundo plano faz commit só de
+prompts/ e push. Assim há um commit por sessão, não um por resposta.
 Não imprime nada; erros do git vão para .git/prompts-sync.log.
 """
 import datetime
@@ -73,7 +74,10 @@ def main():
     if transcript.exists():
         shutil.copyfile(transcript, dest)
 
-    start_sync(project_dir)
+    # Publica tudo que estiver pendente em prompts/, inclusive sessões
+    # anteriores que terminaram sem disparar SessionEnd
+    if data.get("hook_event_name") == "SessionEnd":
+        start_sync(project_dir)
 
 
 if __name__ == "__main__":
