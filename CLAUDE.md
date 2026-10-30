@@ -26,3 +26,26 @@ Não edite nem apague arquivos de `prompts/`. Erros de sincronização ficam em 
 1. Ser colaborador do repositório https://github.com/oedu-gil/hackathon-dopamine
 2. Instalar o GitHub CLI (`gh`) e rodar `gh auth login` e depois `gh auth setup-git`. Sem isso, o hook não consegue publicar as conversas.
 3. Configurar o próprio nome e e-mail no git (`git config user.name` / `git config user.email`), usando um e-mail cadastrado no GitHub.
+
+## Trabalho em paralelo com worktrees
+
+- Use **uma worktree e uma branch por tarefa independente**, com uma conversa da IA aberta na pasta dessa worktree. Não mantenha sessões editando simultaneamente a mesma pasta.
+- Nomeie branches como `codex/<integrante>/<tarefa>`, usando nomes curtos em minúsculas e hífens, por exemplo `codex/miguel/autenticacao`. O prefixo é o mesmo para todos, inclusive no Claude Code.
+- Crie as worktrees fora da pasta do repositório, em uma pasta irmã chamada `hackathon-dopamine-worktrees`, com subpastas `<integrante>-<tarefa>`. Mantenha o checkout principal disponível para integração e verificação do conjunto.
+- Antes de começar, confira `git status` e `git worktree list`, atualize as referências com `git fetch origin` e parta de `origin/main`. Não mova, descarte ou sobrescreva alterações de outra tarefa. Se a tarefa depender de uma mudança ainda não integrada, combine a base com o responsável.
+- Combine o escopo e os responsáveis por arquivos compartilhados, componentes e contratos de API. Worktrees isolam arquivos locais, mas conflitos ainda podem aparecer no merge.
+- Configure dependências e variáveis de ambiente em cada worktree conforme o projeto exigir. Ao rodar frentes ao mesmo tempo, use portas distintas e separe bancos/dados de teste quando houver interferência; worktrees não isolam serviços externos.
+- Faça commits pequenos, publique a branch e abra um pull request para `main`. Integre com frequência, após revisão e verificações pertinentes; confira também o funcionamento do conjunto após o merge.
+- Depois da integração, remova a worktree com `git worktree remove <caminho>` apenas quando estiver limpa e todo trabalho estiver preservado. Não use remoção forçada para contornar alterações pendentes.
+
+Exemplo, executado na raiz do checkout principal (substitua `miguel` e `autenticacao`):
+
+```sh
+git fetch origin
+git worktree add -b codex/miguel/autenticacao ../hackathon-dopamine-worktrees/miguel-autenticacao origin/main
+cd ../hackathon-dopamine-worktrees/miguel-autenticacao
+```
+
+No primeiro push da tarefa, use `git push -u origin codex/miguel/autenticacao` para configurar o acompanhamento da branch remota.
+
+**Registro das conversas:** preserve `prompts/` em cada worktree. O hook atual de publicação automática exige que `.git` seja uma pasta; em worktrees vinculadas, `.git` é um arquivo e a publicação automática não ocorre. Até o hook ser adaptado, confira e publique os arquivos de `prompts/` por commit e push na branch da tarefa antes de encerrar ou remover a worktree, sem editar nem apagar as transcrições.
