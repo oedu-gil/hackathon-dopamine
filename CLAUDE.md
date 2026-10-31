@@ -1,6 +1,8 @@
 # hackathon-dopamine
 
-Projeto de um grupo para um hackathon sobre **educação**. A ideia ainda está em definição.
+Projeto de um grupo para um hackathon sobre **educação**. A ideia e o escopo do protótipo estão em `IDEIA.md`:
+
+@IDEIA.md
 
 ## Regras de trabalho com a IA
 
