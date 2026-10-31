@@ -38,14 +38,15 @@ test('start gate and invalid/repeated selections do not count as comparisons', (
   assert.equal(game.state.attempts, 0); assert.deepEqual(game.state.selected, [0]);
 });
 
-test('mismatch remains visible and blocks extra cards until explicit retry', () => {
+test('mismatch blocks all card selections until the scene closes the comparison', () => {
   const game = round(); game.start(); game.select(0); game.select(2);
   const snapshot = game.state;
   assert.equal(snapshot.phase, 'mismatch'); assert.equal(snapshot.attempts, 1);
   assert.equal(game.select(4), false); assert.deepEqual(game.state, snapshot);
+  for (let index = 0; index < 6; index++) assert.equal(game.select(index), false);
   assert.deepEqual(game.state.selected, [0, 2]);
-  assert.equal(game.retry(), true); assert.deepEqual(game.state.selected, []);
-  assert.equal(game.state.attempts, 1); assert.equal(game.retry(), false);
+  assert.equal(game.closeMismatch(), true); assert.deepEqual(game.state.selected, []);
+  assert.equal(game.state.attempts, 1); assert.equal(game.closeMismatch(), false);
 });
 
 test('pairs stay in place, cannot score twice and complete exactly once', () => {

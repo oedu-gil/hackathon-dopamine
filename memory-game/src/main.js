@@ -36,8 +36,8 @@ function update(state, layout, width, height) {
     button.setAttribute('aria-label', `Carta ${index + 1}: ${open ? state.cards[index].description + (matched ? ', par encontrado' : ', aberta') : 'fechada'}`);
     button.firstChild.textContent = open ? state.cards[index].description : '';
   });
-  const messages = { ready: 'Vamos descobrir os três pares?', playing: state.selected.length ? 'Agora, escolha outra carta.' : state.pairs > previousPairs ? 'Você encontrou um par! Escolha outra carta.' : 'Escolha uma carta.', mismatch: 'São diferentes. Observe e tente de novo quando quiser.', completed: 'Você encontrou todos os pares!' };
-  const actions = { ready: 'Começar', mismatch: 'Tentar de novo', completed: 'Jogar novamente' };
+  const messages = { ready: 'Vamos descobrir os três pares?', playing: state.selected.length ? 'Agora, escolha outra carta.' : state.pairs > previousPairs ? 'Você encontrou um par! Escolha outra carta.' : 'Escolha uma carta.', mismatch: 'São diferentes. Observe as imagens por um momento.', completed: 'Você encontrou todos os pares!' };
+  const actions = { ready: 'Começar', completed: 'Jogar novamente' };
   message.textContent = messages[state.phase]; progress.textContent = `${state.pairs} de 3 pares`;
   action.hidden = !actions[state.phase]; action.disabled = false; action.textContent = actions[state.phase] || '';
   previousPairs = state.pairs;

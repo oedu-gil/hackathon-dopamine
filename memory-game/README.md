@@ -33,7 +33,7 @@ Não inclua nome, foto ou outros dados pessoais se não forem necessários. O jo
 
 - Começar deixa as cartas disponíveis; toque/clique ou Tab e Enter/Espaço escolhem uma carta.
 - Apenas duas cartas diferentes podem ser comparadas. Toques extras, cartas abertas e pares concluídos não alteram o resultado.
-- Imagens diferentes permanecem abertas até **Tentar de novo**; nenhum fechamento automático.
+- Imagens diferentes permanecem abertas por **1,2 segundo** e fecham automaticamente. Todas as cartas ficam bloqueadas nesse intervalo, inclusive para teclado e toques repetidos. O tempo pode ser ajustado em `MISMATCH_DELAY_MS`, em `src/MemoryScene.js`.
 - Os pares ficam abertos na mesma posição, com marca de confirmação além da cor.
 - Ao concluir os três pares, **Jogar novamente** embaralha uma nova partida. Um embaralhamento pode por acaso repetir posições.
 - Sem som, cronômetro, pontuação por erros, flashes ou comemoração automática. **Reduzir movimento** respeita inicialmente a preferência do sistema e pode ser ajustado durante a sessão.
@@ -41,7 +41,7 @@ Não inclua nome, foto ou outros dados pessoais se não forem necessários. O jo
 
 ## Verificações
 
-`npm test` verifica os contratos locais, a comparação, o bloqueio de entradas extras, o fechamento manual, conclusão, reinício por nova rodada e geometria responsiva. Build não comprova gameplay: a inspeção no navegador deve exercitar partida completa, reinício, teclado, toque emulado, redução de movimento, resize e falha de imagem. Dispositivo móvel físico e avaliação com crianças/responsáveis são verificações posteriores.
+`npm test` verifica os contratos locais, a comparação, o bloqueio de entradas extras, o bloqueio durante a comparação, conclusão, reinício por nova rodada e geometria responsiva. Build não comprova gameplay: a inspeção no navegador deve exercitar partida completa, reinício, teclado, toque emulado, redução de movimento, fechamento automático, resize e falha de imagem. Dispositivo móvel físico e avaliação com crianças/responsáveis são verificações posteriores.
 
 ## Escopo
 

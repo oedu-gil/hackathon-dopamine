@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import { MemoryRound, cardLayout } from './model.js';
 
+export const MISMATCH_DELAY_MS = 1200;
+
 export class MemoryScene extends Phaser.Scene {
   constructor(activity, ui) {
     super({ key: 'memory' }); this.activity = activity; this.ui = ui;
@@ -14,15 +16,28 @@ export class MemoryScene extends Phaser.Scene {
     }
     this.round = new MemoryRound(this.activity.images);
     this.scale.on('resize', this.renderBoard, this);
-    this.events.once('shutdown', () => this.scale.off('resize', this.renderBoard, this));
+    this.events.once('shutdown', () => {
+      this.scale.off('resize', this.renderBoard, this);
+      this.mismatchTimer?.remove(false); this.mismatchTimer = null;
+    });
     this.renderBoard();
   }
-  select(index) { if (this.round?.select(index)) this.renderBoard(index); }
+  select(index) {
+    if (!this.round?.select(index)) return;
+    this.renderBoard(index);
+    // Schedule only on the second selection, never during resize/redraw.
+    if (this.round.state.phase === 'mismatch') {
+      this.mismatchTimer = this.time.delayedCall(MISMATCH_DELAY_MS, () => {
+        this.mismatchTimer = null;
+        if (this.round.closeMismatch()) this.renderBoard();
+      });
+    }
+  }
   act() {
     if (!this.round) return;
     if (this.round.state.phase === 'completed') { this.round = new MemoryRound(this.activity.images); this.round.start(); }
     else if (this.round.state.phase === 'ready') this.round.start();
-    else this.round.retry();
+    else return;
     this.renderBoard();
   }
   renderBoard(revealedIndex) {

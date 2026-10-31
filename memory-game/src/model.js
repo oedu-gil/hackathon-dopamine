@@ -44,7 +44,7 @@ export class MemoryRound {
     }
     return true;
   }
-  retry() { if (this.#phase !== 'mismatch') return false; this.#selected = []; this.#phase = 'playing'; return true; }
+  closeMismatch() { if (this.#phase !== 'mismatch') return false; this.#selected = []; this.#phase = 'playing'; return true; }
 }
 
 export function cardLayout(width, height) {
