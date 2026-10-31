@@ -1,6 +1,6 @@
 # Padrão de design
 
-Diretrizes de design do projeto para crianças autistas de 4 a 12 anos. Valem para **o site e para os jogos**: a escola envia o PDI e aprova os jogos, os pais recebem o resumo e a criança acessa os jogos dela, o avatar, o XP e a coleção. Quem cria uma tela do site ou uma cena de jogo segue estas regras.
+Diretrizes de design do projeto para crianças autistas de 4 a 10 anos. Valem para **o site e para os jogos**: a escola envia o PDI e aprova os jogos, os pais recebem o resumo e a criança acessa os jogos dela, o avatar, o XP e a coleção. Quem cria uma tela do site ou uma cena de jogo segue estas regras.
 
 Antes de qualquer tela, identifique o **público**:
 
