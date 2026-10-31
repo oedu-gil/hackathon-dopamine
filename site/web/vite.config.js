@@ -7,6 +7,8 @@ import react from '@vitejs/plugin-react'
 const hub = resolve(import.meta.dirname, '../../hub/src')
 
 export default defineConfig({
+  // Caminhos relativos: o build funciona em qualquer subpasta (GitHub Pages) com HashRouter.
+  base: './',
   plugins: [react()],
   resolve: {
     alias: {

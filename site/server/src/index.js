@@ -26,8 +26,10 @@ app.use((err, req, res, _next) => {
   res.status(500).json({ erro: 'Algo deu errado no servidor. Tente de novo.' })
 })
 
-app.listen(PORT, '127.0.0.1', () => {
-  console.log(`site-server em http://127.0.0.1:${PORT}`)
+// No Render (variável RENDER) precisa escutar em todas as interfaces; localmente, só em 127.0.0.1.
+const HOST = process.env.HOST || (process.env.RENDER ? '0.0.0.0' : '127.0.0.1')
+app.listen(PORT, HOST, () => {
+  console.log(`site-server em http://${HOST}:${PORT}`)
   if (!bancoConfigurado) return console.warn('Aviso: Supabase não configurado (veja site/server/.env.example).')
   // O catálogo do banco sempre acompanha os manifestos do hub, sem passo manual.
   sincronizarJogos()

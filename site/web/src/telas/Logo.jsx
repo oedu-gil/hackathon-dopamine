@@ -4,7 +4,7 @@
 export default function Logo({ tamanho = 48, animado = false }) {
   return (
     <span className="logo" style={{ fontSize: tamanho }}>
-      {animado ? <BeijaFlor /> : <img src="/gump-beija-flor.svg" alt="" aria-hidden="true" />}
+      {animado ? <BeijaFlor /> : <img src={`${import.meta.env.BASE_URL}gump-beija-flor.svg`} alt="" aria-hidden="true" />}
       <span>gump</span>
     </span>
   )
