@@ -33,11 +33,11 @@ Não inclua nome, foto ou outros dados pessoais se não forem necessários. O jo
 
 - Começar deixa as cartas disponíveis; toque/clique ou Tab e Enter/Espaço escolhem uma carta.
 - Apenas duas cartas diferentes podem ser comparadas. Toques extras, cartas abertas e pares concluídos não alteram o resultado.
-- Imagens diferentes permanecem abertas por **1,2 segundo** e fecham automaticamente. Todas as cartas ficam bloqueadas nesse intervalo, inclusive para teclado e toques repetidos. O tempo pode ser ajustado em `MISMATCH_DELAY_MS`, em `src/MemoryScene.js`.
+- Depois que a segunda carta termina de abrir, imagens diferentes permanecem visíveis por **1,2 segundo** e viram de volta automaticamente. Todas as cartas ficam bloqueadas durante a virada, a pausa e o fechamento, inclusive para teclado e toques repetidos. O tempo pode ser ajustado em `MISMATCH_DELAY_MS`, em `src/MemoryScene.js`.
 - Os pares ficam abertos na mesma posição, com marca de confirmação além da cor.
 - Ao concluir os três pares, **Jogar novamente** embaralha uma nova partida. Um embaralhamento pode por acaso repetir posições.
-- Sem som, cronômetro, pontuação por erros, flashes ou comemoração automática. **Reduzir movimento** respeita inicialmente a preferência do sistema e pode ser ajustado durante a sessão.
-- Layout de 3 × 2 em telas maiores e 2 × 3 em telas estreitas. A comparação usa uma regra pura; a cena Phaser renderiza o tabuleiro e anima brevemente a imagem. Botões HTML alinhados às cartas oferecem nomes acessíveis e foco nativo, sem capturar atalhos globais.
+- Sem som, cronômetro, pontuação por erros, flashes ou comemoração automática. **Reduzir movimento** respeita inicialmente a preferência do sistema e pode ser ajustado durante a sessão. Ativar a opção durante uma virada conclui o movimento imediatamente, mantendo a comparação correta.
+- Layout de 3 × 2 em telas maiores e 2 × 3 em telas estreitas. A comparação usa uma regra pura; a cena Phaser mantém cada carta como um objeto persistente, com frente, verso, espessura e sombra. Tweens do Phaser simulam a virada em 420 ms, com pequena elevação, troca de face no meio do giro e acomodação na mesa. O nome da imagem vira junto com a carta. Botões HTML alinhados às cartas oferecem nomes acessíveis e foco nativo, sem capturar atalhos globais.
 
 ## Verificações
 

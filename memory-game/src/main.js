@@ -11,9 +11,10 @@ const action = document.querySelector('#action');
 const reduced = document.querySelector('#reduced-motion');
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
 reduced.checked = motion.matches;
-const onMotion = event => { reduced.checked = event.matches; };
+const onMotion = event => { reduced.checked = event.matches; if (reduced.checked) scene?.finishMotion(); };
 motion.addEventListener('change', onMotion);
 let scene, game, failed = false, previousPairs = 0;
+reduced.addEventListener('change', () => { if (reduced.checked) scene?.finishMotion(); });
 const buttons = Array.from({ length: 6 }, (_, index) => {
   const button = document.createElement('button'); button.type = 'button'; button.className = 'card-button'; button.disabled = true;
   const label = document.createElement('span'); label.className = 'card-label'; label.setAttribute('aria-hidden', 'true'); button.append(label);
@@ -26,20 +27,21 @@ function fail(text) {
   action.hidden = false; action.disabled = false; action.textContent = 'Tentar carregar novamente';
 }
 function update(state, layout, width, height) {
-  board.setAttribute('aria-busy', 'false');
+  board.setAttribute('aria-busy', String(state.interactionLocked || state.phase === 'mismatch'));
   buttons.forEach((button, index) => {
     const rect = layout[index];
     Object.assign(button.style, { left: `${rect.x / width * 100}%`, top: `${rect.y / height * 100}%`, width: `${rect.width / width * 100}%`, height: `${rect.height / height * 100}%` });
     const matched = state.matched.includes(index), open = matched || state.selected.includes(index);
     button.disabled = false;
-    button.setAttribute('aria-disabled', String(state.phase !== 'playing' || open));
+    button.setAttribute('aria-disabled', String(state.interactionLocked || state.phase !== 'playing' || open));
     button.setAttribute('aria-label', `Carta ${index + 1}: ${open ? state.cards[index].description + (matched ? ', par encontrado' : ', aberta') : 'fechada'}`);
-    button.firstChild.textContent = open ? state.cards[index].description : '';
+    // The visible label is inside the Phaser card so it turns with the picture.
+    button.firstChild.textContent = '';
   });
   const messages = { ready: 'Vamos descobrir os três pares?', playing: state.selected.length ? 'Agora, escolha outra carta.' : state.pairs > previousPairs ? 'Você encontrou um par! Escolha outra carta.' : 'Escolha uma carta.', mismatch: 'São diferentes. Observe as imagens por um momento.', completed: 'Você encontrou todos os pares!' };
   const actions = { ready: 'Começar', completed: 'Jogar novamente' };
   message.textContent = messages[state.phase]; progress.textContent = `${state.pairs} de 3 pares`;
-  action.hidden = !actions[state.phase]; action.disabled = false; action.textContent = actions[state.phase] || '';
+  action.hidden = state.interactionLocked || !actions[state.phase]; action.disabled = false; action.textContent = actions[state.phase] || '';
   previousPairs = state.pairs;
 }
 action.addEventListener('click', () => {

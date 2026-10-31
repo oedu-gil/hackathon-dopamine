@@ -32,3 +32,12 @@ As falhas de recurso foram simuladas apenas por interceptação no navegador, se
 - Desenvolvimento: fechamento observado em aproximadamente 1218 ms; cliques repetidos e Enter não alteraram as cartas bloqueadas. Redimensionamento durante a pausa não reiniciou o timer. Nova escolha aceita após fechar.
 - Build servido: comparações fecharam automaticamente, três pares concluídos e reinício verificado. Toque emulado durante a pausa não abriu outra carta; desbloqueio automático confirmado.
 - Oito testes Node e build passaram após a alteração. A mensagem anterior de fechamento manual foi substituída pelo estado automático.
+
+## Atualização: cartas com virada em Phaser
+
+- Cartas persistentes compostas de containers, graphics, image e text Phaser; frente e verso trocam no meio do giro. Tween de 420 ms estreita a carta, eleva o corpo e ajusta sombra/sombreamento. Não há movimento contínuo.
+- A pausa de 1200 ms começa após terminar a abertura da segunda carta. As duas cartas erradas viram de volta juntas; o tabuleiro só desbloqueia após terminar o fechamento.
+- Navegador: amostra visual do canvas durante o giro; entradas repetidas ignoradas durante abertura e fechamento; partida completa no build, três erros fechando automaticamente e reinício confirmado, sem exceções de página.
+- Resize para 320 px durante uma virada manteve alinhamento e desbloqueio (duas colunas, sem overflow). Preferência reduzida pode ser ativada no meio do giro para concluir imediatamente.
+- Toque emulado confirmou bloqueio durante a virada e alteração da preferência durante animação sem travar a partida.
+- Oito testes Node e build passaram. Verificação em aparelho físico permanece pendente.

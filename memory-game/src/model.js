@@ -51,7 +51,7 @@ export function cardLayout(width, height) {
   const columns = height > width ? 2 : 3;
   const rows = 6 / columns;
   const gap = width < 400 ? 12 : 16;
-  const w = (width - gap * (columns - 1) - 8) / columns;
-  const h = (height - gap * (rows - 1) - 8) / rows;
-  return Array.from({ length: 6 }, (_, index) => ({ x: 4 + (index % columns) * (w + gap), y: 4 + Math.floor(index / columns) * (h + gap), width: w, height: h }));
+  const w = (width - gap * (columns - 1) - 16) / columns;
+  const h = (height - gap * (rows - 1) - 20) / rows;
+  return Array.from({ length: 6 }, (_, index) => ({ x: 8 + (index % columns) * (w + gap), y: 10 + Math.floor(index / columns) * (h + gap), width: w, height: h }));
 }
