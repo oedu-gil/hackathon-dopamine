@@ -5,6 +5,7 @@ export async function chamarFeatherless(mensagens, opcoes = {}) {
     fetchImpl = fetch,
     apiKey = process.env.FEATHERLESS_API_KEY,
     modelo = process.env.FEATHERLESS_MODEL || 'deepseek-ai/DeepSeek-V3-0324',
+    timeoutMs = 60000,
   } = opcoes
 
   if (!apiKey) {
@@ -18,6 +19,7 @@ export async function chamarFeatherless(mensagens, opcoes = {}) {
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({ model: modelo, messages: mensagens }),
+    signal: AbortSignal.timeout(timeoutMs),
   })
 
   if (!resposta.ok) {

@@ -24,6 +24,24 @@ test('monta a requisicao com autorizacao e mensagens corretas, devolve o conteud
   const corpo = JSON.parse(requisicaoCapturada.opcoes.body)
   assert.equal(corpo.model, 'modelo-de-teste')
   assert.deepEqual(corpo.messages, [{ role: 'user', content: 'oi' }])
+  assert.ok(requisicaoCapturada.opcoes.signal instanceof AbortSignal, 'requisição deve incluir um AbortSignal de timeout')
+})
+
+test('usa o timeoutMs informado para o signal de aborto', async () => {
+  let requisicaoCapturada
+  const fetchFalso = async (url, opcoes) => {
+    requisicaoCapturada = opcoes
+    return { ok: true, json: async () => ({ choices: [{ message: { content: 'ok' } }] }) }
+  }
+
+  await chamarFeatherless([{ role: 'user', content: 'oi' }], {
+    fetchImpl: fetchFalso,
+    apiKey: 'x',
+    timeoutMs: 5,
+  })
+
+  await new Promise((resolve) => setTimeout(resolve, 10))
+  assert.equal(requisicaoCapturada.signal.aborted, true)
 })
 
 test('lanca erro claro se a chave de API nao for fornecida', async () => {
