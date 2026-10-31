@@ -25,7 +25,7 @@ function Capa({ jogo, tema, n }) {
   )
 }
 
-// Página inicial (raiz): vitrine dos jogos. Uma fileira por tema de hiperfoco, rolando devagar.
+// Página inicial (raiz): a marca no centro e, atrás, uma fileira de capas por tema rolando devagar.
 // Exceção da regra 2 do DESIGN.md, só aqui: a página é para adultos, tem botão de pausar
 // e fica parada com prefers-reduced-motion.
 export default function Inicio({ areaDoUsuario }) {
@@ -45,7 +45,8 @@ export default function Inicio({ areaDoUsuario }) {
       <main className="vitrine">
         <div className="fileiras" aria-hidden="true">
           {TEMAS.map((tema, f) => (
-            <div key={tema.id} className={`fileira ${f % 2 ? 'ao-contrario' : ''}`}>
+            // a primeira fileira vai para a direita, a segunda para a esquerda, e assim por diante
+            <div key={tema.id} className={`fileira ${f % 2 ? 'para-esquerda' : 'para-direita'}`}>
               {/* duas cópias seguidas: a animação anda metade da largura e recomeça sem salto */}
               <div className="fileira-trilho">
                 {[...JOGOS, ...JOGOS].map((jogo, n) => <Capa key={`${jogo.id}-${n}`} jogo={jogo} tema={tema} n={n + f} />)}
@@ -54,11 +55,7 @@ export default function Inicio({ areaDoUsuario }) {
           ))}
         </div>
 
-        <div className="vitrine-texto">
-          <p className="vitrine-selo">{JOGOS.length} jogos · {TEMAS.length} temas de hiperfoco</p>
-          <h1>Jogos que falam a língua do hiperfoco.</h1>
-          <p>O Gump transforma o PDI de cada criança em jogos no tema que ela mais ama: {TEMAS.map((t) => t.nome.toLowerCase()).join(', ').replace(/, ([^,]*)$/, ' ou $1')}.</p>
-        </div>
+        <h1 className="vitrine-marca"><Logo tamanho={140} /></h1>
 
         <button type="button" className="vitrine-pausa" onClick={() => setPausado(!pausado)} aria-pressed={pausado}>
           <Icone nome={pausado ? 'jogar' : 'pausar'} tamanho={20} /> {pausado ? 'Continuar' : 'Pausar'}
