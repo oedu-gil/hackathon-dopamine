@@ -2,21 +2,7 @@ import Phaser from 'phaser'
 import './memoria.css'
 import { validateActivity } from './model.js'
 import { MemoryScene } from './MemoryScene.js'
-import train from './assets/train.svg'
-import rocket from './assets/rocket.svg'
-import sailboat from './assets/sailboat.svg'
-import back from './assets/back-transport.svg'
-
-// Por enquanto há um só conjunto de figuras (Transportes) para todos os temas.
-const ATIVIDADE = {
-  theme: 'Transportes',
-  images: [
-    { id: 'train', url: train, description: 'Trem' },
-    { id: 'rocket', url: rocket, description: 'Foguete' },
-    { id: 'sailboat', url: sailboat, description: 'Veleiro' },
-  ],
-  backImage: { url: back, description: 'Símbolo de trem para o tema Transportes' },
-}
+import { atividadeDoTema } from './temas.js'
 
 const HTML = `
 <div class="album" aria-labelledby="mem-title">
@@ -30,7 +16,8 @@ const HTML = `
   <footer><span id="progress"><span class="pair-markers" aria-hidden="true"><span></span><span></span><span></span></span><span id="progress-text">0 de 3 pares</span></span><button id="action" type="button" disabled>Só um instante…</button></footer>
 </div>`
 
-export function montar(elemento, { aoTerminar } = {}) {
+export function montar(elemento, { tema, aoTerminar } = {}) {
+  const atividade = atividadeDoTema(tema?.id)
   const raiz = document.createElement('div')
   raiz.className = 'memoria'
   raiz.innerHTML = HTML
@@ -96,7 +83,7 @@ export function montar(elemento, { aoTerminar } = {}) {
   }
   function iniciar() {
     try {
-      const activity = validateActivity(ATIVIDADE, location.href)
+      const activity = validateActivity(atividade, location.href)
       $('#theme').textContent = activity.theme
       scene = new MemoryScene(activity, { update, fail, reducedMotion: () => motion.matches })
       const rect = board.getBoundingClientRect()

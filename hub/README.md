@@ -51,7 +51,7 @@ As pastas antigas (`app/`, `memory-game/`, `src/` e `sequencia.html` na raiz) co
 
 ## Limitações conhecidas
 
-- A memória tem um único conjunto de figuras (Transportes) para todos os temas. A sequência tem figuras de trem e dinossauro, e os outros temas usam dinossauro.
+- A memória e a sequência têm figuras próprias para cada tema (trem, aranha, avião, dinossauro). Na memória, os conjuntos ficam em `jogos/memoria/temas.js`, e um tema novo precisa de três figuras e um verso.
 - O quebra-cabeça tem uma imagem por tema e começa sempre com o som desligado. Para testar outra imagem: `jogo.html?id=quebra-cabeca&img=baleia` (ou `foguete`, quadrada).
 - O nível é sempre 1 (ainda não há PDI no hub).
 - O resultado de cada partida só aparece no console. O ponto para enviar ao servidor é `aoTerminar` em `App.jsx`.

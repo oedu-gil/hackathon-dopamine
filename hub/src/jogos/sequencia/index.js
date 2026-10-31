@@ -4,8 +4,8 @@ import { RESULT_EVENT, validateActivity } from '../../compartilhado/atividade/co
 import { EXIT_EVENT, READY_EVENT, SequenceScene } from './SequenceScene.js';
 import { sequenceDemo } from './demo.js';
 
-// Temas do hub que têm figuras próprias na sequência; os outros usam os dinossauros.
-const TEMAS = { trem: 'trem', dinossauro: 'dinossauros' };
+// Tema do hub → figuras da sequência (todos os hiperfocos de compartilhado/temas.js).
+const TEMAS = { trem: 'trem', aranha: 'aranha', aviao: 'aviao', dinossauro: 'dinossauros' };
 
 const HTML = `
 <section class="seq-game" aria-label="Atividade: o que vem depois na sequência?"></section>

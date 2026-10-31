@@ -102,5 +102,15 @@ test('responsive geometry fits portrait and landscape boards with separated touc
 
 test('the hub activity references existing assets', async () => {
   const dir = new URL('../src/jogos/memoria/assets/', import.meta.url);
-  for (const name of ['train.svg', 'rocket.svg', 'sailboat.svg', 'back-transport.svg', 'light-oak.svg']) assert.ok((await readFile(new URL(name, dir))).length > 0, name);
+  const temas = await readFile(new URL('../src/jogos/memoria/temas.js', import.meta.url), 'utf8');
+  const names = [...temas.matchAll(/from '\.\/assets\/([\w-]+\.svg)'/g)].map(m => m[1]);
+  assert.equal(names.length, 16);
+  for (const name of [...names, 'light-oak.svg']) assert.ok((await readFile(new URL(name, dir))).length > 0, name);
+});
+
+test('every hub theme has its own memory set', async () => {
+  const { HIPERFOCOS } = await import('../src/compartilhado/temas.js');
+  const source = await readFile(new URL('../src/jogos/memoria/temas.js', import.meta.url), 'utf8');
+  const keys = [...source.matchAll(/^  (\w+): \{$/gm)].map(m => m[1]);
+  assert.deepEqual([...keys].sort(), HIPERFOCOS.map(h => h.id).sort());
 });
