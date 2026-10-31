@@ -1,7 +1,10 @@
 import { montarPrompt } from './prompt.js'
 import { nomeHabilidade } from './habilidades.js'
+import { recursosPara } from './recursos.js'
 
 const AVISO = 'Estas sugestões são orientações gerais e não substituem acompanhamento profissional.'
+const TEMPO_REVISAO =
+  'Sugerimos observar esses pontos por cerca de 4 a 6 semanas e compartilhar o que notarem com a escola e com os profissionais que acompanham a criança, antes de avaliar se houve melhora.'
 const PARECE_LINK = /https?:\/\/|www\.|\.(com|org|net|br)\b/i
 const MAX_ATIVIDADES = 5
 const MAX_CARACTERES_ATIVIDADE = 200
@@ -86,6 +89,7 @@ export async function processarPdi(texto, habilidades, chamarLLM) {
       habilidade: id,
       atencao: sanitizarAtencao(entrada?.atencao),
       atividades: sanitizarAtividades(entrada?.atividades),
+      recursos: recursosPara(id),
     }
   })
 
@@ -93,6 +97,6 @@ export async function processarPdi(texto, habilidades, chamarLLM) {
 
   return {
     itens,
-    resumoPais: { topicos, porHabilidade, aviso: AVISO },
+    resumoPais: { topicos, porHabilidade, aviso: AVISO, tempoRevisao: TEMPO_REVISAO },
   }
 }

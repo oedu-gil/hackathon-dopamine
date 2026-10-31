@@ -22,23 +22,28 @@ Existe uma startup, jade.autism, que gera o PDI a partir de jogos jogados (camin
 
 ## Arquitetura
 
-**Mudança importante:** não existe mais "o backend do Pedro" isolado. Vai existir **um único servidor rodando todo o backend do projeto** (outro integrante está construindo isso; ainda não está no repositório). Por isso, esta frente é construída como **módulos JS puros, sem framework amarrado** (sem Express próprio, sem rota própria definitiva): funções que recebem/devolvem dados simples, prontas para serem importadas e expostas como rota por quem estruturar o backend compartilhado. Localmente, um script/servidor mínimo descartável serve só para testar ponta a ponta antes da integração real.
+**Atualização (31/10):** o backend compartilhado do projeto ainda não existia quando esta frente precisou ficar demonstrável, então `pdi/server.js` (Express mínimo, `POST /pdi` + `GET /health`) foi criado para colocar a frente no ar (local e, depois, no Render) sem depender de outra equipe terminar primeiro. A lógica em si continua em módulos JS puros (`src/`), sem acoplamento ao Express — `server.js` é só uma casca fina por cima, fácil de descartar quando o backend único do projeto existir.
+
+Extração de texto usa `pdfjs-dist` (não `pdf-parse` como citado antes — `pdf-parse` embute um build de pdf.js de 2018-2019 com bugs de parsing não-determinísticos, descoberto ao testar com um PDF gerado por `pdfkit`; ver ledger do plano de implementação).
 
 Módulos:
-- `extrairTexto(bufferPdf) → string` — texto do PDF (`pdf-parse`; PDIs são sempre digitais, texto selecionável; sem OCR no MVP).
-- `processarPdi(texto) → { itens, resumoPais }` — **uma única chamada** à Featherless (modelo DeepSeek) que já devolve classificação e resumo juntos (economiza custo/tempo/latência: 1 chamada em vez de 2). O prompt lista as habilidades permitidas (cópia local de `HABILIDADES`, a manter sincronizada manualmente com `app/src/data/habilidades.js` até os dois lados compartilharem um pacote comum) e pede JSON estrito:
+- `extrairTexto(bufferPdf) → string` — texto do PDF (`pdfjs-dist`; PDIs são sempre digitais, texto selecionável; sem OCR no MVP).
+- `processarPdi(texto, habilidades, chamarLLM) → { itens, resumoPais }` — **uma única chamada** à Featherless (modelo DeepSeek) que já devolve classificação e resumo juntos (economiza custo/tempo/latência: 1 chamada em vez de 2). O prompt lista as habilidades permitidas (cópia local de `HABILIDADES`, a manter sincronizada manualmente com `app/src/data/habilidades.js` até os dois lados compartilharem um pacote comum), guia a leitura por seção do PDI (diagnóstico = contexto; objetivos/metas = evidência) exigindo **evidência explícita no texto** antes de marcar uma habilidade (evita que o modelo infira tudo só pelo diagnóstico geral de TEA — problema real observado nos testes manuais), e pede JSON estrito:
   ```
   {
     "itens": [{ "habilidade": "reconhecer-emocoes" }, ...],
     "resumoPais": {
       "topicos": ["Reconhecer emoções", "Resposta social"],
       "porHabilidade": [
-        { "habilidade": "reconhecer-emocoes", "atencao": "texto curto", "atividades": ["atividade genérica 1", "atividade genérica 2"] }
+        { "habilidade": "reconhecer-emocoes", "atencao": "texto curto", "atividades": ["atividade genérica 1", "atividade genérica 2", "atividade genérica 3"] }
       ]
     }
   }
   ```
-- Validação (código, não LLM): descarta qualquer `habilidade` fora da lista permitida, tanto em `itens` quanto em `porHabilidade`. Nível sempre fixado em `1` (decisão do grupo: mais simples e já alinhado com o viés do próprio motor de recomendação de priorizar níveis baixos). Acrescenta `resumoPais.aviso` fixo no código (não gerado pela IA): "Estas sugestões são orientações gerais e não substituem acompanhamento profissional."
+- Validação (código, não LLM): descarta qualquer `habilidade` fora da lista permitida, tanto em `itens` quanto em `porHabilidade`; descarta de `atencao`/`atividades` qualquer texto que pareça link/URL (defesa contra alucinação, mesmo com a instrução no prompt); limita a 5 atividades de até 200 caracteres cada. Nível sempre fixado em `1` (decisão do grupo: mais simples e já alinhado com o viés do próprio motor de recomendação de priorizar níveis baixos). Acrescenta por código (nunca pela LLM):
+  - `resumoPais.aviso` — fixo: "Estas sugestões são orientações gerais e não substituem acompanhamento profissional."
+  - `resumoPais.tempoRevisao` — fixo: sugestão de observar por 4-6 semanas e compartilhar com escola/profissionais antes de reavaliar.
+  - `porHabilidade[].recursos` — de 1 a 2 links **reais, verificados manualmente** (não gerados pela LLM) por habilidade, de uma lista curada em `src/recursos.js` (ex.: Genial Care, Autismo e Realidade). Cada URL foi checada antes de entrar no código; a LLM nunca é a fonte de um link.
 
 Fluxo de uso (quando integrado ao backend compartilhado e ao frontend):
 1. Alguém expõe `processarPdi` numa rota (ex.: `POST /pdi`) do backend compartilhado.
@@ -49,9 +54,9 @@ Sem contrato de rede com o colega da base de jogos — a integração de `itens`
 
 ### Resumo para os pais — regras de conteúdo (atualizado, ver `IDEIA.md`)
 
-- Pode incluir: tópicos identificados, pontos de atenção/observação para a família (não é diagnóstico), e **atividades comportamentais genéricas de estímulo** por habilidade (práticas conhecidas, não prescrições clínicas).
-- **Não pode incluir**: ações/intervenções específicas prescritas, nem links/fontes/citações geradas pela IA (risco real de alucinar URL ou referência que não existe — pior do que não citar nada).
-- Sempre acompanhado do aviso fixo de que não substitui acompanhamento profissional.
+- Pode incluir: tópicos identificados, pontos de atenção/observação para a família (não é diagnóstico), **atividades comportamentais genéricas de estímulo** por habilidade (2-3 práticas conhecidas, não prescrições clínicas), e **links de pesquisa reais** — mas só da lista curada e verificada manualmente em `src/recursos.js`, nunca gerados/sugeridos pela LLM.
+- **Não pode incluir**: ações/intervenções específicas prescritas, nem links/fontes/citações **gerados pela IA** (risco real de alucinar URL ou referência que não existe — pior do que não citar nada; por isso os links vêm de uma lista fixa no código, não da LLM).
+- Sempre acompanhado do aviso fixo de que não substitui acompanhamento profissional, e de uma sugestão fixa de prazo (4-6 semanas) para reavaliar com a escola/profissionais.
 
 ## Segurança
 
