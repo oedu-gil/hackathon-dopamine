@@ -19,6 +19,16 @@ Antes de qualquer tela, identifique o **público**:
 8. **Temas de hiperfoco** (dinossauro, navio, avião, trem…): trocam só ilustrações, cores e personagens. Layout, botões, fluxo e sistema de XP continuam iguais em todos os temas. Implementar o tema como uma camada de tokens e assets, não como páginas separadas.
 9. **Escopo:** a criança vê só os jogos ligados às lacunas dela, nunca o banco inteiro.
 
+## Exceção de movimento — personagens do topo da página da criança
+
+Decisão do grupo em 31/10/2026, na página da criança:
+
+- O personagem grande do cenário (ao lado do balão "Oi, …!") toca continuamente a própria animação dos jogos (fumaça e rodas do trem, hélice do avião, pernas da aranha, rabo do dinossauro) a 6 quadros por segundo. Não se desloca.
+- O personagem pequeno anda sobre a barra de XP até o valor atual ao abrir a página (cerca de 1 s, uma vez só).
+- Depois fica "vivo" com um movimento contínuo sutil: só sobe e desce 2 px, devagar (ciclo de cerca de 3 s), com o desenho parado. Sem piscar e sem mudar de cor.
+- Vale só para esses dois personagens. Capas de jogos e o resto da página continuam só com feedback curto (≤ 300 ms) à ação da criança.
+- Com `prefers-reduced-motion`, os personagens e a barra aparecem parados (primeiro quadro, na posição final).
+
 ## Escola e pais
 
 - Hierarquia clara: o que precisa de ação (aprovar jogos, revisar tópicos) vem primeiro.

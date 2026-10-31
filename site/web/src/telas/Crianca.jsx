@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { api } from '../api.js'
 import { cenarioDoTema } from '@hub/compartilhado/arte/cenarios.js'
 import { TEMAS, XP_POR_ITEM, estiloTema, itensGanhos, temaPorId } from '../temas.js'
+import CapaJogo, { temCapa } from './CapaJogo.jsx'
 import Icone, { ICONE_JOGO } from './Icones.jsx'
 
 // O mesmo cenário "papel recortado" dos jogos, para o site e o jogo ficarem iguais.
@@ -29,21 +30,61 @@ function EscolherTema({ escolher, voltar }) {
   )
 }
 
+// Personagem do palco com a animação dos jogos (exceção de movimento do DESIGN.md).
+// Todos os quadros ficam empilhados e só o atual aparece, para a troca não piscar.
+// Mais devagar que nos jogos, para ficar calmo; parado com movimento reduzido.
+const QUADROS_POR_SEGUNDO = 6
+
+function PersonagemAnimado({ quadros, className }) {
+  const [atual, setAtual] = useState(0)
+  useEffect(() => {
+    if (quadros.length < 2) return undefined
+    const reduzir = window.matchMedia('(prefers-reduced-motion: reduce)')
+    let id
+    const ligar = () => {
+      clearInterval(id)
+      setAtual(0)
+      if (!reduzir.matches) id = setInterval(() => setAtual((n) => (n + 1) % quadros.length), 1000 / QUADROS_POR_SEGUNDO)
+    }
+    ligar()
+    reduzir.addEventListener('change', ligar)
+    return () => {
+      clearInterval(id)
+      reduzir.removeEventListener('change', ligar)
+    }
+  }, [quadros])
+  return (
+    <span className={`personagem-animado ${className}`} aria-hidden="true">
+      {quadros.map((src, i) => <img key={i} src={src} alt="" className={i === atual ? 'ativo' : undefined} />)}
+    </span>
+  )
+}
+
 // Topo: o personagem do tema no cenário, com o XP e o próximo item da coleção.
 function Palco({ tema, nome, xp }) {
   const proximo = tema.itens[itensGanhos(tema, xp)]
   const resto = xp % XP_POR_ITEM
+  // com a coleção completa a barra fica cheia
+  const pct = proximo ? (resto / XP_POR_ITEM) * 100 : 100
+  // o personagem não sai pelas pontas da barra
+  const pctPersonagem = Math.min(Math.max(pct, 6), 94)
   return (
     <section className="palco">
       <img className="palco-cenario" src={urlCenario(tema.id)} alt="" />
       <div className="palco-conteudo">
-        <img className="palco-personagem" src={tema.personagem} alt="" />
+        <PersonagemAnimado quadros={tema.quadros} className="palco-personagem" />
         <div className="palco-balao">
           <h1>Oi, {nome}!</h1>
           <div className="xp-linha">
             <span className="xp-estrela"><Icone nome="estrela" tamanho={28} /></span>
-            <div className="xp" role="progressbar" aria-valuemin={0} aria-valuemax={XP_POR_ITEM} aria-valuenow={resto} aria-label="XP até o próximo item">
-              <span style={{ width: `${(resto / XP_POR_ITEM) * 100}%` }} />
+            {/* Exceção de movimento do DESIGN.md: o personagem anda até o XP e fica "vivo". */}
+            <div className="xp-trilho">
+              <div className="xp" role="progressbar" aria-valuemin={0} aria-valuemax={XP_POR_ITEM} aria-valuenow={proximo ? resto : XP_POR_ITEM} aria-label="XP até o próximo item">
+                <span className="xp-preenchido" style={{ '--pct': `${pct}%` }} />
+              </div>
+              <div className="xp-guia" style={{ '--pct': `${pctPersonagem}%` }} aria-hidden="true">
+                <img className="xp-personagem" src={tema.personagem} alt="" />
+              </div>
             </div>
             {proximo && <img className="xp-proximo" src={proximo.img} alt={`Próximo: ${proximo.nome}`} />}
           </div>
@@ -104,8 +145,8 @@ export default function Crianca({ usuario, sair }) {
                 {dados.jogos.map((j, i) => (
                   <button key={j.id} className={`cartao-jogo capa-${i % 3}`} onClick={() => navegar(`/crianca/jogo/${j.id}`)}>
                     <span className="cartao-jogo-capa">
-                      <img src={tema.itens[i % tema.itens.length].img} alt="" />
-                      <span className="cartao-jogo-tipo"><Icone nome={ICONE_JOGO[j.id] ?? 'memoria'} tamanho={22} /></span>
+                      {temCapa(j.id) ? <CapaJogo jogoId={j.id} tema={tema} /> : <img src={tema.itens[i % tema.itens.length].img} alt="" />}
+                      {!temCapa(j.id) && <span className="cartao-jogo-tipo"><Icone nome={ICONE_JOGO[j.id] ?? 'memoria'} tamanho={22} /></span>}
                     </span>
                     <span className="cartao-jogo-rodape">
                       <span className="cartao-jogo-nome">{j.nome}</span>

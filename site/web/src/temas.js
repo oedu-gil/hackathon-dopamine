@@ -2,7 +2,7 @@
 // Layout, botões, fluxo e XP são iguais em todos (DESIGN.md, regra 8).
 // Personagens e itens vêm da arte do hub de jogos, para o site e os jogos ficarem iguais.
 import { HIPERFOCOS } from '@hub/compartilhado/temas.js'
-import { urlDoQuadro } from '@hub/compartilhado/arte/index.js'
+import { ARTE, urlDoQuadro } from '@hub/compartilhado/arte/index.js'
 
 // Cores calmas do cenário de cada tema: `cor` (destaque), `fundo` (página), `ceu` e `chao` (cenário).
 const VISUAL = {
@@ -18,6 +18,8 @@ export const TEMAS = HIPERFOCOS.map((h) => ({
   cor: h.cor,
   personagemNome: h.personagemNome,
   personagem: urlDoQuadro(h.arte),
+  // quadros da animação do personagem (fumaça, rodas, hélice...), os mesmos dos jogos
+  quadros: ARTE[h.arte].frames.map((_, i) => urlDoQuadro(h.arte, i)),
   itens: h.itens.map((i) => ({ nome: i.nome, img: urlDoQuadro(i.arte) })),
   ...VISUAL[h.id],
 }))
