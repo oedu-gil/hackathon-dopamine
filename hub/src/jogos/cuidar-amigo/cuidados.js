@@ -1,0 +1,121 @@
+// "Cuidar do amigo": um amigo mostra um sentimento e a criança escolhe, só por figuras,
+// o que ajuda. `certos` são os itens que ajudam; `errados` são os que não têm a ver.
+export const FERRAMENTAS = {
+  abraco: { arte: 'fer_abraco', nome: 'Abraço' },
+  agua: { arte: 'fer_agua', nome: 'Água' },
+  sorvete: { arte: 'fer_sorvete', nome: 'Sorvete' },
+  curativo: { arte: 'fer_curativo', nome: 'Curativo' },
+  luz: { arte: 'fer_luz', nome: 'Luz' },
+  lanche: { arte: 'fer_lanche', nome: 'Lanche' },
+  bola: { arte: 'fer_bola', nome: 'Brincar' },
+  ursinho: { arte: 'fer_ursinho', nome: 'Ursinho' },
+  respirar: { arte: 'fer_respirar', nome: 'Respirar' },
+  desculpa: { arte: 'fer_desculpa', nome: 'Desculpa' },
+  aplauso: { arte: 'fer_aplauso', nome: 'Palmas' },
+  ajuda: { arte: 'fer_ajuda', nome: 'Ajudar' },
+  desenho: { arte: 'fer_desenho', nome: 'Desenho' },
+}
+
+export const CUIDADOS = [
+  // ---- nível 1: sentimentos bem claros ----
+  {
+    nivel: 1,
+    cara: 'triste',
+    cena: 'sorvete',
+    texto: 'Ele derrubou o sorvete e ficou triste.',
+    certos: ['sorvete', 'abraco'],
+    errados: ['curativo', 'luz', 'bola', 'lanche'],
+  },
+  {
+    nivel: 1,
+    cara: 'machucado',
+    cena: 'arvore',
+    texto: 'Ele caiu, ralou o joelho e está chorando.',
+    certos: ['curativo', 'abraco'],
+    errados: ['sorvete', 'luz', 'bola'],
+  },
+  {
+    nivel: 1,
+    cara: 'medo',
+    cena: 'lua',
+    texto: 'Está escuro e ele ficou com medo.',
+    certos: ['luz', 'abraco'],
+    errados: ['bola', 'lanche', 'aplauso'],
+  },
+  {
+    nivel: 1,
+    cara: 'fome',
+    cena: 'prato',
+    texto: 'A barriga dele está roncando de fome.',
+    certos: ['lanche'],
+    errados: ['curativo', 'luz', 'bola', 'aplauso'],
+  },
+  {
+    nivel: 1,
+    cara: 'sozinho',
+    cena: 'bola',
+    texto: 'Ele está sozinho e quer brincar.',
+    certos: ['bola', 'abraco'],
+    errados: ['curativo', 'lanche', 'luz'],
+  },
+  {
+    nivel: 1,
+    cara: 'festa',
+    cena: 'presente',
+    texto: 'Ele ganhou um presente e está muito feliz!',
+    certos: ['aplauso', 'abraco'],
+    errados: ['curativo', 'luz', 'lanche'],
+  },
+
+  // ---- nível 2 ----
+  {
+    nivel: 2,
+    cara: 'bravo',
+    cena: 'dado',
+    texto: 'Ele perdeu o jogo e ficou bravo.',
+    certos: ['respirar', 'abraco'],
+    errados: ['bola', 'lanche', 'aplauso'],
+  },
+  {
+    nivel: 2,
+    cara: 'sono',
+    cena: 'lua',
+    texto: 'Ele está com sono e cansado.',
+    certos: ['ursinho'],
+    errados: ['bola', 'aplauso', 'sorvete', 'curativo'],
+  },
+  {
+    nivel: 2,
+    cara: 'chateado',
+    cena: 'ursinho',
+    texto: 'Sem querer, o brinquedo dele quebrou e ele ficou chateado.',
+    certos: ['desculpa', 'ajuda'],
+    errados: ['bola', 'lanche', 'aplauso', 'luz'],
+  },
+  {
+    nivel: 2,
+    cara: 'nervoso',
+    cena: 'escola',
+    texto: 'É o primeiro dia na escola e ele está nervoso.',
+    certos: ['respirar', 'abraco'],
+    errados: ['curativo', 'lanche', 'sorvete'],
+  },
+
+  // ---- nível 3 ----
+  {
+    nivel: 3,
+    cara: 'frustrado',
+    cena: 'quebra',
+    texto: 'Ele não consegue montar o quebra-cabeça.',
+    certos: ['ajuda', 'respirar'],
+    errados: ['sorvete', 'curativo', 'aplauso'],
+  },
+  {
+    nivel: 3,
+    cara: 'saudade',
+    cena: 'caminhao',
+    texto: 'O melhor amigo dele se mudou para outra cidade.',
+    certos: ['abraco', 'desenho'],
+    errados: ['lanche', 'bola', 'luz'],
+  },
+]
