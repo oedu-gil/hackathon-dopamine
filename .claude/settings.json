@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/save_transcript.py\""
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/save_transcript.py\" 2>/dev/null || python \"$CLAUDE_PROJECT_DIR/.claude/hooks/save_transcript.py\""
           }
         ]
       }
@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/save_transcript.py\""
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/save_transcript.py\" 2>/dev/null || python \"$CLAUDE_PROJECT_DIR/.claude/hooks/save_transcript.py\""
           }
         ]
       }
