@@ -29,6 +29,43 @@ test('classifica habilidades validas e sempre usa nivel 1', async () => {
   ])
   assert.deepEqual(resultado.resumoPais.topicos, ['Reconhecer emoções', 'Empatia'])
   assert.equal(resultado.resumoPais.aviso, AVISO)
+  assert.match(resultado.resumoPais.tempoRevisao, /semanas/i)
+  assert.deepEqual(resultado.resumoPais.porHabilidade[0].recursos, [
+    { nome: 'Genial Care — Emoções no autismo: saiba como ensinar essas habilidades', url: 'https://genialcare.com.br/blog/emocoes-no-autismo/' },
+  ])
+})
+
+test('recursos de pesquisa vem da lista curada no codigo, nao da LLM, mesmo se a LLM tentar sugerir um link', async () => {
+  const chamarLLM = llmQueDevolve({
+    itens: [{ habilidade: 'empatia' }],
+    resumoPais: {
+      topicos: [],
+      porHabilidade: [{ habilidade: 'empatia', atencao: 'x', atividades: [], recursos: [{ nome: 'fonte inventada', url: 'https://nao-existe-de-verdade.com' }] }],
+    },
+  })
+  const resultado = await processarPdi('texto', HABILIDADES, chamarLLM)
+  const recursos = resultado.resumoPais.porHabilidade[0].recursos
+  assert.equal(recursos.length, 2)
+  assert.ok(recursos.every((r) => r.url.startsWith('https://genialcare.com.br') || r.url.startsWith('https://autismoerealidade.org.br')))
+})
+
+test('habilidade sem recursos curados devolve lista vazia, sem quebrar', async () => {
+  const habilidadesSemRecurso = [{ id: 'habilidade-sem-recurso-curado', nome: 'x' }]
+  const chamarLLM = llmQueDevolve({
+    itens: [{ habilidade: 'habilidade-sem-recurso-curado' }],
+    resumoPais: { topicos: [], porHabilidade: [] },
+  })
+  const resultado = await processarPdi('texto', habilidadesSemRecurso, chamarLLM)
+  assert.deepEqual(resultado.resumoPais.porHabilidade[0].recursos, [])
+})
+
+test('tempoRevisao e sempre o texto fixo, mesmo se a LLM tentar sugerir outro', async () => {
+  const chamarLLM = llmQueDevolve({
+    itens: [{ habilidade: 'empatia' }],
+    resumoPais: { topicos: [], porHabilidade: [], tempoRevisao: 'reavalie amanhã mesmo' },
+  })
+  const resultado = await processarPdi('texto', HABILIDADES, chamarLLM)
+  assert.notEqual(resultado.resumoPais.tempoRevisao, 'reavalie amanhã mesmo')
 })
 
 test('descarta habilidade fora da lista permitida, em itens e em porHabilidade', async () => {
@@ -185,7 +222,7 @@ test('campo extra nao previsto no schema (ex.: link) nao aparece no resultado', 
     },
   })
   const resultado = await processarPdi('texto', HABILIDADES, chamarLLM)
-  assert.deepEqual(Object.keys(resultado.resumoPais.porHabilidade[0]).sort(), ['atencao', 'atividades', 'habilidade'])
+  assert.deepEqual(Object.keys(resultado.resumoPais.porHabilidade[0]).sort(), ['atencao', 'atividades', 'habilidade', 'recursos'])
 })
 
 test('texto vazio (PDF sem conteudo extraivel) nao chama a LLM e sinaliza erro distinto', async () => {
