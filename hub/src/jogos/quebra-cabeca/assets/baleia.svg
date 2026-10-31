@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" viewBox="0 0 500 300">
+<rect width="500" height="300" fill="#2a7fb8"/>
+<rect width="500" height="98" fill="#cfe8f2"/>
+<circle cx="70" cy="48" r="28" fill="#ffd166"/>
+<ellipse cx="250" cy="36" rx="36" ry="12" fill="#fff"/><ellipse cx="268" cy="27" rx="20" ry="11" fill="#fff"/>
+<path d="M130 34 Q140 24 150 34 Q160 24 170 34" stroke="#2a1f3d" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M0 98 Q25 86 50 98 T100 98 T150 98 T200 98 T250 98 T300 98 T350 98 T400 98 T450 98 T500 98 V112 H0Z" fill="#5fa8d3"/>
+<path d="M330 92 H420 L408 108 H342Z" fill="#e76f51"/><rect x="372" y="50" width="4" height="42" fill="#3d2c2e"/><path d="M376 54 L410 86 H376Z" fill="#fff"/>
+<g fill="#cdeaf7"><circle cx="150" cy="78" r="6"/><circle cx="168" cy="64" r="7"/><circle cx="188" cy="74" r="6"/><circle cx="170" cy="88" r="5"/></g>
+<path d="M168 120 Q164 100 170 92" stroke="#cdeaf7" stroke-width="6" fill="none" stroke-linecap="round"/>
+<path d="M60 196 Q100 120 250 124 Q350 128 388 176 Q404 206 376 226 Q300 262 180 254 Q86 244 60 196Z" fill="#20406a"/>
+<path d="M380 184 Q428 150 474 118 Q458 166 476 210 Q430 198 384 204Z" fill="#20406a"/>
+<path d="M86 214 Q180 256 300 242 Q352 236 374 222 Q300 250 190 246 Q114 240 86 214Z" fill="#9cc7e0"/>
+<g stroke="#7aaed0" stroke-width="3"><path d="M150 228 L156 246"/><path d="M190 232 L194 250"/><path d="M230 234 L232 250"/><path d="M270 232 L270 248"/></g>
+<circle cx="122" cy="186" r="7" fill="#fff"/><circle cx="124" cy="187" r="4" fill="#0b132b"/>
+<path d="M210 196 Q240 214 270 200" stroke="#162f50" stroke-width="5" fill="none" stroke-linecap="round"/>
+<rect y="276" width="500" height="24" fill="#e9c46a"/>
+<g fill="#2a9d8f"><path d="M30 280 Q20 250 34 232 Q42 256 38 280Z"/><path d="M46 280 Q50 248 62 240 Q60 262 54 280Z"/><path d="M450 280 Q440 246 456 226 Q464 254 460 280Z"/></g>
+<g fill="#f4a261"><path d="M400 252 Q414 240 428 252 Q414 264 400 252Z M428 252 L438 244 V260Z"/><path d="M330 268 Q340 260 350 268 Q340 276 330 268Z M350 268 L357 263 V273Z"/></g>
+</svg>

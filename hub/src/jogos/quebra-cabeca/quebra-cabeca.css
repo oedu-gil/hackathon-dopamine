@@ -1,0 +1,29 @@
+/* Estilos só do quebra-cabeça (direção B, Papel recortado), presos ao elemento .qc que o index.js cria. */
+@font-face { font-family:'QcAtkinson'; src:url('./assets/fonts/atkinson-hyperlegible-400.woff2') format('woff2'); font-weight:400; }
+@font-face { font-family:'QcAtkinsonBold'; src:url('./assets/fonts/atkinson-hyperlegible-700.woff2') format('woff2'); font-weight:700; }
+@font-face { font-family:'QcBaloo'; src:url('./assets/fonts/baloo2-800.woff2') format('woff2'); font-weight:800; }
+
+.qc { --ink:#2a1f3d; --ink-soft:#57466e; --paper:#fffaf2; --tray:#7fc8a9; --sel:#6a3fc8; --qc-cartolina:#ffd9a8;
+  position:relative; height:100%; overflow:hidden; overscroll-behavior:none; background:var(--qc-cartolina); color:var(--ink);
+  font-family:'QcAtkinson', system-ui, sans-serif; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+.qc [hidden] { display:none !important; }
+.qc .qc-jogo { position:absolute; inset:0; }
+.qc canvas { display:block; touch-action:none; }
+.qc .qc-leitor { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; margin:0; }
+
+.qc .qc-tela { position:absolute; inset:0; z-index:3; background:var(--qc-cartolina); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; padding:24px; text-align:center; }
+.qc .qc-tela h2 { font-family:'QcBaloo', system-ui, sans-serif; font-weight:800; font-size:clamp(28px, 5vw, 38px); line-height:1.05; margin:0; }
+.qc .qc-tela p { margin:0; font-size:19px; max-width:560px; }
+.qc .qc-girar { z-index:5; }
+.qc .qc-acoes { display:flex; gap:16px; flex-wrap:wrap; justify-content:center; }
+.qc button { font-family:'QcAtkinsonBold', system-ui, sans-serif; font-size:22px; color:var(--ink); height:64px; min-width:120px; padding:0 28px;
+  border:3px solid var(--ink); border-radius:22px; background:#fff; box-shadow:3px 3px 0 var(--ink); cursor:pointer; touch-action:manipulation; }
+.qc button:active { transform:translate(2px, 2px); box-shadow:1px 1px 0 var(--ink); }
+.qc button.primario { background:var(--sel); color:#fff; }
+.qc button:focus-visible { outline:4px solid var(--sel); outline-offset:3px; }
+
+.qc .qc-papel { width:120px; height:84px; position:relative; }
+.qc .qc-papel i { position:absolute; inset:0; border:3px solid var(--ink); border-radius:10px; background:#fff; }
+.qc .qc-papel i:nth-child(1) { rotate:-8deg; background:var(--tray); }
+.qc .qc-papel i:nth-child(2) { rotate:5deg; background:var(--paper); }
+.qc.qc-rm .qc-papel i { rotate:0deg; }
