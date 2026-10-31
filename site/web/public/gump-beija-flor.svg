@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-6 20 224 172" role="img" aria-label="Beija-flor do Gump">
+  <g stroke="#1E3B2F" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M70 140 L22 168 L50 146 L32 186 L86 150 Z" fill="#2E9E6B"/>
+    <path d="M96 104 C82 56 56 30 30 30 C36 64 60 98 96 116 Z" fill="#F08A55"/>
+    <ellipse cx="100" cy="122" rx="46" ry="34" transform="rotate(-24 100 122)" fill="#2E9E6B"/>
+    <path d="M164 76 L212 64 L165 89 Z" fill="#1E3B2F"/>
+    <circle cx="140" cy="82" r="28" fill="#2E9E6B"/>
+    <path d="M118 100 C126 118 152 118 162 96 C148 104 132 104 118 100 Z" fill="#D9406E"/>
+    <path d="M108 106 C102 60 80 34 54 30 C58 64 76 98 108 122 Z" fill="#FF9F6B"/>
+    <circle cx="148" cy="77" r="9.5" fill="#FFFFFF"/>
+  </g>
+  <path d="M72 146 C92 160 126 154 142 126 C122 136 96 140 72 146 Z" fill="#FFF6F0" opacity="0.9"/>
+  <circle cx="150" cy="77" r="5.5" fill="#1E3B2F"/>
+  <circle cx="152.5" cy="74.5" r="2" fill="#FFFFFF"/>
+  <circle cx="135" cy="93" r="4.5" fill="#D9406E" opacity="0.75"/>
+  <path d="M20 70 Q 12 80 18 92" fill="none" stroke="#FF9F6B" stroke-width="4" stroke-linecap="round"/>
+  <path d="M8 60 Q -2 78 8 98" fill="none" stroke="#FF9F6B" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+</svg>
