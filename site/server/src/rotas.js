@@ -77,8 +77,11 @@ rotas.get('/alunos/:alunoId', async (req, res) => {
   }
 
   if (perfil === 'responsavel') {
-    // O resumo para os pais informa os tópicos e incentiva a pesquisa, sem sugerir ações.
-    const resumo = pdi?.resumo_pais ? { topicos: pdi.resumo_pais.topicos, aviso: pdi.resumo_pais.aviso } : null
+    // Resumo completo para os pais: tópicos, pontos de atenção e atividades
+    // por habilidade, links de pesquisa curados e aviso — tudo já vem pronto
+    // e validado de processarPdi() (ver pdi/src/processarPdi.js), nunca
+    // gerado aqui. Nenhuma ação é sugerida.
+    const resumo = pdi?.resumo_pais ?? null
     return res.json({ aluno, xp, resumo, jogos: comStatus.filter((j) => j.status === 'aprovado') })
   }
 
