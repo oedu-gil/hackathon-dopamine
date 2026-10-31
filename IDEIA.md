@@ -4,7 +4,7 @@ Fonte única da ideia do grupo. Se algo mudar, atualize este arquivo para que o 
 
 ## Resumo
 
-Site para **crianças autistas de 4 a 12 anos** que transforma o PDI (Plano de Desenvolvimento Individual) do aluno em jogos personalizados e acompanhamento contínuo. Concorrentes como a Jade Autism geram um PDI ou relatório e param aí. Nós começamos a partir do PDI.
+Site para **crianças autistas de 4 a 10 anos** que transforma o PDI (Plano de Desenvolvimento Individual) do aluno em jogos personalizados e acompanhamento contínuo. Concorrentes como a Jade Autism geram um PDI ou relatório e param aí. Nós começamos a partir do PDI.
 
 ## Como funciona
 

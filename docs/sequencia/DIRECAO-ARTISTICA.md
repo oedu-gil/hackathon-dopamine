@@ -5,7 +5,7 @@
 - **Direção escolhida: 1 · Quadro estruturado** (ver `DIRECOES-PROPOSTAS.md` e `estudos/direcao-1-quadro.png`). As direções 2 e 3 não foram adotadas.
 - **Dispositivos:** tablet e celular.
 - **Apoio na primeira versão:** somente uma palavra ou frase curta para contextualizar.
-- **Faixa etária:** 4 a 12 anos.
+- **Faixa etária:** 4 a 10 anos.
 
 Esta decisão aprova a direção visual. O protótipo (`prototipo/`) e o plano (`PLANO.md`) foram aprovados depois, em 30/10/2026, com o apoio confirmado como frase de contexto + Dica em palavras.
 
@@ -18,7 +18,7 @@ Referências: quadros visuais do método TEACCH e cartões de padrão Montessori
 - Cartões quadrados de "papel" claro com traço escuro; sem personagem, sem cenário, sem textura.
 - Fileira de 5 posições numeradas; a lacuna é tracejada com "?".
 - Opções numa bandeja separada embaixo ("Escolha uma"), com sombra sólida para parecerem tocáveis.
-- Aparência neutra, sem estética infantilizada: serve de 4 a 12 anos. O que muda com a idade e o hiperfoco são as imagens e a frase.
+- Aparência neutra, sem estética infantilizada: serve de 4 a 10 anos. O que muda com a idade e o hiperfoco são as imagens e a frase.
 
 ### Paleta e contraste
 

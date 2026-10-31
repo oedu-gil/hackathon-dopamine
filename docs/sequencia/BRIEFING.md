@@ -15,7 +15,7 @@ O jogo não avalia nem diagnostica. Tentativas, acertos e ajudas servem só para
 
 ## Contexto de uso
 
-- **Público:** crianças autistas de 4 a 12 anos (decisão do grupo, como em `IDEIA.md`).
+- **Público:** crianças autistas de 4 a 10 anos (decisão do grupo, como em `IDEIA.md`).
 - **Quem define o objetivo:** o PDI orienta objetivos e apoios. A idade não decide sozinha a dificuldade.
 - **Personalização:** as duas imagens (A e B) vêm do hiperfoco da criança; a regra ABAB continua a mesma. Os temas que já existem em `app/src/data/hiperfocos.js` (origin/main) são trem, aranha, avião e dinossauro.
 - **Preferências sensoriais:** não presumimos que todas as crianças autistas tenham a mesma. Som e movimento precisam poder ser reduzidos ou desligados.
@@ -54,7 +54,7 @@ Integração com a plataforma, XP e coleção, persistência, padrões além de 
 - Direção artística 1 · Quadro estruturado (`DIRECAO-ARTISTICA.md`).
 - Dispositivos: tablet e celular.
 - Apoio na primeira versão: somente uma palavra ou frase para contextualizar.
-- Faixa etária: 4 a 12 anos.
+- Faixa etária: 4 a 10 anos.
 
 ## Pendências
 
