@@ -22,9 +22,12 @@ export default function PhaserGame({ cena, ctx }) {
       width: 800,
       height: 450,
       scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_HORIZONTALLY },
+      physics: { default: 'arcade', arcade: { gravity: { y: 1100 } } },
       scene: [CENAS[cena]],
       callbacks: { preBoot: (g) => g.registry.set('ctx', ctxRef.current) },
     })
+    // só para testes automáticos no modo de desenvolvimento
+    if (import.meta.env.DEV) window.__phaser = game
     return () => game.destroy(true)
   }, [cena])
 

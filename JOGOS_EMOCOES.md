@@ -24,7 +24,7 @@ Uma plataforma em que o professor registra o PDI de uma criança neurodivergente
 | # | Jogo | Estilo | Habilidades | Como funciona |
 |---|------|--------|-------------|---------------|
 | 1 | **Chuva de emoções** | Arcade | Reconhecer emoções | Rostos caem e a criança pega só a emoção pedida. |
-| 2 | **Plataforma do amigo** | Plataforma | Resposta social, empatia | O personagem encontra um amigo numa situação social e pula para a plataforma com a atitude certa. |
+| 2 | **Plataforma do amigo** | Plataformer (estilo Mario) | Resposta social, empatia | Fase de rolagem lateral: o personagem do hiperfoco anda e pula por buracos e plataformas, junta estrelas e encontra amigos pelo caminho. Ao chegar num amigo, aparece a situação social e a criança escolhe a atitude. Ao ajudar todos, chega à bandeira. |
 | 3 | **História com escolhas** | Calmo, sem tempo | Causa e efeito social, empatia | Uma história curta em que a criança escolhe o que o personagem faz e vê a consequência. |
 
 Descartados: "Corrida das reações" e "Respire e acalme".
@@ -32,7 +32,7 @@ Descartados: "Corrida das reações" e "Respire e acalme".
 ### Níveis
 O nível (1 a 3) vem do PDI. Quanto menor o nível da criança numa habilidade, maior a prioridade do jogo. O nível também ajusta o conteúdo:
 - **Chuva de emoções**: 3, 5 ou 7 emoções diferentes, e a queda fica um pouco mais rápida.
-- **Plataforma do amigo**: situações mais sutis nos níveis altos.
+- **Plataforma do amigo**: situações mais sutis nos níveis altos. Controles: setas/WASD e espaço, ou os botões de toque na tela. Cair no buraco só volta ao último ponto, e as estrelas são só diversão (não contam para a coleção).
 - **História com escolhas**: histórias mais complexas nos níveis altos.
 
 ### Cuidados com o público
@@ -43,6 +43,28 @@ O nível (1 a 3) vem do PDI. Quanto menor o nível da criança numa habilidade, 
 
 ## Recomendação (regras por tags)
 Para cada jogo, soma-se `4 - nível` das habilidades do PDI que ele treina. Quanto menor o nível da criança, maior a pontuação. Jogos sem nenhuma habilidade em comum não aparecem. O resultado vem ordenado e com o motivo ("Trabalha X, nível Y"). O hiperfoco **não** entra na recomendação, só no visual e na recompensa.
+
+## Análise de desempenho (para o educador)
+Cada tentativa nos jogos (acerto ou erro) é registrada com jogo, nível, hiperfoco e hora. O botão **📊 Desempenho (educador)** mostra, por aluno:
+- total de tentativas, acertos, erros e taxa de acerto;
+- o mesmo por **habilidade do PDI** e por **jogo**, com uma barra de acertos e erros;
+- uma **estimativa de aprendizado** por habilidade, e um **CSV** para baixar.
+
+O que conta como tentativa: na Chuva de emoções, cada rosto pego (certo ou errado); na Plataforma do amigo e na História com escolhas, cada opção escolhida. Rosto que passa sem ser pego não conta.
+
+A estimativa compara a **primeira e a segunda metade** das tentativas, em ordem de tempo:
+
+| Estado | Regra |
+|--------|-------|
+| Poucos dados | menos de 10 tentativas |
+| Consolidando | acertos recentes de 80% ou mais |
+| Evoluindo | a taxa subiu 10 pontos ou mais (e a recente é menor que 80%) |
+| Precisa de apoio | acertos recentes abaixo de 50% e sem melhora |
+| Estável | os demais casos |
+
+Uma habilidade reúne as tentativas de **todos os jogos que a treinam** (ex.: empatia soma Plataforma do amigo e História com escolhas).
+
+**Limites a ter em mente:** é uma estimativa orientativa, não um diagnóstico, e não substitui a avaliação do educador. Os limiares (10 tentativas, 80%, 50%, 10 pontos) são valores provisórios do MVP que o grupo pode ajustar em `app/src/analise.js`. Na Chuva de emoções, a criança pode acertar por acaso ao mover o personagem. O registro é por nome do aluno e fica só no navegador do aparelho, sem servidor. Dois alunos com o mesmo nome se misturam.
 
 ## Hiperfocos do MVP
 | Hiperfoco | Personagem | Itens desbloqueáveis |
@@ -66,7 +88,7 @@ Para o MVP foram usados estes valores provisórios. São fáceis de trocar, porq
 cd app
 npm install
 npm run dev     # abre em http://localhost:5173
-npm test        # testes do motor de recomendação
+npm test        # testes da recomendação e da análise de desempenho
 npm run build
 ```
 
@@ -76,7 +98,9 @@ app/src/
   data/          conteúdo: habilidades, hiperfocos, emoções, situações, histórias e catálogo de jogos
   recomendacao.js  motor de recomendação (função pura, com testes)
   progresso.js     coleção e desbloqueio de itens (localStorage)
+  desempenho.js    registro de cada tentativa (localStorage)
+  analise.js       estimativa de aprendizado (função pura, com testes)
   games/           cenas Phaser dos 3 jogos e componentes comuns (ui.js)
-  telas/           telas React (PDI, escolha de hiperfoco, jogos, coleção)
+  telas/           telas React (PDI, escolha de hiperfoco, jogos, coleção, desempenho)
   PhaserGame.jsx   ponte React <-> Phaser
 ```

@@ -98,6 +98,7 @@ export default class ChuvaEmocoes extends Phaser.Scene {
       if (this.acertos >= META) return this.terminar()
       if (this.acertos % ACERTOS_POR_ALVO === 0) this.novoAlvo()
     } else {
+      this.hud.erro()
       this.dica.setText(`Quase! Procure: ${this.alvo.emoji} ${this.alvo.nome}`)
     }
     this.time.delayedCall(1200, () => this.dica.setText(''))

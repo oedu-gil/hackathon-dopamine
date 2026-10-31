@@ -52,7 +52,10 @@ export default class HistoriaEscolhas extends Phaser.Scene {
   escolher(b, escolha) {
     if (this.travado) return
     this.retorno.setText(this.trocar(escolha.consequencia))
-    if (!escolha.certo) return b.desativar()
+    if (!escolha.certo) {
+      this.hud.erro()
+      return b.desativar()
+    }
 
     this.travado = true
     this.botoes.forEach((x) => x.desativar())

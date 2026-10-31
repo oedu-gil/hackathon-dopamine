@@ -9,7 +9,16 @@ const VELOCIDADES = [
   { valor: 1.4, nome: 'Rápida' },
 ]
 
-export default function Jogos({ pdi, hiperfoco, opcoes, setOpcoes, jogar, verColecao, trocar }) {
+export default function Jogos({
+  pdi,
+  hiperfoco,
+  opcoes,
+  setOpcoes,
+  jogar,
+  verColecao,
+  verDesempenho,
+  trocar,
+}) {
   const recomendados = useMemo(() => recomendar(pdi.itens, JOGOS), [pdi])
   const e = estado(hiperfoco)
 
@@ -67,6 +76,9 @@ export default function Jogos({ pdi, hiperfoco, opcoes, setOpcoes, jogar, verCol
       <div className="acoes">
         <button className="secundario" onClick={verColecao}>
           Minha coleção
+        </button>
+        <button className="secundario" onClick={verDesempenho}>
+          📊 Desempenho (educador)
         </button>
         <button className="secundario" onClick={trocar}>
           Trocar hiperfoco

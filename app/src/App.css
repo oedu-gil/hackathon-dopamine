@@ -117,3 +117,86 @@ button.secundario {
 .jogo {
   width: 100%;
 }
+
+.aviso {
+  font-size: 14px;
+  padding: 8px 12px;
+  border-left: 4px solid #ffd447;
+  background: #8882;
+}
+
+.resumo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 10px;
+}
+
+.resumo div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #8884;
+  border-radius: 10px;
+}
+
+.resumo strong {
+  font-size: 28px;
+}
+
+.cartao-coluna {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid #8884;
+  border-radius: 10px;
+}
+
+.linha-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.barra {
+  display: flex;
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #8883;
+}
+
+.barra .ok {
+  background: #2e9e5b;
+}
+
+.barra .erro {
+  background: #d9534f;
+}
+
+.selo-estado {
+  font-size: 13px;
+  padding: 2px 10px;
+  border-radius: 99px;
+  color: #fff;
+  background: #777;
+}
+
+.selo-estado.consolidando {
+  background: #2e9e5b;
+}
+
+.selo-estado.evoluindo {
+  background: #2f6fed;
+}
+
+.selo-estado.estavel {
+  background: #b58900;
+}
+
+.selo-estado.apoio {
+  background: #d9534f;
+}

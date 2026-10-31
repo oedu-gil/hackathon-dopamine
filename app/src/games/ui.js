@@ -6,6 +6,7 @@ export function botao(scene, x, y, w, h, texto, aoClicar, cor = 0x2f6fed) {
     .rectangle(x, y, w, h, cor)
     .setStrokeStyle(3, 0xffffff)
     .setInteractive({ useHandCursor: true })
+    .setScrollFactor(0)
   const t = scene.add
     .text(x, y, texto, {
       fontFamily: FONTE, fontSize: '20px',
@@ -14,6 +15,7 @@ export function botao(scene, x, y, w, h, texto, aoClicar, cor = 0x2f6fed) {
       wordWrap: { width: w - 16 },
     })
     .setOrigin(0.5)
+    .setScrollFactor(0)
   r.on('pointerdown', aoClicar)
   return {
     r,
@@ -32,10 +34,16 @@ export function botao(scene, x, y, w, h, texto, aoClicar, cor = 0x2f6fed) {
 
 export function criarHud(scene, ctx) {
   const larguraBarra = 220
-  const rotulo = scene.add.text(20, 8, '', { fontFamily: FONTE, fontSize: '18px', color: '#ffffff' })
-  scene.add.rectangle(20, 38, larguraBarra, 12, 0x000000, 0.4).setOrigin(0, 0.5)
-  const barra = scene.add.rectangle(20, 38, 1, 12, 0xffd447).setOrigin(0, 0.5)
-  botao(scene, 740, 26, 90, 34, 'Sair', () => ctx.sair(), 0x555555)
+  // fixo na tela (scrollFactor 0) e acima do cenário, para cenas com câmera que rola
+  const fixo = (o) => o.setScrollFactor(0).setDepth(40)
+  const rotulo = fixo(
+    scene.add.text(20, 8, '', { fontFamily: FONTE, fontSize: '18px', color: '#ffffff' }),
+  )
+  fixo(scene.add.rectangle(20, 38, larguraBarra, 12, 0x000000, 0.4).setOrigin(0, 0.5))
+  const barra = fixo(scene.add.rectangle(20, 38, 1, 12, 0xffd447).setOrigin(0, 0.5))
+  const sair = botao(scene, 740, 26, 90, 34, 'Sair', () => ctx.sair(), 0x555555)
+  sair.r.setDepth(40)
+  sair.t.setDepth(41)
 
   function atualizar(e) {
     if (e.proximo) {
@@ -59,7 +67,8 @@ export function criarHud(scene, ctx) {
         padding: { x: 24, y: 16 },
       })
       .setOrigin(0.5)
-      .setDepth(10)
+      .setScrollFactor(0)
+      .setDepth(45)
     if (ctx.efeitos) {
       aviso.setScale(0.2)
       scene.tweens.add({ targets: aviso, scale: 1, duration: 350, ease: 'Back.Out' })
@@ -70,24 +79,30 @@ export function criarHud(scene, ctx) {
   atualizar(ctx.estado())
 
   return {
+    // acerto avança a coleção e entra no desempenho; erro só entra no desempenho
     acerto() {
+      ctx.registrarTentativa(true)
       const e = atualizar(ctx.registrarAcerto())
       if (e.novoItem) mostrarDesbloqueio(e.novoItem)
+    },
+    erro() {
+      ctx.registrarTentativa(false)
     },
   }
 }
 
 export function telaFinal(scene, ctx, mensagem) {
-  scene.add.rectangle(400, 225, 800, 450, 0x000000, 0.7).setDepth(20)
+  scene.add.rectangle(400, 225, 800, 450, 0x000000, 0.7).setScrollFactor(0).setDepth(50)
   scene.add
     .text(400, 150, mensagem, { fontFamily: FONTE, fontSize: '34px', color: '#ffffff', align: 'center' })
     .setOrigin(0.5)
-    .setDepth(21)
+    .setScrollFactor(0)
+    .setDepth(51)
   const a = botao(scene, 280, 280, 220, 60, 'Jogar de novo', () => scene.scene.restart(), 0x2e9e5b)
   const b = botao(scene, 520, 280, 220, 60, 'Voltar ao menu', () => ctx.sair(), 0x555555)
   for (const o of [a, b]) {
-    o.r.setDepth(21)
-    o.t.setDepth(22)
+    o.r.setDepth(51)
+    o.t.setDepth(52)
   }
 }
 
