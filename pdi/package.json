@@ -1,0 +1,20 @@
+{
+  "name": "pdi",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "fixtures": "node scripts/gerar-fixtures.js",
+    "start": "node server.js",
+    "dev": "node --env-file=.env server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
+    "multer": "^2.5.0",
+    "pdfjs-dist": "^6.4.299"
+  },
+  "devDependencies": {
+    "pdfkit": "^0.15.0"
+  }
+}
