@@ -21,3 +21,11 @@ Jogo cooperativo jogável no hub, com gatinho animado, fundo de piquenique e tor
 - As quatro folhas do gatinho somam cerca de 34 MB; otimização futura deve preservar os quadros e tempos aprovados.
 
 O snapshot nativo desta conversa é preservado separadamente em prompts/, conforme CLAUDE.md. Capturas temporárias e arquivos de outras frentes não fazem parte da publicação.
+
+## Fechamento com animações do guaxinim
+
+Integração solicitada pelo usuário em 31/10/2026: idle, ataque com release sincronizado, defesa com hold controlado pela IA, reação com limpeza e final sentado dormindo com Zzz separados. A bandeja do guaxinim faz parte do sprite. O corpo normal permanece nas ações comuns; corpo cheio aparece na finalização. A textura provisória não é mais usada para renderizar o personagem. Detalhes, seleções e limitações herdadas em INTEGRACAO-GUAXINIM.md.
+
+Versão combinada com origin/main sem conflitos. Verificação repetida: 67 testes do hub, 6 regras do servidor, builds do hub e site; Chrome com input real, pausa, guarda/abertura, reação/limpeza, final, reinício e movimento reduzido. Aviso existente do bundle Phaser permanece. A integração não altera o fluxo de PDI: cooperacao ainda depende da frente responsável. Tablet físico e fluxo autenticado completo continuam não exercitados.
+
+Conversa de arte preservada sem edição: snapshot JSONL nativo comprimido sem perda, dividido em três partes binárias em prompts/2026-10-31_01a19049-a12a-72a3-b4a5-53251f5f74f7-arquivo/, com SHA256 e instruções de restauração no manifest.json. Divisão necessária pelo limite por arquivo do GitHub. Vídeos originais, tentativas, pastas temporárias e cópia JSONL de trabalho ficam locais.
