@@ -48,4 +48,4 @@ cd ../hackathon-dopamine-worktrees/miguel-autenticacao
 
 No primeiro push da tarefa, use `git push -u origin codex/miguel/autenticacao` para configurar o acompanhamento da branch remota.
 
-**Registro das conversas:** preserve `prompts/` em cada worktree. O hook atual de publicação automática exige que `.git` seja uma pasta; em worktrees vinculadas, `.git` é um arquivo e a publicação automática não ocorre. Até o hook ser adaptado, confira e publique os arquivos de `prompts/` por commit e push na branch da tarefa antes de encerrar ou remover a worktree, sem editar nem apagar as transcrições.
+**Registro das conversas:** preserve `prompts/` em cada worktree. O hook funciona também em worktrees vinculadas: ao fim da sessão ele faz o commit só de `prompts/` e publica a **branch atual** da worktree (`git push -u origin HEAD`), não a `main`. Confira se o push foi feito (erros em `prompts-sync.log`, dentro da pasta do git da worktree) antes de remover a worktree, sem editar nem apagar as transcrições.

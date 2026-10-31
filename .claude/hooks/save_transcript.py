@@ -9,7 +9,6 @@ prompts/ e push. Assim há um commit por sessão, não um por resposta.
 Não imprime nada; erros do git vão para .git/prompts-sync.log.
 """
 import datetime
-import fcntl
 import json
 import os
 import shutil
@@ -17,18 +16,35 @@ import subprocess
 import sys
 from pathlib import Path
 
+try:
+    import fcntl  # indisponível no Windows: lá o sync roda sem trava
+except ImportError:
+    fcntl = None
+
 
 def git(project_dir, *args):
     return subprocess.run(["git", "-C", str(project_dir), *args],
                           stdin=subprocess.DEVNULL)
 
 
+def git_dir(project_dir):
+    """Pasta do git desta árvore de trabalho. Em worktrees vinculadas `.git` é
+    um arquivo, então a pasta real só se descobre perguntando ao git."""
+    result = subprocess.run(
+        ["git", "-C", str(project_dir), "rev-parse", "--absolute-git-dir"],
+        stdin=subprocess.DEVNULL, capture_output=True, text=True)
+    if result.returncode != 0:
+        return None
+    return Path(result.stdout.strip())
+
+
 def sync(project_dir):
     """Commit de prompts/ e push. Roda desacoplado da sessão."""
-    lock_path = project_dir / ".git" / "prompts-sync.lock"
+    lock_path = git_dir(project_dir) / "prompts-sync.lock"
     with open(lock_path, "w") as lock:
         # Stop e SessionEnd podem disparar juntos: um sync por vez
-        fcntl.flock(lock, fcntl.LOCK_EX)
+        if fcntl:
+            fcntl.flock(lock, fcntl.LOCK_EX)
 
         git(project_dir, "add", "prompts")
         if git(project_dir, "diff", "--cached", "--quiet", "--", "prompts").returncode != 0:
@@ -37,18 +53,20 @@ def sync(project_dir):
             git(project_dir, "commit", "-q", "-m", "Atualiza transcrições em prompts/",
                 "--", "prompts")
 
-        if git(project_dir, "push", "-q").returncode != 0:
+        # Publica a branch atual (cria o acompanhamento se ainda não existir)
+        if git(project_dir, "push", "-q", "-u", "origin", "HEAD").returncode != 0:
             # Alguém do grupo publicou antes: traz as mudanças e tenta de novo
             if git(project_dir, "pull", "-q", "--rebase", "--autostash").returncode != 0:
                 git(project_dir, "rebase", "--abort")
                 return
-            git(project_dir, "push", "-q")
+            git(project_dir, "push", "-q", "-u", "origin", "HEAD")
 
 
 def start_sync(project_dir):
-    if not (project_dir / ".git").is_dir():
+    gdir = git_dir(project_dir)
+    if gdir is None:
         return
-    log = open(project_dir / ".git" / "prompts-sync.log", "a")
+    log = open(gdir / "prompts-sync.log", "a")
     subprocess.Popen([sys.executable, __file__, "--sync", str(project_dir)],
                      stdin=subprocess.DEVNULL, stdout=log, stderr=log,
                      start_new_session=True)
