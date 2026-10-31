@@ -112,8 +112,8 @@ export default class GuerraTortas extends Phaser.Scene {
     this.bandejaGato.setVisible(false) // já desenhada na mão esquerda em todos os quadros
     this.posicionarBandeja(this.bandejaGuaxinim, GUAXINIM, -1, false, false)
 
-    // apoiada na pata livre do gatinho (a outra segura a bandeja)
-    this.tortaNaMao = this.add.image(GATO.x - 26, GATO.y + 4, chaveTorta('torta')).setDisplaySize(54, 54).setDepth(5).setVisible(false)
+    // a torta que a criança tem para lançar fica na mão do gatinho
+    this.tortaNaMao = this.add.image(GATO.x - 62, GATO.y + 30, chaveTorta('torta')).setDisplaySize(64, 64).setDepth(5).setVisible(false)
 
     // balão de aviso acima do guaxinim
     const fundo = this.add.rectangle(0, 0, 84, 70, 0xffffff, 0.95).setRounded(RAIO)
