@@ -120,3 +120,7 @@ button.grande { min-height: 72px; padding: 0 28px; font-size: 1.2rem; }
   .tabela { font-size: 0.9rem; }
   .barra { width: 90px; }
 }
+
+/* Logo do Gump */
+.logo { display: inline-flex; align-items: center; gap: 0.1em; font-family: 'Fredoka', 'Atkinson', sans-serif; font-weight: 700; color: #2E9E6B; letter-spacing: -0.02em; line-height: 1; }
+.logo img { height: 1.45em; width: auto; }
