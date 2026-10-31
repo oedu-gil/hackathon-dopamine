@@ -1,4 +1,5 @@
 import { HIPERFOCOS } from '../data/hiperfocos.js'
+import Arte from './Arte'
 
 export default function EscolhaHiperfoco({ nome, escolher }) {
   return (
@@ -12,7 +13,7 @@ export default function EscolhaHiperfoco({ nome, escolher }) {
             style={{ background: h.cor }}
             onClick={() => escolher(h)}
           >
-            <span className="emoji-grande">{h.emoji}</span>
+            <Arte id={h.arte} tamanho={96} className="balanca" />
             {h.nome}
           </button>
         ))}

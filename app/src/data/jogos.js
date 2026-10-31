@@ -4,7 +4,7 @@ export const JOGOS = [
   {
     id: 'chuva-emocoes',
     nome: 'Chuva de emoções',
-    emoji: '🌧️',
+    arte: 'jogo_chuva',
     cena: 'ChuvaEmocoes',
     ritmo: 'dinâmico',
     habilidades: ['reconhecer-emocoes'],
@@ -13,7 +13,7 @@ export const JOGOS = [
   {
     id: 'plataforma-amigo',
     nome: 'Plataforma do amigo',
-    emoji: '🏃',
+    arte: 'jogo_plataforma',
     cena: 'PlataformaAmigo',
     ritmo: 'dinâmico',
     habilidades: ['resposta-social', 'empatia'],
@@ -22,7 +22,7 @@ export const JOGOS = [
   {
     id: 'cuidar-amigo',
     nome: 'Cuidar do amigo',
-    emoji: '🤗',
+    arte: 'jogo_cuidar',
     cena: 'CuidarAmigo',
     ritmo: 'calmo',
     habilidades: ['empatia', 'causa-efeito-social'],

@@ -72,7 +72,7 @@ export function analisar(tentativas, pdi, catalogo) {
     }
   })
   const jogos = catalogo
-    .map((j) => ({ id: j.id, nome: j.nome, emoji: j.emoji, ...resumir(tentativas.filter((t) => t.jogo === j.id)) }))
+    .map((j) => ({ id: j.id, nome: j.nome, arte: j.arte, ...resumir(tentativas.filter((t) => t.jogo === j.id)) }))
     .filter((j) => j.tentativas > 0)
   return { geral: resumir(tentativas), habilidades, jogos }
 }

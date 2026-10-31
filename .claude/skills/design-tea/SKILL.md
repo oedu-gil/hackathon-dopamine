@@ -1,6 +1,6 @@
 ---
 name: design-tea
-description: Padrão de design do hackathon-dopamine para crianças autistas de 4 a 12 anos. Use ao criar, revisar ou ajustar qualquer tela do site ou cena de jogo (área da criança, jogos, área da escola, área dos pais, temas de hiperfoco, avatar, XP, coleção).
+description: Padrão de design do hackathon-dopamine para crianças autistas de 4 a 10 anos. Use ao criar, revisar ou ajustar qualquer tela do site ou cena de jogo (área da criança, jogos, área da escola, área dos pais, temas de hiperfoco, avatar, XP, coleção).
 ---
 
 # design-tea

@@ -1,13 +1,14 @@
 import Phaser from 'phaser'
 import { CUIDADOS, FERRAMENTAS } from '../data/cuidados.js'
+import { ANIMAIS_AMIGOS } from '../arte/index.js'
 import { sortear } from '../variedade.js'
 import { FONTE, RAIO, caixaTexto, criarHud, telaFinal, embaralhar } from './ui.js'
+import { chave, imagem, trocarImagem } from './arte.js'
 import { balancar, estourar, nuvens, respirar } from './efeitos.js'
 
 const RODADAS = 5
-const ANIMAIS = ['🐶', '🐱', '🐰', '🐻', '🦊', '🐼', '🐸', '🐵']
-const AGITADOS = ['😨', '😠', '😰', '😤'] // tremem
-const CHORANDO = ['😢', '🤕', '😔', '💔', '😞'] // pingam lágrimas
+const AGITADOS = ['medo', 'bravo', 'nervoso', 'frustrado'] // tremem
+const CHORANDO = ['triste', 'machucado', 'sozinho', 'saudade', 'chateado'] // pingam lágrimas
 const AMIGO = { x: 400, y: 255 }
 
 // Jogo sem leitura: um amigo mostra um sentimento e a criança arrasta (ou toca) o que ajuda.
@@ -45,16 +46,11 @@ export default class CuidarAmigo extends Phaser.Scene {
       { fontSize: '22px', color: '#ffffff', align: 'center', wordWrap: { width: 560 } },
       { px: 14, py: 6, alpha: 0.4 },
     )
-    this.cara = this.add.text(AMIGO.x, 142, '', { fontFamily: FONTE, fontSize: '52px' }).setOrigin(0.5)
-    this.amigo = this.add
-      .text(AMIGO.x, AMIGO.y, '', { fontFamily: FONTE, fontSize: '100px' })
-      .setOrigin(0.5)
-      .setDepth(2)
-    this.cena = this.add.text(590, 280, '', { fontFamily: FONTE, fontSize: '56px' }).setOrigin(0.5)
+    this.amigo = imagem(this, AMIGO.x, AMIGO.y + 10, ANIMAIS_AMIGOS[0], 150).setDepth(2)
+    this.cara = imagem(this, AMIGO.x, 138, 'rosto_neutro', 66).setDepth(3)
+    this.cena = imagem(this, 595, 285, 'cena_lua', 96, { parado: true })
     // o personagem do hiperfoco é quem cuida do amigo
-    this.cuidador = this.add
-      .text(150, 285, hiperfoco.personagem, { fontFamily: FONTE, fontSize: '68px' })
-      .setOrigin(0.5)
+    this.cuidador = imagem(this, 150, 285, hiperfoco.arte, 120)
     respirar(this, this.cuidador)
 
     this.input.on('drag', (_, obj, x, y) => {
@@ -80,9 +76,10 @@ export default class CuidarAmigo extends Phaser.Scene {
     const c = this.rodadas[this.rodada]
     this.situacao = c
     this.travado = false
-    this.amigo.setText(embaralhar(ANIMAIS)[0]).setAngle(0).setScale(1)
-    this.cara.setText(c.cara)
-    this.cena.setText(c.cena)
+    trocarImagem(this.amigo, embaralhar(ANIMAIS_AMIGOS)[0])
+    this.amigo.setAngle(0)
+    trocarImagem(this.cara, `rosto_${c.cara}`)
+    trocarImagem(this.cena, `cena_${c.cena}`, { parado: true })
     this.legenda.setText(c.texto)
 
     // sentimento "vivo": os agitados tremem e os tristes choram
@@ -99,13 +96,13 @@ export default class CuidarAmigo extends Phaser.Scene {
 
   expressar() {
     if (!this.ctx.efeitos || this.travado) return
-    const emoji = this.situacao.cara
-    if (AGITADOS.includes(emoji)) balancar(this, this.amigo, 4)
-    if (CHORANDO.includes(emoji)) {
-      const gota = this.add.text(this.cara.x + 14, this.cara.y + 10, '💧', { fontSize: '22px' })
+    const sentimento = this.situacao.cara
+    if (AGITADOS.includes(sentimento)) balancar(this, this.amigo, 4)
+    if (CHORANDO.includes(sentimento)) {
+      const gota = this.add.image(this.cara.x + 16, this.cara.y + 12, chave('gota')).setDisplaySize(18, 18)
       this.tweens.add({
         targets: gota,
-        y: gota.y + 70,
+        y: gota.y + 80,
         alpha: 0,
         duration: 900,
         onComplete: () => gota.destroy(),
@@ -119,27 +116,24 @@ export default class CuidarAmigo extends Phaser.Scene {
     const rotulo = this.add
       .text(x, y + 38, f.nome, { fontFamily: FONTE, fontSize: '15px', color: '#ffffff' })
       .setOrigin(0.5)
-    const emoji = this.add
-      .text(x, y - 10, f.emoji, { fontFamily: FONTE, fontSize: '58px' })
-      .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true })
-    this.input.setDraggable(emoji)
+    const figura = imagem(this, x, y - 8, f.arte, 66, { parado: true }).setInteractive({ useHandCursor: true })
+    this.input.setDraggable(figura)
 
     const item = {
       id,
-      emoji,
-      casa: { x, y: y - 10 },
+      emoji: figura, // o desenho que a criança arrasta
+      casa: { x, y: y - 8 },
       destruir() {
         placa.destroy()
         rotulo.destroy()
-        emoji.destroy()
+        figura.destroy()
       },
     }
-    emoji.item = item
-    emoji.on('pointerdown', () => (emoji.arrastou = false))
+    figura.item = item
+    figura.on('pointerdown', () => (figura.arrastou = false))
     // toque simples (sem arrastar): o item vai sozinho até o amigo
-    emoji.on('pointerup', () => {
-      if (!emoji.arrastou && !this.travado) this.usar(item)
+    figura.on('pointerup', () => {
+      if (!figura.arrastou && !this.travado) this.usar(item)
     })
     return item
   }
@@ -170,7 +164,7 @@ export default class CuidarAmigo extends Phaser.Scene {
   }
 
   acertou(item) {
-    this.cara.setText('😊')
+    trocarImagem(this.cara, 'rosto_feliz')
     this.legenda.setText(`Isso! ${FERRAMENTAS[item.id].nome} ajudou o amigo.`)
     item.emoji.setAlpha(0)
     this.emocao.remove()
@@ -180,7 +174,7 @@ export default class CuidarAmigo extends Phaser.Scene {
     this.time.delayedCall(1700, () => {
       this.rodada++
       if (this.rodada >= this.rodadas.length) {
-        telaFinal(this, this.ctx, 'Muito bem! 🎉\nVocê cuidou de todos os amigos!')
+        telaFinal(this, this.ctx, 'Muito bem!\nVocê cuidou de todos os amigos!')
       } else {
         this.novaRodada()
       }
@@ -189,12 +183,12 @@ export default class CuidarAmigo extends Phaser.Scene {
 
   errou(item) {
     this.hud.erro()
-    this.cara.setText('😕')
+    trocarImagem(this.cara, 'rosto_confuso')
     this.legenda.setText('Hmm, isso não ajudou. Tente outra coisa!')
     balancar(this, this.amigo, 6)
     this.voltar(item)
     this.time.delayedCall(this.duracao(1000), () => {
-      this.cara.setText(this.situacao.cara)
+      trocarImagem(this.cara, `rosto_${this.situacao.cara}`)
       this.legenda.setText(this.situacao.texto)
       this.travado = false
     })

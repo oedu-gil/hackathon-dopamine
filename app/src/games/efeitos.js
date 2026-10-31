@@ -1,16 +1,18 @@
+import { chave } from './arte.js'
+
 // Efeitos visuais de recompensa e de "vida" do cenário. Todos respeitam a opção
-// "Reduzir efeitos" (ctx.efeitos = false): nesse caso não animam nada.
-const SIMBOLOS = ['⭐', '✨', '🎉', '💛', '💙', '💚']
+// "Reduzir efeitos" (ctx.efeitos = false): nesse caso não animam nada. As animações de
+// escala são relativas à escala atual, porque os sprites têm tamanho em pixels.
+const PARTICULAS = ['p_estrela', 'p_coracao', 'p_brilho', 'p_bolinha', 'p_fita']
 const entre = (a, b) => a + Math.random() * (b - a)
 
 // Explosão de estrelinhas e confete. `fixo` = coordenadas da tela, em vez do mundo da fase.
 export function confete(scene, x, y, { quantidade = 16, espalhar = 100, fixo = false } = {}) {
   if (!scene.ctx.efeitos) return
   for (let i = 0; i < quantidade; i++) {
-    const p = scene.add
-      .text(x, y, SIMBOLOS[i % SIMBOLOS.length], { fontSize: `${Math.round(entre(22, 38))}px` })
-      .setOrigin(0.5)
-      .setDepth(60)
+    const tamanho = entre(16, 30)
+    const base = tamanho / 48 // as partículas são rasterizadas em 48 px
+    const p = scene.add.image(x, y, chave(PARTICULAS[i % PARTICULAS.length])).setScale(base).setDepth(60)
     if (fixo) p.setScrollFactor(0)
     const angulo = entre(0, Math.PI * 2)
     const distancia = espalhar * entre(0.5, 1.2)
@@ -20,7 +22,7 @@ export function confete(scene, x, y, { quantidade = 16, espalhar = 100, fixo = f
       x: x + Math.cos(angulo) * distancia,
       y: y + Math.sin(angulo) * distancia - 30,
       angle: entre(-180, 180),
-      scale: 0.6,
+      scale: base * 0.6,
       duration: duracao,
       ease: 'Cubic.Out',
       onComplete: () => p.destroy(),
@@ -44,8 +46,8 @@ export function estourar(scene, alvo, forca = 1.3) {
   if (!scene.ctx.efeitos) return
   scene.tweens.add({
     targets: alvo,
-    scaleX: forca,
-    scaleY: forca,
+    scaleX: alvo.scaleX * forca,
+    scaleY: alvo.scaleY * forca,
     duration: 110,
     yoyo: true,
     ease: 'Quad.Out',
@@ -70,8 +72,8 @@ export function respirar(scene, alvo, forca = 0.06) {
   if (!scene.ctx.efeitos) return
   scene.tweens.add({
     targets: alvo,
-    scaleY: 1 + forca,
-    scaleX: 1 - forca / 2,
+    scaleY: alvo.scaleY * (1 + forca),
+    scaleX: alvo.scaleX * (1 - forca / 2),
     duration: 700,
     yoyo: true,
     repeat: -1,
@@ -96,8 +98,10 @@ export function acenar(scene, alvo, graus = 7, duracao = 500) {
 // Nuvens que passam devagar ao fundo (cenas sem rolagem).
 export function nuvens(scene, quantidade = 6) {
   for (let i = 0; i < quantidade; i++) {
+    const tamanho = entre(90, 150)
     const n = scene.add
-      .text(entre(0, 800), entre(70, 330), '☁️', { fontSize: `${Math.round(entre(40, 70))}px` })
+      .image(entre(0, 800), entre(70, 330), chave('nuvem'))
+      .setDisplaySize(tamanho, tamanho)
       .setAlpha(0.35)
       .setDepth(-1)
     if (!scene.ctx.efeitos) continue

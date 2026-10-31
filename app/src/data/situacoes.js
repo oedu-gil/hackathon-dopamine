@@ -4,7 +4,7 @@ export const SITUACOES = [
   {
     nivel: 1,
     texto: 'Um amigo caiu e está chorando.',
-    cara: '😢',
+    cara: 'triste',
     opcoes: [
       { texto: 'Perguntar se ele está bem', certo: true, feedback: 'Perguntar mostra que você se importa.' },
       { texto: 'Continuar correndo', feedback: 'Ele está precisando de ajuda. Que tal parar?' },
@@ -14,7 +14,7 @@ export const SITUACOES = [
   {
     nivel: 1,
     texto: 'Um amigo quer brincar com você.',
-    cara: '😀',
+    cara: 'alegre',
     opcoes: [
       { texto: 'Dizer: vamos brincar!', certo: true, feedback: 'Aceitar o convite deixa o amigo feliz.' },
       { texto: 'Virar as costas', feedback: 'O amigo pode ficar chateado se você ignorar.' },
@@ -24,7 +24,7 @@ export const SITUACOES = [
   {
     nivel: 1,
     texto: 'Um amigo ganhou um presente e está feliz.',
-    cara: '🥳',
+    cara: 'festa',
     opcoes: [
       { texto: 'Dizer: que legal, parabéns!', certo: true, feedback: 'Dividir a alegria é muito legal.' },
       { texto: 'Dizer que o presente é feio', feedback: 'Isso poderia magoar o amigo.' },
@@ -34,7 +34,7 @@ export const SITUACOES = [
   {
     nivel: 1,
     texto: 'Alguém esbarrou em você sem querer e pediu desculpa.',
-    cara: '😳',
+    cara: 'envergonhado',
     opcoes: [
       { texto: 'Dizer: tudo bem!', certo: true, feedback: 'Foi sem querer, e aceitar a desculpa ajuda.' },
       { texto: 'Empurrar de volta', feedback: 'Foi sem querer, então não precisa revidar.' },
@@ -44,7 +44,7 @@ export const SITUACOES = [
   {
     nivel: 2,
     texto: 'Um amigo está sozinho no canto e parece triste.',
-    cara: '😔',
+    cara: 'sozinho',
     opcoes: [
       { texto: 'Chegar perto e convidar para brincar', certo: true, feedback: 'Um convite pode melhorar o dia dele.' },
       { texto: 'Fingir que não viu', feedback: 'Ele pode estar precisando de companhia.' },
@@ -54,7 +54,7 @@ export const SITUACOES = [
   {
     nivel: 2,
     texto: 'Você quer o brinquedo que seu amigo está usando.',
-    cara: '😐',
+    cara: 'neutro',
     opcoes: [
       { texto: 'Pedir: posso brincar depois de você?', certo: true, feedback: 'Pedir e esperar a vez funciona bem.' },
       { texto: 'Puxar da mão dele', feedback: 'Puxar pode machucar e deixar o amigo bravo.' },
@@ -64,7 +64,7 @@ export const SITUACOES = [
   {
     nivel: 2,
     texto: 'Um amigo errou no jogo e ficou bravo.',
-    cara: '😠',
+    cara: 'bravo',
     opcoes: [
       { texto: 'Dizer: tudo bem, vamos tentar de novo', certo: true, feedback: 'Animar o amigo ajuda ele a se acalmar.' },
       { texto: 'Zombar do erro', feedback: 'Zombar deixa ele ainda mais chateado.' },
@@ -74,7 +74,7 @@ export const SITUACOES = [
   {
     nivel: 3,
     texto: 'Dois amigos estão discutindo por causa de um jogo.',
-    cara: '😤',
+    cara: 'frustrado',
     opcoes: [
       { texto: 'Sugerir que cada um jogue uma vez', certo: true, feedback: 'Revezar resolve a briga de um jeito justo.' },
       { texto: 'Escolher um lado e brigar também', feedback: 'Brigar de novo só aumenta o problema.' },
@@ -84,7 +84,7 @@ export const SITUACOES = [
   {
     nivel: 3,
     texto: 'Um amigo contou um segredo e pediu para você guardar.',
-    cara: '🤫',
+    cara: 'segredo',
     opcoes: [
       { texto: 'Guardar o segredo', certo: true, feedback: 'Guardar segredo mostra que ele pode confiar em você.' },
       { texto: 'Contar para todo mundo', feedback: 'Contar quebra a confiança do amigo.' },
@@ -96,7 +96,7 @@ export const SITUACOES = [
   {
     nivel: 1,
     texto: 'Um amigo derrubou o lanche no chão e ficou chateado.',
-    cara: '😞',
+    cara: 'chateado',
     opcoes: [
       { texto: 'Oferecer um pedaço do seu lanche', certo: true, feedback: 'Dividir ajuda o amigo a se sentir melhor.' },
       { texto: 'Dizer que a culpa é dele', feedback: 'Culpar só deixa o amigo pior.' },
@@ -106,7 +106,7 @@ export const SITUACOES = [
   {
     nivel: 1,
     texto: 'Um amigo está com medo do trovão.',
-    cara: '😨',
+    cara: 'medo',
     opcoes: [
       { texto: 'Ficar perto e dizer: estou aqui com você', certo: true, feedback: 'Companhia faz o medo diminuir.' },
       { texto: 'Dizer que ele é bobo por ter medo', feedback: 'Todo mundo sente medo às vezes.' },
@@ -116,7 +116,7 @@ export const SITUACOES = [
   {
     nivel: 1,
     texto: 'Um amigo emprestou um lápis para você.',
-    cara: '🙂',
+    cara: 'sorriso',
     opcoes: [
       { texto: 'Dizer obrigado e devolver depois', certo: true, feedback: 'Agradecer e devolver mostra respeito.' },
       { texto: 'Guardar na mochila sem falar nada', feedback: 'O lápis é dele, então é preciso devolver.' },
@@ -126,7 +126,7 @@ export const SITUACOES = [
   {
     nivel: 1,
     texto: 'Você chegou à sala e um amigo disse bom dia.',
-    cara: '😄',
+    cara: 'alegre',
     opcoes: [
       { texto: 'Responder: bom dia!', certo: true, feedback: 'Cumprimentar faz o amigo se sentir bem-vindo.' },
       { texto: 'Olhar para o chão e não responder', feedback: 'Ele pode achar que você não quer conversar.' },
@@ -138,7 +138,7 @@ export const SITUACOES = [
   {
     nivel: 2,
     texto: 'Um amigo não foi escolhido para o time e ficou triste.',
-    cara: '😢',
+    cara: 'triste',
     opcoes: [
       { texto: 'Convidar o amigo para o seu time', certo: true, feedback: 'Incluir faz a pessoa se sentir importante.' },
       { texto: 'Rir dele', feedback: 'Rir de quem está triste machuca.' },
@@ -148,7 +148,7 @@ export const SITUACOES = [
   {
     nivel: 2,
     texto: 'Um amigo está falando e você quer contar uma novidade.',
-    cara: '🗣️',
+    cara: 'falando',
     opcoes: [
       { texto: 'Esperar ele terminar e depois contar', certo: true, feedback: 'Esperar a vez de falar mostra respeito.' },
       { texto: 'Interromper gritando', feedback: 'Interromper atrapalha a conversa.' },
@@ -158,7 +158,7 @@ export const SITUACOES = [
   {
     nivel: 2,
     texto: 'Um amigo derrubou os seus blocos sem querer.',
-    cara: '😬',
+    cara: 'semjeito',
     opcoes: [
       { texto: 'Respirar fundo e dizer: tudo bem, vamos montar de novo', certo: true, feedback: 'Calma ajuda a resolver o problema juntos.' },
       { texto: 'Derrubar os blocos dele também', feedback: 'Revidar só cria outro problema.' },
@@ -168,7 +168,7 @@ export const SITUACOES = [
   {
     nivel: 2,
     texto: 'Um amigo não entendeu a regra do jogo.',
-    cara: '🤔',
+    cara: 'pensando',
     opcoes: [
       { texto: 'Explicar de novo com calma', certo: true, feedback: 'Explicar com paciência ajuda todo mundo a brincar.' },
       { texto: 'Dizer que ele é lento', feedback: 'Isso o deixaria envergonhado.' },
@@ -180,7 +180,7 @@ export const SITUACOES = [
   {
     nivel: 3,
     texto: 'Um amigo contou uma mentira para não ficar encrencado.',
-    cara: '😬',
+    cara: 'semjeito',
     opcoes: [
       { texto: 'Conversar e incentivá-lo a falar a verdade', certo: true, feedback: 'Ajudar o amigo a ser honesto é cuidar dele.' },
       { texto: 'Espalhar a mentira para a turma', feedback: 'Isso só aumenta o problema.' },
@@ -190,7 +190,7 @@ export const SITUACOES = [
   {
     nivel: 3,
     texto: 'Um grupo está deixando um colega de fora da brincadeira.',
-    cara: '😔',
+    cara: 'sozinho',
     opcoes: [
       { texto: 'Chamar o colega e incluí-lo', certo: true, feedback: 'Incluir faz o colega se sentir parte do grupo.' },
       { texto: 'Entrar na brincadeira e ignorar o colega', feedback: 'Ele continuaria sozinho e triste.' },
@@ -200,7 +200,7 @@ export const SITUACOES = [
   {
     nivel: 3,
     texto: 'Um amigo ganhou o jogo e você perdeu.',
-    cara: '😎',
+    cara: 'convencido',
     opcoes: [
       { texto: 'Parabenizar o amigo e pedir uma revanche', certo: true, feedback: 'Saber perder também é uma habilidade.' },
       { texto: 'Dizer que ele trapaceou, sem provas', feedback: 'Acusar sem provas magoa o amigo.' },
@@ -210,7 +210,7 @@ export const SITUACOES = [
   {
     nivel: 3,
     texto: 'Um amigo diz que está bem, mas parece chateado.',
-    cara: '😶',
+    cara: 'calado',
     opcoes: [
       { texto: 'Perguntar com carinho se ele quer conversar', certo: true, feedback: 'Perceber os sinais ajuda a cuidar do amigo.' },
       { texto: 'Acreditar e nunca mais perguntar', feedback: 'Ele pode precisar de ajuda mesmo assim.' },

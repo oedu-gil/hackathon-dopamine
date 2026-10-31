@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { analisar } from '../analise.js'
 import { apagarAluno, tentativasDoAluno } from '../desempenho.js'
 import { JOGOS } from '../data/jogos.js'
+import Arte from './Arte'
 
 const pct = (x) => (x == null ? '–' : `${Math.round(x * 100)}%`)
 
@@ -45,7 +46,9 @@ export default function Desempenho({ aluno, pdi, voltar }) {
 
   return (
     <section className="tela">
-      <h2>📊 Desempenho de {aluno}</h2>
+      <h2 className="titulo-com-arte">
+        <Arte id="icone_desempenho" tamanho={40} animar={false} /> Desempenho de {aluno}
+      </h2>
       <p className="aviso">
         Estimativa orientativa, baseada só no que a criança fez nos jogos. Ela não substitui a
         avaliação do educador.
@@ -86,8 +89,8 @@ export default function Desempenho({ aluno, pdi, voltar }) {
           <ul className="lista">
             {analise.jogos.map((j) => (
               <li key={j.id} className="cartao-coluna">
-                <strong>
-                  {j.emoji} {j.nome}
+                <strong className="titulo-com-arte">
+                  <Arte id={j.arte} tamanho={32} animar={false} /> {j.nome}
                 </strong>
                 <Barra acertos={j.acertos} erros={j.erros} />
                 <small>

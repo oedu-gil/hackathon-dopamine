@@ -200,3 +200,44 @@ button.secundario {
 .selo-estado.apoio {
   background: #d9534f;
 }
+
+/* ---- imagens (arte em SVG) ---- */
+.arte {
+  display: inline-block;
+  vertical-align: middle;
+  user-select: none;
+}
+
+.titulo-com-arte {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cartao-texto {
+  flex: 1;
+}
+
+.item .silhueta {
+  filter: grayscale(1) contrast(0.6) brightness(0.9);
+  opacity: 0.35;
+}
+
+.cartao-grande .balanca {
+  animation: balanca 2.4s ease-in-out infinite;
+}
+
+.cartao-grande:hover .balanca {
+  animation-duration: 0.8s;
+}
+
+@keyframes balanca {
+  0%, 100% { transform: rotate(-4deg) translateY(0); }
+  50% { transform: rotate(4deg) translateY(-6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cartao-grande .balanca {
+    animation: none;
+  }
+}
