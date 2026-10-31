@@ -2,9 +2,12 @@ import { montarPrompt } from './prompt.js'
 import { nomeHabilidade } from './habilidades.js'
 
 const AVISO = 'Estas sugestões são orientações gerais e não substituem acompanhamento profissional.'
+const PARECE_LINK = /https?:\/\/|www\.|\.(com|org|net|br)\b/i
+const MAX_ATIVIDADES = 5
+const MAX_CARACTERES_ATIVIDADE = 200
 
-function respostaVazia() {
-  return { itens: [], resumoPais: null }
+function respostaVazia(erro) {
+  return { itens: [], resumoPais: null, erro }
 }
 
 function normalizar(id) {
@@ -13,7 +16,30 @@ function normalizar(id) {
 
 function extrairJson(bruto) {
   const semCercas = bruto.replace(/```json/gi, '').replace(/```/g, '').trim()
-  return JSON.parse(semCercas)
+  const inicio = semCercas.indexOf('{')
+  const fim = semCercas.lastIndexOf('}')
+  const candidato = inicio !== -1 && fim !== -1 ? semCercas.slice(inicio, fim + 1) : semCercas
+  const dados = JSON.parse(candidato)
+  if (!dados || typeof dados !== 'object') {
+    throw new Error('resposta da LLM não é um objeto JSON')
+  }
+  return dados
+}
+
+function sanitizarAtencao(atencao) {
+  if (typeof atencao !== 'string') return ''
+  if (PARECE_LINK.test(atencao)) return ''
+  return atencao
+}
+
+function sanitizarAtividades(atividades) {
+  if (!Array.isArray(atividades)) return []
+  return atividades
+    .filter((item) => typeof item === 'string')
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0 && !PARECE_LINK.test(item))
+    .slice(0, MAX_ATIVIDADES)
+    .map((item) => item.slice(0, MAX_CARACTERES_ATIVIDADE))
 }
 
 export async function processarPdi(texto, habilidades, chamarLLM) {
@@ -28,8 +54,9 @@ export async function processarPdi(texto, habilidades, chamarLLM) {
     const mensagens = montarPrompt(texto, habilidades)
     const bruto = await chamarLLM(mensagens)
     dados = extrairJson(bruto)
-  } catch {
-    return respostaVazia()
+  } catch (e) {
+    console.warn('pdi: falha ao obter/interpretar resposta da LLM:', e.message)
+    return respostaVazia('falha-llm')
   }
 
   const itensBrutos = Array.isArray(dados.itens) ? dados.itens : []
@@ -44,7 +71,7 @@ export async function processarPdi(texto, habilidades, chamarLLM) {
   }
 
   if (idsValidosOrdenados.length === 0) {
-    return respostaVazia()
+    return respostaVazia('nenhuma-habilidade-reconhecida')
   }
 
   const itens = idsValidosOrdenados.map((id) => ({ habilidade: id, nivel: 1 }))
@@ -57,8 +84,8 @@ export async function processarPdi(texto, habilidades, chamarLLM) {
     const entrada = porHabilidadeBruto.find((p) => normalizar(p?.habilidade) === id)
     return {
       habilidade: id,
-      atencao: typeof entrada?.atencao === 'string' ? entrada.atencao : '',
-      atividades: Array.isArray(entrada?.atividades) ? entrada.atividades : [],
+      atencao: sanitizarAtencao(entrada?.atencao),
+      atividades: sanitizarAtividades(entrada?.atividades),
     }
   })
 
