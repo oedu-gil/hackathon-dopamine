@@ -1,8 +1,8 @@
 // Temas de hiperfoco: trocam só cor, cenário, personagem e itens da coleção.
 // Layout, botões, fluxo e XP são iguais em todos (DESIGN.md, regra 8).
 // Personagens e itens vêm da arte do hub de jogos, para o site e os jogos ficarem iguais.
-import { HIPERFOCOS } from '../../../hub/src/compartilhado/temas.js'
-import { urlDoQuadro } from '../../../hub/src/compartilhado/arte/index.js'
+import { HIPERFOCOS } from '@hub/compartilhado/temas.js'
+import { urlDoQuadro } from '@hub/compartilhado/arte/index.js'
 
 // Cores calmas do cenário de cada tema: `cor` (destaque), `fundo` (página), `ceu` e `chao` (cenário).
 const VISUAL = {

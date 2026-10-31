@@ -7,7 +7,7 @@ drop table if exists resultados, aprovacoes, pdis, usuarios, jogos, alunos casca
 create table alunos (
   id text primary key,
   nome text not null,
-  hiperfoco text            -- id do tema (trem, dinossauro, aviao, navio); null = ainda não escolheu
+  hiperfoco text            -- id do tema (trem, aranha, aviao, dinossauro; os mesmos do hub); null = ainda não escolheu
 );
 
 create table usuarios (
@@ -23,7 +23,6 @@ create table usuarios (
 -- As habilidades de cada jogo são provisórias: combinar com quem faz os jogos.
 create table jogos (
   id text primary key,
-  game_id text not null,
   nome text not null,
   descricao text not null,
   habilidades text[] not null
@@ -75,7 +74,12 @@ insert into usuarios (id, email, senha, nome, perfil, aluno_id) values
   ('resp-1', 'familia@demo.com', 'demo', 'Família da Ana', 'responsavel', 'ana'),
   ('crianca-1', 'ana@demo.com', 'demo', 'Ana', 'crianca', 'ana');
 
-insert into jogos (id, game_id, nome, descricao, habilidades) values
-  ('memoria', 'memory', 'Jogo da memória', 'Encontrar pares de figuras.', array['reconhecer-emocoes']),
-  ('quebra-cabeca', 'puzzle', 'Quebra-cabeça', 'Montar uma figura com peças.', array['causa-efeito-social']),
-  ('sequencia', 'sequence', 'Sequência', 'Completar o padrão que falta.', array['resposta-social', 'empatia']);
+-- Catálogo de jogos: fonte são os manifestos em hub/src/jogos/*/manifesto.js.
+-- Depois de mudar um manifesto, rode `npm run sincronizar-jogos` em site/server.
+insert into jogos (id, nome, descricao, habilidades) values
+  ('memoria', 'Jogo da memória', 'Vire as cartas e encontre os pares de figuras.', array['reconhecer-emocoes']),
+  ('sequencia', 'Complete a sequência', 'Olhe a fila de figuras e descubra qual vem depois.', array['resposta-social', 'empatia']),
+  ('chuva-emocoes', 'Chuva de emoções', 'Rostos caem do céu. Pegue só a emoção pedida!', array['reconhecer-emocoes']),
+  ('cuidar-amigo', 'Cuidar do amigo', 'Um amigo está com um sentimento. Arraste o que ajuda!', array['empatia', 'causa-efeito-social']),
+  ('plataforma-amigo', 'Plataforma do amigo', 'Corra, pule e ajude os amigos que encontrar pelo caminho.', array['resposta-social', 'empatia']),
+  ('quebra-cabeca', 'Quebra-cabeça', 'Toque numa peça e depois na casa dela para montar a imagem inteira.', array['relacao-parte-todo']);

@@ -8,6 +8,7 @@ import Desempenho from './telas/Desempenho.jsx'
 import Pais from './telas/Pais.jsx'
 import Crianca from './telas/Crianca.jsx'
 import Jogo from './telas/Jogo.jsx'
+import '@fontsource/fredoka/400.css'
 import './estilo.css'
 
 const INICIO = { escola: '/escola', responsavel: '/pais', crianca: '/crianca' }

@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { sugerirJogos, calcularXp, itensDesbloqueados, resumirDesempenho, validarResultado } from './regras.js'
+import { sugerirJogos, nivelDoJogo, calcularXp, itensDesbloqueados, resumirDesempenho, validarResultado } from './regras.js'
 
 const jogos = [
   { id: 'memoria', nome: 'Memória', habilidades: ['reconhecer-emocoes'] },
@@ -34,4 +34,16 @@ test('valida resultado no formato de createResult', () => {
   assert.equal(validarResultado({ status: 'completed', attempts: 3, correct: 2 }), null)
   assert.ok(validarResultado({ status: 'completed', attempts: 1, correct: 2 }))
   assert.ok(validarResultado({ status: 'x', attempts: 1, correct: 0 }))
+})
+
+test('jogos que cobrem mais tópicos do PDI vêm primeiro', () => {
+  const itens = [{ habilidade: 'empatia', nivel: 1 }, { habilidade: 'resposta-social', nivel: 1 }, { habilidade: 'reconhecer-emocoes', nivel: 1 }]
+  assert.deepEqual(sugerirJogos(itens, jogos).map((j) => j.id), ['sequencia', 'memoria'])
+})
+
+test('o nível do jogo vem das tags do PDI que ele treina, entre 1 e 3', () => {
+  const seq = jogos[1]
+  assert.equal(nivelDoJogo([{ habilidade: 'empatia', nivel: 2 }, { habilidade: 'resposta-social', nivel: 3 }], seq), 3)
+  assert.equal(nivelDoJogo([{ habilidade: 'reconhecer-emocoes', nivel: 3 }], seq), 1)
+  assert.equal(nivelDoJogo([{ habilidade: 'empatia', nivel: 9 }], seq), 3)
 })

@@ -44,6 +44,14 @@ export const ICONE_HABILIDADE = {
   'resposta-social': 'conversa',
   empatia: 'coracao',
   'causa-efeito-social': 'causa',
+  'relacao-parte-todo': 'quebra',
 }
 
-export const ICONE_JOGO = { memory: 'memoria', puzzle: 'quebra', sequence: 'sequencia' }
+export const ICONE_JOGO = {
+  memoria: 'memoria',
+  sequencia: 'sequencia',
+  'chuva-emocoes': 'memoria',
+  'cuidar-amigo': 'memoria',
+  'plataforma-amigo': 'sequencia',
+  'quebra-cabeca': 'quebra',
+}

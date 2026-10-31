@@ -116,7 +116,7 @@ export default function Pais({ usuario, sair }) {
             <ul className="lista-jogos">
               {dados.jogos.map((j, i) => (
                 <li key={j.id}>
-                  <span className={`lista-jogos-icone cor-${CORES[i % CORES.length]}`}><Icone nome={ICONE_JOGO[j.game_id] ?? 'memoria'} tamanho={28} /></span>
+                  <span className={`lista-jogos-icone cor-${CORES[i % CORES.length]}`}><Icone nome={ICONE_JOGO[j.id] ?? 'memoria'} tamanho={28} /></span>
                   <div>
                     <strong>{j.nome}</strong>
                     <p className="ajuda">{j.descricao}</p>

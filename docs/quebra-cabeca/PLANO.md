@@ -4,6 +4,43 @@ Etapa 4 de `docs/DELEGACAO-CLAUDE.md`. **Plano e protótipo aprovados pelo grupo
 
 Base: branch `codex/miguel/quebra-cabeca`, criada a partir de `9d0de9c`, com Phaser 4.2.1 e Vite 8.3.5. A versão do Phaser não muda e nenhuma dependência nova entra.
 
+## 0. Mudança de destino: o jogo entrou no hub (31/10/2026)
+
+O jogo foi implementado em `hub/src/jogos/quebra-cabeca/` (branch `codex/miguel/quebra-cabeca-hub`), seguindo `hub/src/jogos/contrato.js`, e não em `src/games/puzzle/`. As seções 1 a 4 abaixo são o plano original; esta seção diz o que mudou. Decisões do grupo para a versão no hub:
+
+1. **Som:** começa sempre desligado. Se o hub mandar `sons: false`, o botão Som não aparece.
+2. **Cor da cartolina:** pêssego fixo. A lista das 4 cores fica pronta em `layout.js`.
+3. **Imagens:** ficam as do protótipo (trem, baleia e foguete) e entram aranha, avião e dinossauro, uma por tema do hub.
+4. **Fontes:** a Atkinson Hyperlegible foi copiada para a pasta do jogo, e a Baloo 2 (peso 800) foi baixada uma vez como arquivo `woff2`. As duas têm licença OFL e não entram como dependência no npm.
+5. **Saída:** vale a confirmação do hub ("Quer sair do jogo?"), igual em todos os jogos.
+
+| Plano original | No hub |
+|---|---|
+| `src/games/puzzle/` | `hub/src/jogos/quebra-cabeca/`: `rules.js`, `layout.js`, `composeImage.js`, `PuzzleScene.js`, `demo.js`, `som.js`, `index.js`, `manifesto.js`, `quebra-cabeca.css` e `assets/` |
+| `main.js` + `puzzle.html` | `index.js` com `montar(elemento, params)` → `desmontar()`. A entrada individual é `hub/jogo.html?id=quebra-cabeca&tema=trem`. |
+| `public/assets/demo/puzzle/` | `quebra-cabeca/assets/` (SVGs importados) |
+| `tests/puzzle-rules.test.js` | `hub/tests/quebra-cabeca.test.js` |
+| `?img=baleia` | `jogo.html?id=quebra-cabeca&img=baleia` (ou `foguete`, 1:1). Sem `img`, a imagem é a do tema. |
+
+Os ajustes da seção 4 deixaram de depender do Codex:
+
+1. **Página no build:** o `vite.config.js` do hub já gera `jogo.html`. O pacote do quebra-cabeça só importa Phaser e `BaseGameScene`, conferido no build.
+2. **Falha de imagem:** o `index.js` mostra a própria tela, com "Tentar de novo" (`scene.restart`) e "Sair" (`aoSair`). A `BaseGameScene` não foi alterada.
+3. **Montar de novo:** o contrato do hub prevê `aoTerminar` uma vez por partida e não usa `activityId`, então uma partida nova envia um resultado novo.
+4. **`settings.puzzle`:** o hub não passa `settings`. A atividade de demonstração monta `settings.puzzle.cardColor = 'pessego'` dentro do próprio jogo.
+
+Diferenças em relação ao protótipo:
+
+- O botão Sair saiu da barra e das telas de carregamento e de início, porque o Sair é do hub. A confirmação do hub não tem a frase "As peças desta partida não ficam guardadas" e aparece também no início e no fim. Os botões Sair das telas de erro e de conclusão chamam `aoSair` direto.
+- Sem o Sair, a instrução fica centralizada no espaço à esquerda de Ajuda e Som.
+- A legenda "Tema: …" sai num peso só, sem o "Tema:" em negrito.
+- As imagens dentro das peças têm cantos retos (no protótipo eram levemente arredondados).
+- As telas de carregamento, de erro e "Gire o tablet" são HTML por cima do canvas. Um leitor de tela ouve a instrução da barra por uma região `aria-live`.
+- A baleia ganhou uma nuvem e uma gaivota, e o foguete ganhou um planeta, um cometa e uma estrela: no protótipo, dois recortes de cada um ficavam quase iguais.
+- O desfoque da sobra (imagens fora de 5:3) usa redução de 10×, para manter as formas reconhecíveis como no protótipo.
+
+**Habilidade no manifesto:** `relacao-parte-todo`. O hub não confere a lista de habilidades; combinar com quem cuida do PDI continua pendente.
+
 ## 1. Módulos
 
 Tudo fica em `src/games/puzzle/`, menos a página de entrada.
@@ -101,6 +138,23 @@ No navegador (conferido de verdade, não só pelo build):
 - [ ] Ao fechar a cena, não sobram timers nem listeners.
 
 O build passar não comprova interação, acessibilidade nem efeito educacional; isso fica registrado nas limitações.
+
+### Conferência de 31/10/2026 (versão no hub)
+
+Feita com `npm test` (50 testes, 18 deles do quebra-cabeça), `npm run build` e Playwright no Chromium:
+
+- [x] Regras: os 7 critérios acima, em `hub/tests/quebra-cabeca.test.js`.
+- [x] `jogo.html?id=quebra-cabeca` abre sozinho; o pacote do build só importa Phaser e `BaseGameScene`.
+- [x] Mouse e toque emulado (tablet 1024 × 768 com densidade 2). O canvas usa a resolução do aparelho.
+- [x] Partida completa: com 1 erro e ajudas, o resultado foi `{ completed, attempts: 16, correct: 15, hints: 16 }`. A ajuda repetida não contou, e o toque duplo na casa não duplicou nada.
+- [x] Sair depois da conclusão não envia outro resultado. "Montar de novo" começa do zero (`attempts: 1` na partida seguinte).
+- [x] No hub (janela de 1280 × 650): o Sair do hub pede confirmação, envia `abandoned` com a contagem da partida e desmonta o jogo.
+- [x] Falha de imagem mostra a tela de erro; "Tentar de novo" carrega a imagem; "Sair" envia `abandoned`.
+- [x] Tablet em retrato mostra "Gire o tablet"; ao deitar, o aviso some.
+- [x] Movimento reduzido: sem inclinação, e o encaixe libera na hora. Sem `sons`, o botão Som some.
+- [x] Imagens 5:3 e 1:1 sem distorção. Uma comparação dos 15 recortes de cada imagem não encontrou pares quase iguais.
+
+Limitações que continuam: no navegador de teste o Phaser roda a cerca de 2 quadros por segundo (renderização por software; a sequência fica igual), então a suavidade das animações e o som de papel ainda precisam ser conferidos num aparelho de verdade, de preferência um tablet. As peças ficam no canvas, então ainda não dá para jogar só com o teclado.
 
 ## 7. Ordem de trabalho depois da aprovação
 

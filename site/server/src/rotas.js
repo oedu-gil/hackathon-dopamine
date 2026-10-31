@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import multer from 'multer'
 import { db, q } from './db.js'
-import { sugerirJogos, calcularXp, resumirDesempenho, validarResultado } from './regras.js'
+import { sugerirJogos, nivelDoJogo, calcularXp, resumirDesempenho, validarResultado } from './regras.js'
 import { HABILIDADES } from '../../../pdi/src/habilidades.js'
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } })
@@ -67,7 +67,10 @@ rotas.get('/alunos/:alunoId', async (req, res) => {
   ])
 
   const statusPorJogo = Object.fromEntries(aprovacoes.map((a) => [a.jogo_id, a.status]))
-  const comStatus = jogos.filter((j) => statusPorJogo[j.id]).map((j) => ({ ...j, status: statusPorJogo[j.id] }))
+  const itensPdi = pdi?.itens ?? []
+  const comStatus = jogos
+    .filter((j) => statusPorJogo[j.id])
+    .map((j) => ({ ...j, status: statusPorJogo[j.id], nivel: nivelDoJogo(itensPdi, j) }))
   const xp = calcularXp(resultados)
   const { perfil } = req.usuario
 

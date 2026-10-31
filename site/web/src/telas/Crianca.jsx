@@ -102,7 +102,7 @@ export default function Crianca({ usuario, sair }) {
                   <button key={j.id} className={`cartao-jogo capa-${i % 3}`} onClick={() => navegar(`/crianca/jogo/${j.id}`)}>
                     <span className="cartao-jogo-capa">
                       <img src={tema.itens[i % tema.itens.length].img} alt="" />
-                      <span className="cartao-jogo-tipo"><Icone nome={ICONE_JOGO[j.game_id] ?? 'memoria'} tamanho={22} /></span>
+                      <span className="cartao-jogo-tipo"><Icone nome={ICONE_JOGO[j.id] ?? 'memoria'} tamanho={22} /></span>
                     </span>
                     <span className="cartao-jogo-rodape">
                       <span className="cartao-jogo-nome">{j.nome}</span>

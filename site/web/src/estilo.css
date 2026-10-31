@@ -206,6 +206,9 @@ label { display: flex; flex-direction: column; gap: 6px; font-weight: 700; }
 
 .etiquetas { list-style: none; padding: 0; margin: 8px 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .etiquetas li { padding: 6px 12px; border-radius: 999px; background: var(--verde-claro); color: var(--ok); font-weight: 700; }
+.etiquetas li:not(.do-pdi) { background: transparent; color: var(--tinta); border: 1px dashed currentColor; font-weight: 400; }
+.etiquetas li.do-pdi { display: inline-flex; align-items: center; gap: 4px; }
+
 .selo { font-size: 0.9rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #F3E9E1; }
 .status-sugerido .selo { background: var(--pessego-claro); color: var(--alerta); }
 .status-aprovado .selo { background: var(--verde-claro); color: var(--ok); }
@@ -347,3 +350,12 @@ button.grande { min-height: 72px; padding: 0 32px; font-size: 1.25rem; }
 /* Logo do Gump */
 .logo { display: inline-flex; align-items: center; gap: 0.1em; font-family: var(--titulo); font-weight: 700; color: #2E9E6B; letter-spacing: -0.02em; line-height: 1; }
 .logo img { height: 1.45em; width: auto; }
+
+/* Palco onde o jogo do hub é montado. Os jogos usam height:100%, então o palco precisa de altura definida. */
+.crianca-jogo { display: flex; flex-direction: column; height: 100dvh; box-sizing: border-box; }
+.crianca-jogo { padding-bottom: 0; }
+.crianca-jogo .crianca-barra { width: 100%; box-sizing: border-box; }
+.crianca-barra-titulo { font-family: var(--titulo); font-size: 1.4rem; }
+.palco-jogo { position: relative; flex: 1; min-height: 0; width: 100%; max-width: 880px; margin: 0 auto; overflow: hidden; border-radius: 16px; background: var(--cartao); }
+.palco-jogo canvas { display: block; touch-action: none; }
+.cartao-jogo-icone { width: 64px; height: 64px; object-fit: contain; }

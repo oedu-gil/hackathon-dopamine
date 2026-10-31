@@ -18,12 +18,14 @@ hub/src/
   jogos/
     contrato.js          o que o hub espera de um jogo (leia antes de criar um)
     registro.js          catálogo: fonte única dos jogos do hub
-    memoria/  sequencia/  chuva-emocoes/  cuidar-amigo/  plataforma-amigo/
+    memoria/  sequencia/  chuva-emocoes/  cuidar-amigo/  plataforma-amigo/  quebra-cabeca/
   compartilhado/
     temas.js             hiperfocos (trem, aranha, avião, dinossauro)
-    arte/                desenhos SVG feitos em código (personagens, rostos, itens)
+    arte/                desenhos SVG feitos em código (personagens, rostos, itens, cenários por tema)
     kit-phaser/          HUD, efeitos, sons, XP e montarCena() dos jogos do antigo app/
-    atividade/           contrato antigo de atividade (usado pela sequência)
+                         papel.js: visual "papel recortado" do quebra-cabeça para Phaser
+                         (cartões, adesivos, botões, HUD e tela final), usado pela chuva e pelo cuidar
+    atividade/           contrato antigo de atividade (usado pela sequência e pelo quebra-cabeça)
 ```
 
 Regra: **um jogo só importa da própria pasta e de `compartilhado/`**, nunca do hub nem de outro jogo. `tests/hub.test.js` confere isso, e também confere se toda pasta de jogo tem `manifesto.js` e `index.js` e está no registro.
@@ -47,10 +49,12 @@ As pastas antigas (`app/`, `memory-game/`, `src/` e `sequencia.html` na raiz) co
 | memoria | `memory-game/` |
 | sequencia | `src/games/sequence/` |
 | chuva-emocoes, cuidar-amigo, plataforma-amigo | `app/src/games/` |
+| quebra-cabeca | feito direto no hub, a partir de `docs/quebra-cabeca/` (protótipo aprovado em `estudos/prototipo.html`) |
 
 ## Limitações conhecidas
 
-- A memória tem um único conjunto de figuras (Transportes) para todos os temas. A sequência tem figuras de trem e dinossauro, e os outros temas usam dinossauro.
+- A memória e a sequência têm figuras próprias para cada tema (trem, aranha, avião, dinossauro). Na memória, os conjuntos ficam em `jogos/memoria/temas.js`, e um tema novo precisa de três figuras e um verso.
+- O quebra-cabeça tem uma imagem por tema e começa sempre com o som desligado. Para testar outra imagem: `jogo.html?id=quebra-cabeca&img=baleia` (ou `foguete`, quadrada).
 - O nível é sempre 1 (ainda não há PDI no hub).
 - O resultado de cada partida só aparece no console. O ponto para enviar ao servidor é `aoTerminar` em `App.jsx`.
 - O XP e a coleção dos jogos do antigo `app/` ficam salvos no navegador (`kit-phaser/progresso.js`).

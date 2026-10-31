@@ -3,10 +3,19 @@
 export const XP_POR_JOGO = 10
 export const XP_POR_ITEM = 20
 
-// Jogos do catálogo que treinam pelo menos uma habilidade do PDI.
+// Jogos do catálogo que treinam pelo menos uma habilidade (tag) do PDI.
+// Os que cobrem mais tópicos do PDI vêm primeiro.
 export function sugerirJogos(itens, jogos) {
   const habilidades = new Set(itens.map((i) => i.habilidade))
-  return jogos.filter((j) => j.habilidades.some((h) => habilidades.has(h)))
+  const cobertas = (j) => j.habilidades.filter((h) => habilidades.has(h)).length
+  return jogos.filter((j) => cobertas(j) > 0).sort((a, b) => cobertas(b) - cobertas(a))
+}
+
+// Nível (1 a 3) que o jogo recebe: o maior nível, entre as tags do PDI que o jogo treina.
+export function nivelDoJogo(itens, jogo) {
+  const niveis = itens.filter((i) => jogo.habilidades.includes(i.habilidade)).map((i) => Number(i.nivel))
+  const nivel = Math.max(1, ...niveis.filter(Number.isFinite))
+  return Math.min(3, Math.round(nivel))
 }
 
 export function calcularXp(resultados) {

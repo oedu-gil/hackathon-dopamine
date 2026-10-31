@@ -85,6 +85,7 @@ export default function Escola({ usuario, sair }) {
   const pdi = dados?.pdi
   const jogos = dados?.jogos ?? []
   const pendentes = jogos.filter((j) => j.status === 'sugerido')
+  const dopdi = new Set((pdi?.itens ?? []).map((i) => i.habilidade))
   const atencao = Object.fromEntries((pdi?.resumo_pais?.porHabilidade ?? []).map((h) => [h.habilidade, h.atencao]))
   const tema = temaPorId(dados?.aluno.hiperfoco)
   const feitos = [Boolean(pdi && !pdi.erro), Boolean(pdi?.itens.length), jogos.length > 0 && pendentes.length === 0]
@@ -170,14 +171,18 @@ export default function Escola({ usuario, sair }) {
               {jogos.map((j, n) => (
                 <li key={j.id} className={`cartao-sugestao status-${j.status}`}>
                   <div className={`sugestao-capa cor-${CORES[n % CORES.length]}`}>
-                    <Icone nome={ICONE_JOGO[j.game_id] ?? 'memoria'} tamanho={44} />
+                    <Icone nome={ICONE_JOGO[j.id] ?? 'memoria'} tamanho={44} />
                     <span className="selo">{STATUS[j.status]}</span>
                   </div>
                   <div className="sugestao-corpo">
                     <strong>{j.nome}</strong>
                     <p className="ajuda">{j.descricao}</p>
                     <ul className="etiquetas">
-                      {j.habilidades.map((h) => <li key={h}>{nome(h)}</li>)}
+                      {j.habilidades.map((h) => (
+                        <li key={h} className={dopdi.has(h) ? 'do-pdi' : ''} title={dopdi.has(h) ? 'Tópico identificado no PDI' : undefined}>
+                          {dopdi.has(h) && <Icone nome="ok" tamanho={14} />} {nome(h)}
+                        </li>
+                      ))}
                     </ul>
                     <div className="linha">
                       <button className="primario" disabled={j.status === 'aprovado'} onClick={() => decidir(j.id, 'aprovado')}>
