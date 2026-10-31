@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api.js'
+import { temaPorId } from '../temas.js'
 import Cabecalho from './Cabecalho.jsx'
+import Icone, { ICONE_HABILIDADE, ICONE_JOGO } from './Icones.jsx'
 
 const ERROS_PDI = {
   'pdf-sem-texto': 'Não encontramos texto neste PDF. Por enquanto só aceitamos PDF digital (não escaneado).',
@@ -10,6 +12,21 @@ const ERROS_PDI = {
 }
 
 const STATUS = { sugerido: 'Aguardando decisão', aprovado: 'Aprovado', recusado: 'Recusado' }
+const CORES = ['verde', 'rubi', 'pessego']
+
+function Passos({ feitos }) {
+  const passos = ['Enviar o PDI', 'Tópicos de lacunas', 'Aprovar os jogos']
+  return (
+    <ol className="passos">
+      {passos.map((p, i) => (
+        <li key={p} className={feitos[i] ? 'feito' : feitos[i - 1] || i === 0 ? 'atual' : ''}>
+          <span className="passo-marca">{feitos[i] ? <Icone nome="ok" tamanho={18} /> : i + 1}</span>
+          {p}
+        </li>
+      ))}
+    </ol>
+  )
+}
 
 export default function Escola({ usuario, sair }) {
   const [alunos, setAlunos] = useState([])
@@ -65,21 +82,38 @@ export default function Escola({ usuario, sair }) {
 
   const nome = (id) => habilidades.find((h) => h.id === id)?.nome ?? id
   const pdi = dados?.pdi
-  const pendentes = dados?.jogos.filter((j) => j.status === 'sugerido') ?? []
+  const jogos = dados?.jogos ?? []
+  const pendentes = jogos.filter((j) => j.status === 'sugerido')
+  const atencao = Object.fromEntries((pdi?.resumo_pais?.porHabilidade ?? []).map((h) => [h.habilidade, h.atencao]))
+  const tema = temaPorId(dados?.aluno.hiperfoco)
+  const feitos = [Boolean(pdi && !pdi.erro), Boolean(pdi?.itens.length), jogos.length > 0 && pendentes.length === 0]
 
   return (
     <div className="adulto">
-      <Cabecalho usuario={usuario} sair={sair} titulo="Área da escola" />
+      <Cabecalho usuario={usuario} sair={sair} titulo="Escola">
+        <label className="seletor-aluno">
+          <span>Aluno</span>
+          <select value={alunoId} onChange={(e) => setAlunoId(e.target.value)}>
+            {alunos.map((a) => <option key={a.id} value={a.id}>{a.nome}</option>)}
+          </select>
+        </label>
+      </Cabecalho>
+
       <main className="conteudo">
-        <div className="linha">
-          <label>
-            Aluno{' '}
-            <select value={alunoId} onChange={(e) => setAlunoId(e.target.value)}>
-              {alunos.map((a) => <option key={a.id} value={a.id}>{a.nome}</option>)}
-            </select>
-          </label>
-          {alunoId && <Link className="botao" to={`/escola/desempenho/${alunoId}`}>Ver desempenho</Link>}
-        </div>
+        {dados && (
+          <section className="aluno-topo">
+            <span className="aluno-avatar" aria-hidden="true">{dados.aluno.nome[0]}</span>
+            <div>
+              <h1>{dados.aluno.nome}</h1>
+              <p className="ajuda">{tema ? `Hiperfoco: ${tema.nome}` : 'Ainda não escolheu o tema de hiperfoco'}</p>
+            </div>
+            <Link className="botao" to={`/escola/desempenho/${alunoId}`}>
+              <Icone nome="grafico" tamanho={20} /> Ver desempenho
+            </Link>
+          </section>
+        )}
+
+        <Passos feitos={feitos} />
 
         {erro && <p className="erro" role="alert">{erro}</p>}
 
@@ -89,11 +123,15 @@ export default function Escola({ usuario, sair }) {
           </p>
         )}
 
-        <section className="cartao">
-          <h2>1. Enviar o PDI</h2>
-          <p className="ajuda">PDF digital do Plano de Desenvolvimento Individual. A IA lê o documento e separa os tópicos de lacunas.</p>
-          <form className="linha" onSubmit={enviarPdi}>
-            <input type="file" accept="application/pdf" onChange={(e) => setArquivo(e.target.files[0] ?? null)} />
+        <section className="bloco">
+          <h2>Enviar o PDI</h2>
+          <form className="envio" onSubmit={enviarPdi}>
+            <label className={`soltar ${arquivo ? 'com-arquivo' : ''}`}>
+              <span className="soltar-icone"><Icone nome={arquivo ? 'documento' : 'envio'} tamanho={32} /></span>
+              <strong>{arquivo ? arquivo.name : 'Escolha o PDF do PDI'}</strong>
+              <span className="ajuda">PDF digital do Plano de Desenvolvimento Individual. A IA lê e separa os tópicos de lacunas.</span>
+              <input type="file" accept="application/pdf" onChange={(e) => setArquivo(e.target.files[0] ?? null)} />
+            </label>
             <button className="primario" disabled={!arquivo || enviando}>{enviando ? 'Lendo o PDI…' : 'Enviar PDI'}</button>
           </form>
           {pdi && (
@@ -104,38 +142,56 @@ export default function Escola({ usuario, sair }) {
           {pdi?.erro && <p className="erro">{ERROS_PDI[pdi.erro] ?? 'Não foi possível ler o PDI.'}</p>}
         </section>
 
-        <section className="cartao">
-          <h2>2. Tópicos de lacunas</h2>
+        <section className="bloco">
+          <h2>Tópicos de lacunas</h2>
           {pdi?.itens.length ? (
-            <ul className="etiquetas">
-              {pdi.itens.map((i) => <li key={i.habilidade}>{nome(i.habilidade)}</li>)}
+            <ul className="grade-topicos">
+              {pdi.itens.map((i, n) => (
+                <li key={i.habilidade} className={`topico cor-${CORES[n % CORES.length]}`}>
+                  <span className="topico-icone"><Icone nome={ICONE_HABILIDADE[i.habilidade] ?? 'ia'} tamanho={28} /></span>
+                  <strong>{nome(i.habilidade)}</strong>
+                  {atencao[i.habilidade] && <p>{atencao[i.habilidade]}</p>}
+                </li>
+              ))}
             </ul>
           ) : (
-            <p className="ajuda">Nenhum tópico ainda. Envie o PDI acima.</p>
+            <p className="vazio">Nenhum tópico ainda. Envie o PDI acima.</p>
           )}
         </section>
 
-        <section className="cartao">
-          <h2>3. Jogos sugeridos</h2>
-          <p className="ajuda">A IA só sugere. Quem decide quais jogos a criança vai jogar é a escola.</p>
-          {dados?.jogos.length ? (
-            <ul className="lista-jogos">
-              {dados.jogos.map((j) => (
-                <li key={j.id} className={`jogo-linha status-${j.status}`}>
-                  <div>
-                    <strong>{j.nome}</strong>
-                    <p className="ajuda">{j.descricao} Trabalha: {j.habilidades.map(nome).join(', ')}.</p>
+        <section className="bloco">
+          <div className="bloco-titulo">
+            <h2>Jogos sugeridos</h2>
+            <span className="nota-ia"><Icone nome="ia" tamanho={18} /> A IA só sugere. Quem decide é a escola.</span>
+          </div>
+          {jogos.length ? (
+            <ul className="grade-cartoes-jogo">
+              {jogos.map((j, n) => (
+                <li key={j.id} className={`cartao-sugestao status-${j.status}`}>
+                  <div className={`sugestao-capa cor-${CORES[n % CORES.length]}`}>
+                    <Icone nome={ICONE_JOGO[j.game_id] ?? 'memoria'} tamanho={44} />
+                    <span className="selo">{STATUS[j.status]}</span>
                   </div>
-                  <span className="selo">{STATUS[j.status]}</span>
-                  <div className="linha">
-                    <button className="primario" disabled={j.status === 'aprovado'} onClick={() => decidir(j.id, 'aprovado')}>Aprovar</button>
-                    <button disabled={j.status === 'recusado'} onClick={() => decidir(j.id, 'recusado')}>Recusar</button>
+                  <div className="sugestao-corpo">
+                    <strong>{j.nome}</strong>
+                    <p className="ajuda">{j.descricao}</p>
+                    <ul className="etiquetas">
+                      {j.habilidades.map((h) => <li key={h}>{nome(h)}</li>)}
+                    </ul>
+                    <div className="linha">
+                      <button className="primario" disabled={j.status === 'aprovado'} onClick={() => decidir(j.id, 'aprovado')}>
+                        <Icone nome="ok" tamanho={18} /> Aprovar
+                      </button>
+                      <button disabled={j.status === 'recusado'} onClick={() => decidir(j.id, 'recusado')}>
+                        <Icone nome="nao" tamanho={18} /> Recusar
+                      </button>
+                    </div>
                   </div>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="ajuda">As sugestões aparecem depois que o PDI for lido.</p>
+            <p className="vazio">As sugestões aparecem depois que o PDI for lido.</p>
           )}
         </section>
       </main>
