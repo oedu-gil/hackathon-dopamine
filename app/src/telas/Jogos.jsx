@@ -54,6 +54,22 @@ export default function Jogos({
           />{' '}
           Reduzir efeitos
         </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={opcoes.sons}
+            onChange={(ev) => setOpcoes({ ...opcoes, sons: ev.target.checked })}
+          />{' '}
+          Sons
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={opcoes.musica}
+            onChange={(ev) => setOpcoes({ ...opcoes, musica: ev.target.checked })}
+          />{' '}
+          Música
+        </label>
       </div>
 
       <ul className="lista">

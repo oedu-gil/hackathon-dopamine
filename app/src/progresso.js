@@ -1,6 +1,7 @@
 // Acertos acumulados por hiperfoco, guardados no navegador. Cada limite desbloqueia um item.
 const CHAVE = 'dopamine-progresso-v1'
-export const LIMITES = [5, 12, 22, 35, 50]
+// um limite por item do hiperfoco; os primeiros marcos vêm rápido para motivar
+export const LIMITES = [5, 12, 22, 35, 50, 68, 88, 110, 135, 165]
 
 function ler() {
   try {

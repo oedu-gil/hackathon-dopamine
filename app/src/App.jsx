@@ -14,16 +14,19 @@ function App() {
   const [tela, setTela] = useState('pdi')
   const [pdi, setPdi] = useState({ nome: '', itens: [] })
   const [hiperfoco, setHiperfoco] = useState(null)
-  const [opcoes, setOpcoes] = useState({ velocidade: 1, efeitos: true })
+  const [opcoes, setOpcoes] = useState({ velocidade: 1, efeitos: true, sons: true, musica: true })
   const [partida, setPartida] = useState(null)
 
   const aluno = pdi.nome.trim() || 'Aluno sem nome'
 
   const ctx = partida && {
+    aluno,
     hiperfoco,
     nivel: partida.nivel,
     velocidade: opcoes.velocidade,
     efeitos: opcoes.efeitos,
+    sons: opcoes.sons,
+    musica: opcoes.musica,
     sair: () => setTela('jogos'),
     estado: () => estado(hiperfoco),
     registrarAcerto: () => registrarAcerto(hiperfoco),

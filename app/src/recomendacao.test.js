@@ -19,7 +19,7 @@ test('quanto menor o nível, maior a prioridade', () => {
     ],
     JOGOS,
   )
-  assert.deepEqual(ids(r), ['historia-escolhas', 'chuva-emocoes'])
+  assert.deepEqual(ids(r), ['cuidar-amigo', 'chuva-emocoes'])
 })
 
 test('empatia aparece em dois jogos e soma pontos com outra habilidade', () => {
@@ -30,7 +30,7 @@ test('empatia aparece em dois jogos e soma pontos com outra habilidade', () => {
     ],
     JOGOS,
   )
-  assert.deepEqual(ids(r), ['plataforma-amigo', 'historia-escolhas'])
+  assert.deepEqual(ids(r), ['plataforma-amigo', 'cuidar-amigo'])
 })
 
 test('PDI vazio não recomenda nada', () => {
