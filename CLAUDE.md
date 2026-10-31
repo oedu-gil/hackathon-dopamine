@@ -1,6 +1,8 @@
 # hackathon-dopamine
 
-Projeto de um grupo para um hackathon sobre **educação**. A ideia ainda está em definição.
+Projeto de um grupo para um hackathon sobre **educação**. A ideia e o escopo do protótipo estão em `IDEIA.md`:
+
+@IDEIA.md
 
 **Público-alvo: crianças neurodivergentes de 4 a 10 anos**, com um estilo único para toda a faixa (a dificuldade se ajusta pelo nível do PDI, não por modos por idade). Considere isso em textos, visual, sons e ritmo dos jogos.
 

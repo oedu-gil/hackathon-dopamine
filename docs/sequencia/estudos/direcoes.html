@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sequência — estudos de direção</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Lexend:wght@400;600;700&family=Andika:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* Página de estudo (não é o jogo). Cada direção tem seus próprios tokens. */
+  :root { --page:#ececec; --text:#222; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--page); color:var(--text); font-family:system-ui,sans-serif; padding:24px 16px 64px; }
+  h1 { max-width:1400px; margin:0 auto 4px; font-size:26px; }
+  .lead { max-width:1400px; margin:0 auto 24px; color:#555; }
+  section.dir { max-width:1400px; margin:0 auto 48px; background:#fff; border-radius:12px; padding:20px; }
+  section.dir > h2 { margin:0 0 4px; font-size:22px; }
+  section.dir > p { margin:0 0 16px; color:#555; max-width:900px; }
+  .frames { display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap; }
+  .label { font-size:12px; color:#777; margin:0 0 6px; text-transform:uppercase; letter-spacing:.06em; }
+  .phone { width:360px; height:720px; border-radius:24px; overflow:hidden; border:1px solid #ccc; position:relative; flex:none; }
+  .wide { width:960px; height:600px; border-radius:12px; overflow:hidden; border:1px solid #ccc; position:relative; flex:none; }
+  .states { display:flex; gap:16px; margin-top:16px; flex-wrap:wrap; }
+  .state { width:300px; height:188px; border-radius:10px; overflow:hidden; border:1px solid #ccc; position:relative; flex:none; }
+  svg.icon { width:100%; height:100%; display:block; }
+
+  /* ---------- Direção 1: Quadro estruturado ---------- */
+  .d1 { --bg:#f4efe4; --ink:#1f2a2e; --card:#fffdf8; --line:#1f2a2e; --muted:#6b6458; --gap:#7d7262; --ok:#2f6b4f; --tray:#e8e0cf;
+        background:var(--bg); color:var(--ink); font-family:'Atkinson Hyperlegible',sans-serif; height:100%; display:flex; flex-direction:column; }
+  .d1 .top { display:flex; justify-content:space-between; align-items:center; padding:16px 20px; }
+  .d1 .btn { border:2px solid var(--line); background:var(--card); border-radius:10px; min-width:48px; min-height:48px; font:inherit; font-weight:700; color:var(--ink); padding:0 12px; display:flex; align-items:center; gap:6px; }
+  .d1 .instr { text-align:center; font-size:22px; font-weight:700; margin:4px 16px 0; }
+  .d1 .row { display:flex; justify-content:center; gap:10px; margin:24px 0 0; }
+  .d1 .slot { background:var(--card); border:3px solid var(--line); border-radius:12px; padding:8px; position:relative; }
+  .d1 .slot .n { position:absolute; bottom:-26px; left:0; right:0; text-align:center; font-size:14px; color:var(--muted); }
+  .d1 .slot.gap { border-style:dashed; border-color:var(--gap); background:transparent; display:flex; align-items:center; justify-content:center; font-size:40px; font-weight:700; color:var(--gap); }
+  .d1 .tray { margin-top:auto; background:var(--tray); padding:20px 16px 28px; }
+  .d1 .tray h3 { margin:0 0 12px; text-align:center; font-size:18px; }
+  .d1 .opts { display:flex; justify-content:center; gap:20px; }
+  .d1 .opt { background:var(--card); border:3px solid var(--line); border-radius:16px; padding:10px; box-shadow:0 4px 0 var(--line); }
+
+  /* ---------- Direção 2: Trilha temática ---------- */
+  .d2 { --sky:#dfeee9; --ground:#c9dcc3; --ink:#173a35; --card:#fffaf0; --edge:#2d5a4f; --path:#8a7a5c; --accent:#d9822b;
+        background:linear-gradient(var(--sky) 0 62%, var(--ground) 62%); color:var(--ink); font-family:'Lexend',sans-serif; height:100%; position:relative; }
+  .d2 .top { display:flex; justify-content:space-between; align-items:center; padding:14px 18px; }
+  .d2 .btn { border:none; background:rgba(255,255,255,.85); border-radius:999px; min-width:48px; min-height:48px; font:inherit; font-weight:600; color:var(--ink); padding:0 14px; }
+  .d2 .bubble { margin:0 auto; background:#fff; border-radius:18px; padding:10px 18px; font-size:19px; font-weight:600; width:max-content; max-width:90%; text-align:center; position:relative; }
+  .d2 .track { position:absolute; left:0; right:0; }
+  .d2 .car { background:var(--card); border:3px solid var(--edge); border-radius:18px 18px 10px 10px; padding:6px; position:absolute; }
+  .d2 .car.gap { border-style:dashed; background:#eef6f2; display:flex; align-items:center; justify-content:center; font-size:38px; font-weight:700; color:var(--edge); }
+  .d2 .opt { background:var(--card); border:3px solid var(--edge); border-radius:20px; padding:8px; position:absolute; box-shadow:0 5px 0 var(--edge); }
+
+  /* ---------- Direção 3: Prancha com legenda (CAA) ---------- */
+  .d3 { --bg:#1f4e79; --panel:#ffffff; --ink:#111; --line:#111; --cap:#fff; --mute:#cfe0ef; --gap:#ffd34d;
+        background:var(--bg); color:var(--cap); font-family:'Andika',sans-serif; height:100%; display:flex; flex-direction:column; }
+  .d3 .top { display:flex; justify-content:space-between; align-items:center; padding:14px 18px; }
+  .d3 .btn { border:3px solid #fff; background:transparent; color:#fff; border-radius:8px; min-width:48px; min-height:48px; font:inherit; font-weight:700; padding:0 12px; }
+  .d3 .instr { text-align:center; font-size:22px; font-weight:700; margin:0 16px; }
+  .d3 .board { background:var(--panel); border-radius:14px; margin:16px; padding:14px; display:grid; gap:10px; color:var(--ink); }
+  .d3 .cell { border:3px solid var(--line); border-radius:8px; display:flex; flex-direction:column; align-items:center; padding:6px 4px 4px; }
+  .d3 .cell .cap { font-weight:700; font-size:15px; margin-top:2px; }
+  .d3 .cell.gap { border:4px dashed var(--line); background:#fff6d6; justify-content:center; font-size:40px; font-weight:700; }
+  .d3 .opts { display:flex; justify-content:center; gap:18px; margin-top:auto; padding:0 16px 24px; }
+  .d3 .opt { background:var(--panel); color:var(--ink); border:4px solid #fff; outline:3px solid var(--line); border-radius:12px; display:flex; flex-direction:column; align-items:center; padding:8px; }
+  .d3 .opt .cap { font-weight:700; font-size:20px; }
+</style>
+</head>
+<body>
+
+<!-- Imagens de demonstração com silhuetas diferentes (não só cor). -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="dino" viewBox="0 0 400 400"><path d="M70 260 Q80 190 170 205 L205 135 Q220 95 280 115 L330 140 L325 185 L255 185 L235 255 L240 320 H205 L195 280 H150 L140 320 H105 L110 265 L45 240 Z" fill="#54876b"/><circle cx="280" cy="142" r="7" fill="#17312b"/><path d="M125 205 L142 178 L158 205 M164 205 L181 180 L194 211" fill="#54876b"/></symbol>
+    <symbol id="ovo" viewBox="0 0 400 400"><path d="M200 70 C275 70 320 190 320 255 C320 320 265 350 200 350 C135 350 80 320 80 255 C80 190 125 70 200 70 Z" fill="#e9d9b0" stroke="#8a7350" stroke-width="10"/><circle cx="170" cy="190" r="18" fill="#c4a56b"/><circle cx="235" cy="250" r="24" fill="#c4a56b"/><circle cx="160" cy="285" r="12" fill="#c4a56b"/></symbol>
+    <symbol id="loco" viewBox="0 0 400 400"><rect x="70" y="170" width="200" height="110" rx="12" fill="#2b6e4f"/><rect x="230" y="110" width="100" height="170" rx="10" fill="#2b6e4f"/><rect x="250" y="130" width="60" height="50" rx="6" fill="#dff1e8"/><rect x="100" y="110" width="36" height="60" fill="#2b6e4f"/><circle cx="120" cy="300" r="32" fill="#173a2c"/><circle cx="210" cy="300" r="32" fill="#173a2c"/><circle cx="295" cy="300" r="32" fill="#173a2c"/></symbol>
+    <symbol id="vagao" viewBox="0 0 400 400"><rect x="60" y="160" width="280" height="120" rx="60" fill="#b5652a"/><circle cx="130" cy="300" r="32" fill="#4a2a12"/><circle cx="270" cy="300" r="32" fill="#4a2a12"/><rect x="185" y="135" width="30" height="30" fill="#b5652a"/></symbol>
+  </defs>
+</svg>
+
+<h1>Complete a sequência — estudos de direção artística</h1>
+<p class="lead">Três alternativas para o mesmo estado principal (A-B-A-B-? com duas opções), em celular retrato (360×720) e tela ampla (960×600). Imagens de demonstração: dinossauro (A) e ovo (B). A tira "hiperfoco" mostra o mesmo layout com trem. Nada aqui está aprovado.</p>
+
+<!-- ======================= DIREÇÃO 1 ======================= -->
+<section class="dir" id="d1">
+  <h2>1 · Quadro estruturado</h2>
+  <p>Referências: quadros visuais do método TEACCH e cartões de padrão Montessori. Papel claro, traço escuro, posições numeradas, área de escolha separada embaixo. Máxima previsibilidade, mínimo de decoração.</p>
+  <div class="frames">
+    <div><p class="label">Celular · retrato</p>
+      <div class="phone"><div class="d1">
+        <div class="top"><button class="btn">✕ Sair</button><button class="btn">💡 Dica</button></div>
+        <p class="instr">O que vem depois?</p>
+        <div class="row" style="flex-wrap:wrap;gap:10px 8px;padding:0 12px">
+          <div class="slot" style="width:100px;height:100px"><svg class="icon"><use href="#dino"/></svg><span class="n">1</span></div>
+          <div class="slot" style="width:100px;height:100px"><svg class="icon"><use href="#ovo"/></svg><span class="n">2</span></div>
+          <div class="slot" style="width:100px;height:100px"><svg class="icon"><use href="#dino"/></svg><span class="n">3</span></div>
+        </div>
+        <div class="row" style="gap:8px;margin-top:36px">
+          <div class="slot" style="width:100px;height:100px"><svg class="icon"><use href="#ovo"/></svg><span class="n">4</span></div>
+          <div class="slot gap" style="width:100px;height:100px">?<span class="n">5</span></div>
+        </div>
+        <div class="tray"><h3>Escolha uma</h3>
+          <div class="opts"><div class="opt" style="width:140px;height:140px"><svg class="icon"><use href="#ovo"/></svg></div><div class="opt" style="width:140px;height:140px"><svg class="icon"><use href="#dino"/></svg></div></div>
+        </div>
+      </div></div>
+    </div>
+    <div><p class="label">Tela ampla · tablet deitado / computador</p>
+      <div class="wide"><div class="d1">
+        <div class="top"><button class="btn">✕ Sair</button><button class="btn">💡 Dica</button></div>
+        <p class="instr" style="font-size:28px">O que vem depois?</p>
+        <div class="row" style="gap:16px;margin-top:28px">
+          <div class="slot" style="width:140px;height:140px"><svg class="icon"><use href="#dino"/></svg><span class="n">1</span></div>
+          <div class="slot" style="width:140px;height:140px"><svg class="icon"><use href="#ovo"/></svg><span class="n">2</span></div>
+          <div class="slot" style="width:140px;height:140px"><svg class="icon"><use href="#dino"/></svg><span class="n">3</span></div>
+          <div class="slot" style="width:140px;height:140px"><svg class="icon"><use href="#ovo"/></svg><span class="n">4</span></div>
+          <div class="slot gap" style="width:140px;height:140px;font-size:56px">?<span class="n">5</span></div>
+        </div>
+        <div class="tray"><h3>Escolha uma</h3>
+          <div class="opts" style="gap:40px"><div class="opt" style="width:160px;height:160px"><svg class="icon"><use href="#ovo"/></svg></div><div class="opt" style="width:160px;height:160px"><svg class="icon"><use href="#dino"/></svg></div></div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+  <div class="states">
+    <div><p class="label">Dica: alternância marcada</p><div class="state"><div class="d1" style="justify-content:center">
+      <div class="row" style="gap:6px;margin:0">
+        <div class="slot" style="width:50px;height:50px;padding:3px;border-color:#2f6b4f;border-width:4px"><svg class="icon"><use href="#dino"/></svg></div>
+        <div class="slot" style="width:50px;height:50px;padding:3px"><svg class="icon"><use href="#ovo"/></svg></div>
+        <div class="slot" style="width:50px;height:50px;padding:3px;border-color:#2f6b4f;border-width:4px"><svg class="icon"><use href="#dino"/></svg></div>
+        <div class="slot" style="width:50px;height:50px;padding:3px"><svg class="icon"><use href="#ovo"/></svg></div>
+        <div class="slot gap" style="width:50px;height:50px;font-size:22px;border-color:#2f6b4f">?</div>
+      </div>
+      <p style="text-align:center;margin:10px 0 0;font-size:14px">As posições 1, 3 e 5 ganham a mesma moldura.</p></div></div></div>
+    <div><p class="label">Erro: volta, sem marcar</p><div class="state"><div class="d1" style="justify-content:center;align-items:center">
+      <div class="opt" style="width:80px;height:80px;opacity:.55"><svg class="icon"><use href="#ovo"/></svg></div>
+      <p style="margin:12px 0 0;font-size:16px;font-weight:700">Quase! Olhe a fileira de novo.</p></div></div></div>
+    <div><p class="label">Acerto: lacuna preenchida</p><div class="state"><div class="d1" style="justify-content:center">
+      <div class="row" style="gap:6px;margin:0">
+        <div class="slot" style="width:50px;height:50px;padding:3px"><svg class="icon"><use href="#dino"/></svg></div>
+        <div class="slot" style="width:50px;height:50px;padding:3px"><svg class="icon"><use href="#ovo"/></svg></div>
+        <div class="slot" style="width:50px;height:50px;padding:3px"><svg class="icon"><use href="#dino"/></svg></div>
+        <div class="slot" style="width:50px;height:50px;padding:3px"><svg class="icon"><use href="#ovo"/></svg></div>
+        <div class="slot" style="width:50px;height:50px;padding:3px;border-color:#2f6b4f;border-width:4px"><svg class="icon"><use href="#dino"/></svg></div>
+      </div>
+      <p style="text-align:center;margin:10px 0 0;font-size:16px;font-weight:700">✓ Você completou!</p></div></div></div>
+    <div><p class="label">Hiperfoco: trem</p><div class="state"><div class="d1" style="justify-content:center">
+      <div class="row" style="gap:6px;margin:0">
+        <div class="slot" style="width:50px;height:50px;padding:3px"><svg class="icon"><use href="#loco"/></svg></div>
+        <div class="slot" style="width:50px;height:50px;padding:3px"><svg class="icon"><use href="#vagao"/></svg></div>
+        <div class="slot" style="width:50px;height:50px;padding:3px"><svg class="icon"><use href="#loco"/></svg></div>
+        <div class="slot" style="width:50px;height:50px;padding:3px"><svg class="icon"><use href="#vagao"/></svg></div>
+        <div class="slot gap" style="width:50px;height:50px;font-size:22px">?</div>
+      </div>
+      <p style="text-align:center;margin:10px 0 0;font-size:14px">Só as imagens mudam.</p></div></div></div>
+  </div>
+</section>
+
+<!-- ======================= DIREÇÃO 2 ======================= -->
+<section class="dir" id="d2">
+  <h2>2 · Trilha temática</h2>
+  <p>Referências: livros-cartão ilustrados e apps de pré-escola com cenário (ex.: Khan Academy Kids), sem copiar personagens. A fileira vira um caminho do hiperfoco: pegadas para dinossauro, trilho para trem, rota pontilhada para avião. Mais narrativa e acolhedora, mais elementos na tela.</p>
+  <div class="frames">
+    <div><p class="label">Celular · retrato</p>
+      <div class="phone"><div class="d2">
+        <div class="top"><button class="btn">✕</button><button class="btn">💡 Dica</button></div>
+        <p class="bubble">Quem vem no fim da trilha?</p>
+        <svg style="position:absolute;left:0;top:150px;width:360px;height:300px" viewBox="0 0 360 300"><path d="M40 70 H320 Q345 70 345 110 V150 Q345 190 310 190 H40" fill="none" stroke="#8a7a5c" stroke-width="8" stroke-dasharray="2 16" stroke-linecap="round"/></svg>
+        <div class="car" style="left:22px;top:170px;width:96px;height:96px"><svg class="icon"><use href="#dino"/></svg></div>
+        <div class="car" style="left:132px;top:170px;width:96px;height:96px"><svg class="icon"><use href="#ovo"/></svg></div>
+        <div class="car" style="left:242px;top:170px;width:96px;height:96px"><svg class="icon"><use href="#dino"/></svg></div>
+        <div class="car" style="left:242px;top:290px;width:96px;height:96px"><svg class="icon"><use href="#ovo"/></svg></div>
+        <div class="car gap" style="left:132px;top:290px;width:96px;height:96px">?</div>
+        <div class="opt" style="left:36px;top:520px;width:130px;height:130px"><svg class="icon"><use href="#dino"/></svg></div>
+        <div class="opt" style="left:194px;top:520px;width:130px;height:130px"><svg class="icon"><use href="#ovo"/></svg></div>
+      </div></div>
+    </div>
+    <div><p class="label">Tela ampla · tablet deitado / computador</p>
+      <div class="wide"><div class="d2">
+        <div class="top"><button class="btn">✕ Sair</button><button class="btn">💡 Dica</button></div>
+        <p class="bubble" style="font-size:24px">Quem vem no fim da trilha?</p>
+        <svg style="position:absolute;left:0;top:240px;width:960px;height:80px" viewBox="0 0 960 80"><path d="M60 40 H900" stroke="#8a7a5c" stroke-width="10" stroke-dasharray="2 20" stroke-linecap="round"/></svg>
+        <div class="car" style="left:110px;top:200px;width:130px;height:130px"><svg class="icon"><use href="#dino"/></svg></div>
+        <div class="car" style="left:260px;top:200px;width:130px;height:130px"><svg class="icon"><use href="#ovo"/></svg></div>
+        <div class="car" style="left:410px;top:200px;width:130px;height:130px"><svg class="icon"><use href="#dino"/></svg></div>
+        <div class="car" style="left:560px;top:200px;width:130px;height:130px"><svg class="icon"><use href="#ovo"/></svg></div>
+        <div class="car gap" style="left:710px;top:200px;width:130px;height:130px;font-size:52px">?</div>
+        <div class="opt" style="left:300px;top:410px;width:150px;height:150px"><svg class="icon"><use href="#ovo"/></svg></div>
+        <div class="opt" style="left:510px;top:410px;width:150px;height:150px"><svg class="icon"><use href="#dino"/></svg></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="states">
+    <div><p class="label">Dica: "A" pulsa uma vez (ou só destaca)</p><div class="state"><div class="d2">
+      <svg style="position:absolute;left:0;top:70px;width:300px;height:40px" viewBox="0 0 300 40"><path d="M14 20 H286" stroke="#8a7a5c" stroke-width="5" stroke-dasharray="2 12" stroke-linecap="round"/></svg>
+      <div class="car" style="left:14px;top:62px;width:48px;height:48px;padding:3px;border-color:#d9822b;border-width:4px"><svg class="icon"><use href="#dino"/></svg></div>
+      <div class="car" style="left:70px;top:62px;width:48px;height:48px;padding:3px"><svg class="icon"><use href="#ovo"/></svg></div>
+      <div class="car" style="left:126px;top:62px;width:48px;height:48px;padding:3px;border-color:#d9822b;border-width:4px"><svg class="icon"><use href="#dino"/></svg></div>
+      <div class="car" style="left:182px;top:62px;width:48px;height:48px;padding:3px"><svg class="icon"><use href="#ovo"/></svg></div>
+      <div class="car gap" style="left:238px;top:62px;width:48px;height:48px;font-size:22px;border-color:#d9822b">?</div>
+    </div></div></div>
+    <div><p class="label">Erro: opção volta ao lugar</p><div class="state"><div class="d2" style="display:flex;flex-direction:column;align-items:center;justify-content:center">
+      <div style="background:#fffaf0;border:3px solid #2d5a4f;border-radius:16px;width:80px;height:80px;padding:6px"><svg class="icon"><use href="#ovo"/></svg></div>
+      <p style="margin:10px 0 0;font-weight:600">Hmm, vamos olhar de novo?</p></div></div></div>
+    <div><p class="label">Acerto: a fileira dá um passo</p><div class="state"><div class="d2">
+      <svg style="position:absolute;left:0;top:70px;width:300px;height:40px" viewBox="0 0 300 40"><path d="M14 20 H286" stroke="#8a7a5c" stroke-width="5" stroke-dasharray="2 12" stroke-linecap="round"/></svg>
+      <div class="car" style="left:24px;top:62px;width:48px;height:48px;padding:3px"><svg class="icon"><use href="#dino"/></svg></div>
+      <div class="car" style="left:80px;top:62px;width:48px;height:48px;padding:3px"><svg class="icon"><use href="#ovo"/></svg></div>
+      <div class="car" style="left:136px;top:62px;width:48px;height:48px;padding:3px"><svg class="icon"><use href="#dino"/></svg></div>
+      <div class="car" style="left:192px;top:62px;width:48px;height:48px;padding:3px"><svg class="icon"><use href="#ovo"/></svg></div>
+      <div class="car" style="left:248px;top:62px;width:48px;height:48px;padding:3px"><svg class="icon"><use href="#dino"/></svg></div>
+      <p style="position:absolute;bottom:16px;width:100%;text-align:center;margin:0;font-weight:600">Trilha completa!</p></div></div></div>
+    <div><p class="label">Hiperfoco: trem (trilho)</p><div class="state"><div class="d2">
+      <svg style="position:absolute;left:0;top:104px;width:300px;height:12px" viewBox="0 0 300 12"><path d="M10 3 H290 M10 9 H290" stroke="#5b4a35" stroke-width="3"/></svg>
+      <div class="car" style="left:14px;top:56px;width:48px;height:48px;padding:3px"><svg class="icon"><use href="#loco"/></svg></div>
+      <div class="car" style="left:70px;top:56px;width:48px;height:48px;padding:3px"><svg class="icon"><use href="#vagao"/></svg></div>
+      <div class="car" style="left:126px;top:56px;width:48px;height:48px;padding:3px"><svg class="icon"><use href="#loco"/></svg></div>
+      <div class="car" style="left:182px;top:56px;width:48px;height:48px;padding:3px"><svg class="icon"><use href="#vagao"/></svg></div>
+      <div class="car gap" style="left:238px;top:56px;width:48px;height:48px;font-size:22px">?</div>
+      <p style="position:absolute;bottom:16px;width:100%;text-align:center;margin:0;font-size:14px">O caminho muda com o tema.</p></div></div></div>
+  </div>
+</section>
+
+<!-- ======================= DIREÇÃO 3 ======================= -->
+<section class="dir" id="d3">
+  <h2>3 · Prancha com legenda (CAA)</h2>
+  <p>Referências: pranchas de Comunicação Alternativa (símbolos ARASAAC, PECS). Moldura branca de alto contraste sobre fundo azul, legenda em palavra embaixo de cada imagem. Apoia linguagem e leitura inicial; tem mais texto e visual menos "de jogo".</p>
+  <div class="frames">
+    <div><p class="label">Celular · retrato</p>
+      <div class="phone"><div class="d3">
+        <div class="top"><button class="btn">✕ Sair</button><button class="btn">💡 Dica</button></div>
+        <p class="instr">O que vem depois?</p>
+        <div class="board" style="grid-template-columns:repeat(3,1fr)">
+          <div class="cell"><div style="width:80px;height:80px"><svg class="icon"><use href="#dino"/></svg></div><span class="cap">dino</span></div>
+          <div class="cell"><div style="width:80px;height:80px"><svg class="icon"><use href="#ovo"/></svg></div><span class="cap">ovo</span></div>
+          <div class="cell"><div style="width:80px;height:80px"><svg class="icon"><use href="#dino"/></svg></div><span class="cap">dino</span></div>
+          <div class="cell"><div style="width:80px;height:80px"><svg class="icon"><use href="#ovo"/></svg></div><span class="cap">ovo</span></div>
+          <div class="cell gap">?</div>
+        </div>
+        <div class="opts">
+          <div class="opt" style="width:140px"><div style="width:110px;height:110px"><svg class="icon"><use href="#ovo"/></svg></div><span class="cap">ovo</span></div>
+          <div class="opt" style="width:140px"><div style="width:110px;height:110px"><svg class="icon"><use href="#dino"/></svg></div><span class="cap">dino</span></div>
+        </div>
+      </div></div>
+    </div>
+    <div><p class="label">Tela ampla · tablet deitado / computador</p>
+      <div class="wide"><div class="d3">
+        <div class="top"><button class="btn">✕ Sair</button><button class="btn">💡 Dica</button></div>
+        <p class="instr" style="font-size:28px">O que vem depois?</p>
+        <div class="board" style="grid-template-columns:repeat(5,1fr);margin:16px 60px">
+          <div class="cell"><div style="width:110px;height:110px"><svg class="icon"><use href="#dino"/></svg></div><span class="cap">dino</span></div>
+          <div class="cell"><div style="width:110px;height:110px"><svg class="icon"><use href="#ovo"/></svg></div><span class="cap">ovo</span></div>
+          <div class="cell"><div style="width:110px;height:110px"><svg class="icon"><use href="#dino"/></svg></div><span class="cap">dino</span></div>
+          <div class="cell"><div style="width:110px;height:110px"><svg class="icon"><use href="#ovo"/></svg></div><span class="cap">ovo</span></div>
+          <div class="cell gap" style="font-size:56px">?</div>
+        </div>
+        <div class="opts" style="gap:48px">
+          <div class="opt" style="width:170px"><div style="width:130px;height:130px"><svg class="icon"><use href="#ovo"/></svg></div><span class="cap">ovo</span></div>
+          <div class="opt" style="width:170px"><div style="width:130px;height:130px"><svg class="icon"><use href="#dino"/></svg></div><span class="cap">dino</span></div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+  <div class="states">
+    <div><p class="label">Dica: legendas lidas em ordem</p><div class="state"><div class="d3" style="justify-content:center;align-items:center">
+      <p style="font-size:20px;font-weight:700;margin:0">dino · ovo · dino · ovo · <span style="background:#ffd34d;color:#111;padding:0 6px;border-radius:4px">?</span></p>
+      <p style="font-size:14px;margin:8px 0 0">(opcional: voz lê as palavras)</p></div></div></div>
+    <div><p class="label">Erro</p><div class="state"><div class="d3" style="justify-content:center;align-items:center">
+      <p style="font-size:20px;font-weight:700;margin:0">Ainda não. Tente de novo.</p></div></div></div>
+    <div><p class="label">Acerto</p><div class="state"><div class="d3" style="justify-content:center;align-items:center">
+      <p style="font-size:20px;font-weight:700;margin:0">dino · ovo · dino · ovo · <u>dino</u></p>
+      <p style="font-size:20px;font-weight:700;margin:8px 0 0">✓ Muito bem!</p></div></div></div>
+    <div><p class="label">Hiperfoco: trem</p><div class="state"><div class="d3" style="justify-content:center">
+      <div class="board" style="grid-template-columns:repeat(5,1fr);gap:4px;padding:6px;margin:0 10px">
+        <div class="cell" style="padding:2px;border-width:2px"><svg class="icon" style="height:36px"><use href="#loco"/></svg><span class="cap" style="font-size:10px">locomotiva</span></div>
+        <div class="cell" style="padding:2px;border-width:2px"><svg class="icon" style="height:36px"><use href="#vagao"/></svg><span class="cap" style="font-size:10px">vagão</span></div>
+        <div class="cell" style="padding:2px;border-width:2px"><svg class="icon" style="height:36px"><use href="#loco"/></svg><span class="cap" style="font-size:10px">locomotiva</span></div>
+        <div class="cell" style="padding:2px;border-width:2px"><svg class="icon" style="height:36px"><use href="#vagao"/></svg><span class="cap" style="font-size:10px">vagão</span></div>
+        <div class="cell gap" style="font-size:20px;border-width:2px">?</div>
+      </div></div></div></div>
+  </div>
+</section>
+
+</body>
+</html>
