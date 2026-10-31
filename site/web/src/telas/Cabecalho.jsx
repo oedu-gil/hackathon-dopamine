@@ -1,9 +1,11 @@
+import Logo from './Logo.jsx'
+
 // Cabeçalho das áreas de adulto (escola e pais).
 export default function Cabecalho({ usuario, sair, titulo }) {
   return (
     <header className="cabecalho">
       <div>
-        <p className="marca">Dopamine</p>
+        <Logo tamanho={26} />
         <h1>{titulo}</h1>
       </div>
       <div className="cabecalho-acoes">
