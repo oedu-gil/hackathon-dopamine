@@ -164,6 +164,13 @@ function gerarPdf(nomeArquivo, texto) {
   doc.end()
 }
 
+function gerarPdfEmBranco(nomeArquivo) {
+  const doc = new PDFDocument({ margin: 50 })
+  doc.pipe(createWriteStream(path.join(DESTINO, nomeArquivo)))
+  doc.end()
+}
+
 mkdirSync(DESTINO, { recursive: true })
 gerarPdf('pdi-pequeno.pdf', PDI_PEQUENO)
 gerarPdf('pdi-realista.pdf', PDI_REALISTA)
+gerarPdfEmBranco('pdi-em-branco.pdf')
