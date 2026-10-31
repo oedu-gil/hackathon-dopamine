@@ -1,7 +1,8 @@
 import Phaser from 'phaser'
 import { EMOCOES } from '../data/emocoes.js'
 import { sons } from '../audio.js'
-import { FONTE, caixaTexto, criarHud, telaFinal, embaralhar } from './ui.js'
+import { caixaComIcone, caixaTexto, criarHud, telaFinal, embaralhar } from './ui.js'
+import { imagem } from './arte.js'
 import { balancar, confete, estourar, nuvens, respirar } from './efeitos.js'
 
 const ACERTOS_POR_ALVO = 4
@@ -10,10 +11,11 @@ const RAIO_NORMAL = 40
 const RAIO_SUPER = 85
 const DURACAO_SUPER = 6000
 const INTERVALO_BONUS = 14000
+const TAMANHO_ROSTO = 56
 
 // Rostos caem e a criança pega só a emoção pedida. Começa devagar, com poucos rostos, e vai
-// acelerando conforme ela acerta. Errar não tira pontos. De vez em quando cai uma 🌟 que dá
-// um "super" por alguns segundos (a criança pega rostos num raio maior).
+// acelerando conforme ela acerta. Errar não tira pontos. De vez em quando cai uma estrela
+// dourada que dá um "super" por alguns segundos (a criança pega rostos num raio maior).
 export default class ChuvaEmocoes extends Phaser.Scene {
   constructor() {
     super('ChuvaEmocoes')
@@ -38,17 +40,17 @@ export default class ChuvaEmocoes extends Phaser.Scene {
 
     nuvens(this)
     this.hud = criarHud(this, this.ctx)
-    this.titulo = caixaTexto(this, 400, 90, '', { fontSize: '28px', color: '#ffffff' }, { alpha: 0.4 })
+    this.titulo = caixaComIcone(this, 400, 92, {}, { fontSize: '28px', color: '#ffffff' }, { alpha: 0.4, tamanho: 48 })
     this.dica = caixaTexto(
       this,
       400,
-      138,
+      150,
       '',
       { fontSize: '20px', color: '#ffe9a8' },
       { px: 12, py: 5, alpha: 0.35 },
     )
     this.aura = this.add.circle(400, 410, RAIO_SUPER, 0xffd447, 0.25).setVisible(false)
-    this.jogador = this.add.text(400, 410, hiperfoco.personagem, { fontFamily: FONTE, fontSize: '56px' }).setOrigin(0.5)
+    this.jogador = imagem(this, 400, 405, hiperfoco.arte, 84)
     respirar(this, this.jogador)
 
     this.setas = this.input.keyboard.createCursorKeys()
@@ -85,21 +87,19 @@ export default class ChuvaEmocoes extends Phaser.Scene {
   novoAlvo() {
     const outras = this.emocoes.filter((e) => e !== this.alvo)
     this.alvo = embaralhar(outras)[0]
-    this.titulo.setText(`Pegue: ${this.alvo.emoji} ${this.alvo.nome}`)
+    this.titulo.definir({ antes: 'Pegue:', icone: this.alvo.arte, depois: this.alvo.nome })
   }
 
   soltar() {
     const x = Phaser.Math.Between(40, 760)
     let emocao = Math.random() < 0.5 ? this.alvo : embaralhar(this.emocoes)[0]
-    let emoji = emocao.emoji
     let bonus = false
     if (this.time.now > this.proximoBonus) {
       bonus = true
-      emoji = '🌟'
       emocao = null
       this.proximoBonus = this.time.now + INTERVALO_BONUS
     }
-    const obj = this.add.text(x, -30, emoji, { fontFamily: FONTE, fontSize: '44px' }).setOrigin(0.5)
+    const obj = imagem(this, x, -30, bonus ? 'estrela_bonus' : emocao.arte, TAMANHO_ROSTO)
     this.itens.push({ obj, emocao, bonus, fase: Math.random() * 6.28 })
   }
 
@@ -140,7 +140,7 @@ export default class ChuvaEmocoes extends Phaser.Scene {
       this.superAte = this.time.now + DURACAO_SUPER
       sons.desbloqueio()
       confete(this, x, y, { quantidade: 14 })
-      this.mostrarDica('🌟 SUPER! Pegue tudo!')
+      this.mostrarDica('SUPER! Pegue tudo!')
       return
     }
 
@@ -151,9 +151,9 @@ export default class ChuvaEmocoes extends Phaser.Scene {
       estourar(this, this.jogador)
       if (this.combo >= 3) {
         confete(this, this.jogador.x, this.jogador.y - 20, { quantidade: 10 })
-        this.mostrarDica(`🔥 Combo x${this.combo}!`)
+        this.mostrarDica(`Combo x${this.combo}!`)
       } else {
-        this.mostrarDica('✨ Isso!')
+        this.mostrarDica('Isso!')
       }
       if (this.acertos >= META) return this.terminar()
       if (this.acertos % ACERTOS_POR_ALVO === 0) this.novoAlvo()
@@ -161,7 +161,7 @@ export default class ChuvaEmocoes extends Phaser.Scene {
       this.combo = 0
       this.hud.erro()
       balancar(this, this.jogador, 8)
-      this.mostrarDica(`Quase! Procure: ${this.alvo.emoji} ${this.alvo.nome}`)
+      this.mostrarDica(`Quase! Procure: ${this.alvo.nome}`)
     }
   }
 
@@ -176,6 +176,6 @@ export default class ChuvaEmocoes extends Phaser.Scene {
 
   terminar() {
     this.fim = true
-    telaFinal(this, this.ctx, 'Muito bem! 🎉\nVocê reconheceu as emoções!')
+    telaFinal(this, this.ctx, 'Muito bem!\nVocê reconheceu as emoções!')
   }
 }

@@ -1,13 +1,15 @@
 import { useEffect, useRef } from 'react'
 import Phaser from 'phaser'
 import { pararMusica } from './audio.js'
+import Boot from './games/Boot.js'
 import ChuvaEmocoes from './games/ChuvaEmocoes.js'
 import PlataformaAmigo from './games/PlataformaAmigo.js'
 import CuidarAmigo from './games/CuidarAmigo.js'
 
 const CENAS = { ChuvaEmocoes, PlataformaAmigo, CuidarAmigo }
 
-// ctx: { hiperfoco, nivel, velocidade, efeitos, sair, estado, registrarAcerto }
+// ctx: { aluno, hiperfoco, nivel, velocidade, efeitos, sons, musica, sair, estado,
+//        registrarAcerto, registrarTentativa }
 export default function PhaserGame({ cena, ctx }) {
   const containerRef = useRef(null)
   const ctxRef = useRef(ctx)
@@ -33,8 +35,14 @@ export default function PhaserGame({ cena, ctx }) {
           height: 450,
           scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_HORIZONTALLY },
           physics: { default: 'arcade', arcade: { gravity: { y: 1100 } } },
-          scene: [CENAS[cena]],
-          callbacks: { preBoot: (g) => g.registry.set('ctx', ctxRef.current) },
+          // a Boot carrega a arte e depois inicia a cena do jogo escolhido
+          scene: [Boot, CENAS[cena]],
+          callbacks: {
+            preBoot: (g) => {
+              g.registry.set('ctx', ctxRef.current)
+              g.registry.set('cena', cena)
+            },
+          },
         })
         // só para testes automáticos no modo de desenvolvimento
         if (import.meta.env.DEV) window.__phaser = game

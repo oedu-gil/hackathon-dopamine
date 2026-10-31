@@ -1,12 +1,13 @@
 import { LIMITES, estado } from '../progresso.js'
+import Arte from './Arte'
 
 export default function Colecao({ hiperfoco, voltar }) {
   const e = estado(hiperfoco)
 
   return (
     <section className="tela">
-      <h2>
-        {hiperfoco.emoji} Coleção de {hiperfoco.nome}
+      <h2 className="titulo-com-arte">
+        <Arte id={hiperfoco.arte} tamanho={44} /> Coleção de {hiperfoco.nome}
       </h2>
       <p>{e.total} acertos no total</p>
       <div className="grade">
@@ -14,7 +15,8 @@ export default function Colecao({ hiperfoco, voltar }) {
           const livre = e.total >= LIMITES[i]
           return (
             <div key={item.nome} className={livre ? 'item' : 'item bloqueado'}>
-              <span className="emoji-grande">{livre ? item.emoji : '❓'}</span>
+              {/* item ainda bloqueado aparece como uma silhueta, para dar vontade de abrir */}
+              <Arte id={item.arte} tamanho={72} animar={livre} className={livre ? '' : 'silhueta'} />
               {livre ? item.nome : `Faltam ${LIMITES[i] - e.total} acertos`}
             </div>
           )

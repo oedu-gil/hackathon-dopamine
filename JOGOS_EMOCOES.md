@@ -38,6 +38,20 @@ O nível (1 a 3) vem do PDI. Quanto menor o nível da criança numa habilidade, 
 ### Público: crianças de 4 a 10 anos
 Um estilo único para toda a faixa. A dificuldade se ajusta pelo nível do PDI, e não há modos separados por idade. O **Cuidar do amigo** é feito para quem ainda não lê, porque usa só figuras. Na Plataforma do amigo, as situações são frases, e uma criança de 4 a 6 anos pode precisar de um adulto para ler com ela (veja os pontos em aberto).
 
+### Arte e animação
+Nenhum jogo ou tela usa emoji: tudo é **imagem desenhada em SVG, em código** (`app/src/arte/`), sem arquivos de imagem. São 120 desenhos (174 quadros):
+- **27 rostos de emoção** (alegre, triste, bravo, medo, nojo, sono, saudade…), que piscam e têm detalhes que se mexem (lágrimas, vapor, suor, "zzz", bochechas).
+- **8 amigos animais** (cachorro, gato, coelho, urso, raposa, panda, sapo, macaco), que piscam.
+- **4 personagens de hiperfoco animados**: o trem gira as rodas e solta fumaça, a aranha mexe as pernas, o avião gira a hélice e o dinossauro balança o rabo.
+- **40 itens de coleção**, um desenho diferente para cada (locomotiva, semáforo, teia, lupa, foguete, balão, ovo, vulcão…).
+- **13 ferramentas** do Cuidar do amigo, **12 cenas**, e extras: estrela que gira, lesma, mola, bandeira que balança, nuvem, troféu e partículas de confete.
+
+Como funciona:
+- Cada desenho tem um id (`rosto_triste`, `hf_trem`, `item_trem_3`, `fer_abraco`…) e pode ter vários **quadros**. Os jogos carregam tudo numa tela de abertura e criam as animações por quadros no Phaser; o site (React) usa o mesmo desenho pelo componente `Arte`.
+- Os dados usam os ids (ex.: `cara: 'triste'` em `situacoes.js`), e testes garantem que todo id citado tem desenho (`arte.test.js`).
+- Para criar um desenho novo: acrescente uma função que devolve o SVG em `app/src/arte/` e registre em `app/src/arte/index.js`.
+- Os movimentos que não são quadros (quicar, respirar, balançar, celebrar) são feitos por código e respeitam **Reduzir efeitos**. A animação por quadros também para quando essa opção está ligada, e no site ela respeita a preferência de "menos movimento" do sistema.
+
 ### Animação e sons
 Para deixar os jogos mais animados (todos os itens abaixo respeitam as opções do menu):
 - **Efeitos de recompensa:** chuva de estrelinhas e confete a cada acerto, "pulinho de alegria" do personagem, celebração maior ao desbloquear um item e confete na tela final.
@@ -97,7 +111,7 @@ Os itens são desbloqueados com **5, 12, 22, 35, 50, 68, 88, 110, 135 e 165** ac
 
 ## Pontos em aberto (o grupo pode mudar)
 Para o MVP foram usados estes valores provisórios. São fáceis de trocar, porque o conteúdo fica separado do código em `app/src/data/`.
-- **Assets**: emojis no lugar de desenhos. Dá para trocar por imagens depois.
+- **Arte**: os desenhos são SVG feitos em código (veja "Arte e animação"). São simples e geométricos; se o grupo conseguir arte de um artista ou gerada por IA, dá para trocar sem mudar os jogos, porque cada desenho é referenciado por um id.
 - **Hiperfocos**: quatro no banco. Adicionar outro é incluir um objeto em `app/src/data/hiperfocos.js`.
 - **Persistência**: só no navegador do aparelho, sem servidor.
 - **Formato final do PDI**: ainda a definir. Hoje o PDI é uma lista de habilidades com nível de 1 a 3. A faixa etária já está decidida: 4 a 10 anos.
@@ -122,6 +136,7 @@ app/src/
   analise.js       estimativa de aprendizado (função pura, com testes)
   variedade.js     sorteio que evita repetir situações e sentimentos
   audio.js         sons e música gerados no navegador (Web Audio)
+  arte/            desenhos em SVG feitos em código (rostos, animais, hiperfocos, itens, extras)
   games/           cenas Phaser dos 3 jogos e componentes comuns (ui.js)
   telas/           telas React (PDI, escolha de hiperfoco, jogos, coleção, desempenho)
   PhaserGame.jsx   ponte React <-> Phaser

@@ -1,8 +1,10 @@
 import Phaser from 'phaser'
 import { SITUACOES } from '../data/situacoes.js'
-import { FONTE, RAIO, botao, caixaTexto, criarHud, telaFinal, embaralhar } from './ui.js'
+import { ANIMAIS_AMIGOS } from '../arte/index.js'
+import { FONTE, RAIO, botao, caixaComIcone, caixaTexto, criarHud, telaFinal, embaralhar } from './ui.js'
 import { sortear } from '../variedade.js'
 import { sons } from '../audio.js'
+import { animar, chave, imagem } from './arte.js'
 import { acenar, balancar, confete, estourar } from './efeitos.js'
 
 const RODADAS = 5
@@ -12,7 +14,8 @@ const PULO_DUPLO = -480
 const MOLA = -800
 const TOPO_CHAO = 390
 const SECAO = 900 // largura de cada trecho da fase (buraco + inimigo + mola + amigo)
-const ANIMAIS = ['🐶', '🐱', '🐰', '🐻', '🦊', '🐼']
+const TAMANHO_JOGADOR = 72
+const AJUSTE_PES = 8 // o desenho é maior que o corpo físico: sobe um pouco para pisar no chão
 
 // Plataformer de rolagem lateral: o personagem do hiperfoco anda e pula pela fase (pulo duplo,
 // molas, lesmas para pisar, estrelas) e cada amigo encontrado traz uma situação social. O amigo
@@ -67,14 +70,12 @@ export default class PlataformaAmigo extends Phaser.Scene {
     this.desenharNuvens()
     this.construirFase(situacoes)
 
-    // O corpo físico é um retângulo invisível; o emoji só o acompanha.
+    // O corpo físico é um retângulo invisível; o desenho só o acompanha.
     this.corpo = this.add.rectangle(this.ponto.x, this.ponto.y, 40, 56).setVisible(false)
     this.physics.add.existing(this.corpo)
     this.corpo.body.setCollideWorldBounds(true)
-    this.jogador = this.add
-      .text(this.ponto.x, this.ponto.y, hiperfoco.personagem, { fontFamily: FONTE, fontSize: '56px' })
-      .setOrigin(0.5)
-      .setDepth(5)
+    this.jogador = imagem(this, this.ponto.x, this.ponto.y, hiperfoco.arte, TAMANHO_JOGADOR, { parado: true }).setDepth(5)
+    this.escalaJogador = this.jogador.scaleX
     this.cameras.main.startFollow(this.corpo, true, 0.12, 0.12)
 
     this.physics.add.collider(this.corpo, this.solidos)
@@ -85,23 +86,23 @@ export default class PlataformaAmigo extends Phaser.Scene {
     this.physics.add.overlap(this.corpo, this.zonaBandeira, () => this.chegou())
 
     this.hud = criarHud(this, this.ctx)
-    this.contador = caixaTexto(
+    this.contador = caixaComIcone(
       this,
       400,
       26,
-      '⭐ 0',
+      { icone: 'estrela', depois: '0' },
       { fontSize: '20px', color: '#ffe9a8' },
-      { px: 14, py: 5, alpha: 0.4, depth: 40, fixo: true },
+      { px: 14, py: 4, alpha: 0.4, depth: 40, fixo: true, tamanho: 26, folga: 6 },
     )
     this.criarControles()
-    this.mostrarDica('← → andar · espaço pula (duas vezes!)\nPise nas lesmas 🐌 e ajude os amigos!')
+    this.mostrarDica('← → andar · espaço pula (duas vezes!)\nPise nas lesmas e ajude os amigos!')
   }
 
   // ---------- fase ----------
 
   construirFase(situacoes) {
     const n = situacoes.length
-    const animais = embaralhar(ANIMAIS)
+    const animais = embaralhar(ANIMAIS_AMIGOS)
     let inicioChao = 0
 
     for (let i = 0; i < n; i++) {
@@ -123,10 +124,8 @@ export default class PlataformaAmigo extends Phaser.Scene {
 
     this.chao(inicioChao, this.larguraMundo)
     const xBandeira = this.larguraMundo - 150
-    const bandeira = this.add
-      .text(xBandeira, TOPO_CHAO, '🏁', { fontFamily: FONTE, fontSize: '64px' })
-      .setOrigin(0.5, 1)
-    acenar(this, bandeira, 8, 450)
+    const bandeira = imagem(this, xBandeira + 22, TOPO_CHAO + 4, 'bandeira', 120).setOrigin(0.5, 1)
+    acenar(this, bandeira, 2, 600)
     this.zonaBandeira = this.add.rectangle(xBandeira, 200, 60, 500)
     this.physics.add.existing(this.zonaBandeira, true)
   }
@@ -146,10 +145,10 @@ export default class PlataformaAmigo extends Phaser.Scene {
   }
 
   estrela(x, y) {
-    const texto = this.add.text(x, y, '⭐', { fontFamily: FONTE, fontSize: '30px' }).setOrigin(0.5)
+    const figura = imagem(this, x, y, 'estrela', 34)
     const zona = this.add.rectangle(x, y, 36, 36)
     this.physics.add.existing(zona, true)
-    zona.texto = texto
+    zona.texto = figura
     this.zonasEstrela.push(zona)
   }
 
@@ -159,17 +158,19 @@ export default class PlataformaAmigo extends Phaser.Scene {
     confete(this, zona.x, zona.y, { quantidade: 5, espalhar: 45 })
     zona.texto.destroy()
     sons.estrela()
+    this.somarEstrela()
+  }
+
+  somarEstrela() {
     this.estrelas++
-    this.contador.setText(`⭐ ${this.estrelas}`)
+    this.contador.definir({ depois: String(this.estrelas) })
   }
 
   // Mola: joga o personagem bem alto, para as plataformas e estrelas lá em cima.
   mola(x) {
-    const base = this.add.rectangle(x, TOPO_CHAO - 7, 56, 14, 0xff8a3d).setRounded(6).setStrokeStyle(2, 0xffffff)
-    this.add.text(x, TOPO_CHAO - 30, '⬆️', { fontFamily: FONTE, fontSize: '22px' }).setOrigin(0.5)
     const zona = this.add.rectangle(x, TOPO_CHAO - 16, 50, 24)
     this.physics.add.existing(zona, true)
-    zona.visual = base
+    zona.visual = imagem(this, x, TOPO_CHAO + 4, 'mola_solta', 70, { parado: true }).setOrigin(0.5, 1)
     this.zonasMola.push(zona)
   }
 
@@ -179,18 +180,14 @@ export default class PlataformaAmigo extends Phaser.Scene {
     this.esticar = 0.5
     this.pulosRestantes = 1
     sons.pulo()
-    if (this.ctx.efeitos) {
-      this.tweens.add({ targets: zona.visual, scaleY: 0.4, duration: 90, yoyo: true })
-    }
+    zona.visual.setTexture(chave('mola_comprimida'))
+    this.time.delayedCall(160, () => zona.visual.setTexture(chave('mola_solta')))
   }
 
   // Lesma bobinha: anda de um lado para o outro. Pisar em cima vale uma estrela; esbarrar só
   // empurra o personagem de volta.
   inimigo(x1, x2) {
-    const figura = this.add
-      .text(x1, TOPO_CHAO, '🐌', { fontFamily: FONTE, fontSize: '40px' })
-      .setOrigin(0.5, 1)
-      .setDepth(4)
+    const figura = imagem(this, x1, TOPO_CHAO + 2, 'lesma', 60).setOrigin(0.5, 1).setDepth(4)
     const corpo = this.add.rectangle(x1, TOPO_CHAO - 16, 36, 32).setVisible(false)
     this.physics.add.existing(corpo)
     corpo.body.setAllowGravity(false)
@@ -214,7 +211,7 @@ export default class PlataformaAmigo extends Phaser.Scene {
       confete(this, inimigo.figura.x, inimigo.figura.y - 20, { quantidade: 8, espalhar: 60 })
       this.tweens.add({
         targets: inimigo.figura,
-        scaleY: 0.2,
+        scaleY: inimigo.figura.scaleY * 0.2,
         alpha: 0,
         duration: this.ctx.efeitos ? 250 : 1,
         onComplete: () => inimigo.figura.destroy(),
@@ -222,8 +219,7 @@ export default class PlataformaAmigo extends Phaser.Scene {
       c.setVelocityY(-380)
       this.esticar = 0.3
       this.pulosRestantes = 1
-      this.estrelas++
-      this.contador.setText(`⭐ ${this.estrelas}`)
+      this.somarEstrela()
     } else {
       const dir = this.corpo.x < inimigo.corpo.x ? -1 : 1
       c.setVelocity(dir * 260, -260)
@@ -236,13 +232,8 @@ export default class PlataformaAmigo extends Phaser.Scene {
 
   criarAmigo(x, animal, situacao) {
     const amigo = { x, situacao, resolvido: false }
-    amigo.figura = this.add
-      .text(x, TOPO_CHAO, animal, { fontFamily: FONTE, fontSize: '56px' })
-      .setOrigin(0.5, 1)
-      .setDepth(4)
-    amigo.cara = this.add
-      .text(x, TOPO_CHAO - 75, situacao.cara, { fontFamily: FONTE, fontSize: '34px' })
-      .setOrigin(0.5, 1)
+    amigo.figura = imagem(this, x, TOPO_CHAO + 4, animal, 82).setOrigin(0.5, 1).setDepth(4)
+    amigo.cara = imagem(this, x, TOPO_CHAO - 112, `rosto_${situacao.cara}`, 46)
     if (this.ctx.efeitos) {
       this.tweens.add({
         targets: amigo.cara,
@@ -252,7 +243,7 @@ export default class PlataformaAmigo extends Phaser.Scene {
         repeat: -1,
         ease: 'Sine.InOut',
       })
-      acenar(this, amigo.figura, 6, 400 + Math.random() * 300) // o amigo balança chamando
+      acenar(this, amigo.figura, 4, 400 + Math.random() * 300) // o amigo balança chamando
     }
     // zona alta: não dá para pular por cima do amigo sem encontrá-lo
     amigo.zona = this.add.rectangle(x, 200, 70, 500)
@@ -263,11 +254,10 @@ export default class PlataformaAmigo extends Phaser.Scene {
 
   desenharNuvens() {
     for (let i = 0; i < 10; i++) {
+      const tamanho = Phaser.Math.Between(90, 150)
       const nuvem = this.add
-        .text(i * 330 + Phaser.Math.Between(0, 120), Phaser.Math.Between(60, 170), '☁️', {
-          fontFamily: FONTE,
-          fontSize: `${Phaser.Math.Between(40, 70)}px`,
-        })
+        .image(i * 330 + Phaser.Math.Between(0, 120), Phaser.Math.Between(70, 170), chave('nuvem'))
+        .setDisplaySize(tamanho, tamanho)
         .setAlpha(0.6)
         .setScrollFactor(0.3)
       // além da rolagem lenta (parallax), as nuvens vão à deriva
@@ -355,8 +345,9 @@ export default class PlataformaAmigo extends Phaser.Scene {
       if (!noChao) confete(this, this.corpo.x, this.corpo.y + 24, { quantidade: 4, espalhar: 30 })
     }
 
-    this.jogador.setPosition(this.corpo.x, this.corpo.y)
-    if (dir !== esq) this.jogador.setFlipX(dir)
+    this.jogador.setPosition(this.corpo.x, this.corpo.y - AJUSTE_PES)
+    this.jogador.setFlipX(this.direcao < 0)
+    animar(this.jogador, dir !== esq || !noChao) // rodas e pernas só se mexem em movimento
 
     // o personagem quica ao andar, respira parado e estica ao pular
     if (this.ctx.efeitos) {
@@ -364,7 +355,7 @@ export default class PlataformaAmigo extends Phaser.Scene {
       const onda = Math.sin(this.time.now / (andando ? 70 : 350)) * (andando ? 0.07 : 0.025)
       this.esticar *= 0.85
       const e = onda + this.esticar
-      this.jogador.setScale(1 - e / 2, 1 + e)
+      this.jogador.setScale(this.escalaJogador * (1 - e / 2), this.escalaJogador * (1 + e))
     }
 
     this.moverInimigos()
@@ -379,8 +370,8 @@ export default class PlataformaAmigo extends Phaser.Scene {
       if (!e.vivo) continue
       if (e.corpo.x <= e.x1) e.corpo.body.setVelocityX(50)
       if (e.corpo.x >= e.x2) e.corpo.body.setVelocityX(-50)
-      e.figura.setPosition(e.corpo.x, TOPO_CHAO)
-      e.figura.setFlipX(e.corpo.body.velocity.x > 0)
+      e.figura.setPosition(e.corpo.x, TOPO_CHAO + 2)
+      e.figura.setFlipX(e.corpo.body.velocity.x < 0)
     }
   }
 
@@ -394,9 +385,9 @@ export default class PlataformaAmigo extends Phaser.Scene {
       const atraso = (k + 1) * 14
       const alvo = this.rastro[Math.max(0, this.rastro.length - 1 - atraso)]
       const f = amigo.figura
-      f.x += (alvo.x - this.direcao * (k + 1) * 26 - f.x) * 0.25
-      f.y += (alvo.y + 8 - f.y) * 0.25
-      f.setFlipX(this.direcao > 0)
+      f.x += (alvo.x - this.direcao * (k + 1) * 30 - f.x) * 0.25
+      f.y += (alvo.y + 4 - f.y) * 0.25
+      f.setFlipX(this.direcao < 0)
 
       for (const z of this.zonasEstrela) {
         if (z.body.enable && Math.hypot(z.x - f.x, z.y - f.y) < 50) this.pegarEstrela(z)
@@ -409,7 +400,7 @@ export default class PlataformaAmigo extends Phaser.Scene {
     this.corpo.body.setVelocity(0, 0)
     this.rastro = [{ x: this.ponto.x, y: this.ponto.y }]
     sons.erro()
-    this.mostrarDica('Opa! Vamos de novo 💪')
+    this.mostrarDica('Opa! Vamos de novo')
   }
 
   // ---------- encontro com o amigo ----------
@@ -422,18 +413,17 @@ export default class PlataformaAmigo extends Phaser.Scene {
     const opcoes = embaralhar(amigo.situacao.opcoes)
 
     const fundo = this.add.rectangle(400, 225, 800, 450, 0x000000, 0.5).setScrollFactor(0).setDepth(30)
-    const balao = caixaTexto(
+    const balao = caixaComIcone(
       this,
       400,
-      100,
-      '',
-      { fontSize: '24px', color: '#ffffff', align: 'center', wordWrap: { width: 640 } },
-      { px: 16, py: 10, alpha: 0.6, depth: 31, fixo: true },
+      104,
+      { icone: `rosto_${amigo.situacao.cara}`, depois: `${amigo.situacao.texto}\nO que ${personagemNome} faz?` },
+      { fontSize: '24px', color: '#ffffff', align: 'center', wordWrap: { width: 560 } },
+      { px: 16, py: 10, alpha: 0.6, depth: 31, fixo: true, tamanho: 60 },
     )
-    balao.setText(`${amigo.situacao.cara} ${amigo.situacao.texto}\nO que ${personagemNome} faz?`)
 
     const botoes = opcoes.map((op, i) => {
-      const b = botao(this, 400, 190 + i * 70, 600, 58, `${i + 1}. ${op.texto}`, () => this.escolher(i))
+      const b = botao(this, 400, 195 + i * 70, 600, 58, `${i + 1}. ${op.texto}`, () => this.escolher(i))
       b.r.setDepth(31)
       b.t.setDepth(32)
       return b
@@ -453,13 +443,13 @@ export default class PlataformaAmigo extends Phaser.Scene {
     if (!op.certo) {
       this.hud.erro()
       balancar(this, this.jogador, 8)
-      d.balao.setText(`Hmm... ${op.feedback}\nTente outra opção.`)
+      d.balao.definir({ icone: 'rosto_confuso', depois: `Hmm... ${op.feedback}\nTente outra opção.` })
       d.botoes[i].desativar()
       return
     }
     d.travado = true
     d.botoes.forEach((b) => b.desativar())
-    d.balao.setText(`Isso! ${op.feedback}`)
+    d.balao.definir({ icone: 'rosto_feliz', depois: `Isso! ${op.feedback}` })
     const { figura } = d.amigo
     this.hud.acerto({ x: figura.x, y: figura.y - 40 })
     estourar(this, this.jogador, 1.25)
@@ -483,8 +473,8 @@ export default class PlataformaAmigo extends Phaser.Scene {
   seguir(amigo) {
     amigo.cara.destroy()
     this.tweens.killTweensOf(amigo.figura)
-    amigo.figura.setAngle(0).setOrigin(0.5, 0.5).setScale(0.75).setDepth(4)
-    amigo.figura.y -= 28
+    amigo.figura.setAngle(0).setOrigin(0.5, 0.5).setDisplaySize(58, 58)
+    amigo.figura.y -= 30
     this.seguidores.push(amigo)
     sons.estrela()
     confete(this, amigo.figura.x, amigo.figura.y, { quantidade: 8, espalhar: 60 })
@@ -494,6 +484,6 @@ export default class PlataformaAmigo extends Phaser.Scene {
     if (this.fim) return
     this.fim = true
     this.corpo.body.setVelocity(0, 0)
-    telaFinal(this, this.ctx, 'Muito bem! 🎉\nVocê ajudou todos os amigos!')
+    telaFinal(this, this.ctx, 'Muito bem!\nVocê ajudou todos os amigos!')
   }
 }

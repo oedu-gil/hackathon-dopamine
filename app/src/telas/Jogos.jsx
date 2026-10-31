@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { JOGOS } from '../data/jogos.js'
 import { recomendar } from '../recomendacao.js'
 import { estado } from '../progresso.js'
+import Arte from './Arte'
 
 const VELOCIDADES = [
   { valor: 0.7, nome: 'Lenta' },
@@ -24,8 +25,8 @@ export default function Jogos({
 
   return (
     <section className="tela">
-      <h2>
-        {hiperfoco.emoji} Jogos para {pdi.nome || 'a criança'}
+      <h2 className="titulo-com-arte">
+        <Arte id={hiperfoco.arte} tamanho={48} /> Jogos para {pdi.nome || 'a criança'}
       </h2>
       <p>
         Hiperfoco: <strong>{hiperfoco.nome}</strong> · {e.total} acertos ·{' '}
@@ -75,9 +76,10 @@ export default function Jogos({
       <ul className="lista">
         {recomendados.map((r, i) => (
           <li key={r.jogo.id} className="cartao">
-            <div>
+            <Arte id={r.jogo.arte} tamanho={64} animar={false} />
+            <div className="cartao-texto">
               <h3>
-                {r.jogo.emoji} {r.jogo.nome} {i === 0 && <span className="selo">Mais indicado</span>}
+                {r.jogo.nome} {i === 0 && <span className="selo">Mais indicado</span>}
               </h3>
               <p>{r.jogo.descricao}</p>
               <small>
@@ -94,7 +96,7 @@ export default function Jogos({
           Minha coleção
         </button>
         <button className="secundario" onClick={verDesempenho}>
-          📊 Desempenho (educador)
+          Desempenho (educador)
         </button>
         <button className="secundario" onClick={trocar}>
           Trocar hiperfoco
