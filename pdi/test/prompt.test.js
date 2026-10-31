@@ -20,3 +20,16 @@ test('prompt instrui a nao sugerir acoes nem citar fontes/links', () => {
   const sistema = mensagens.find((m) => m.role === 'system').content
   assert.match(sistema, /n(ã|a)o (sugira|inclua|cite).*(a(ç|c)(ã|a)o|link|fonte)/i)
 })
+
+test('prompt instrui a basear a classificacao em evidencia explicita do texto, nao em inferencia geral do diagnostico', () => {
+  const mensagens = montarPrompt('texto', HABILIDADES)
+  const sistema = mensagens.find((m) => m.role === 'system').content
+  assert.match(sistema, /evid(ê|e)ncia expl(í|i)cita/i)
+  assert.match(sistema, /n(ã|a)o classifique.*(apenas|s(ó|o)).*diagn(ó|o)stico/i)
+})
+
+test('prompt pede pelo menos duas atividades por habilidade identificada', () => {
+  const mensagens = montarPrompt('texto', HABILIDADES)
+  const sistema = mensagens.find((m) => m.role === 'system').content
+  assert.match(sistema, /2 a 3 atividades|duas a tr(ê|e)s atividades/i)
+})
