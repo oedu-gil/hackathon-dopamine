@@ -21,8 +21,10 @@ hub/src/
     memoria/  sequencia/  chuva-emocoes/  cuidar-amigo/  plataforma-amigo/  quebra-cabeca/
   compartilhado/
     temas.js             hiperfocos (trem, aranha, avião, dinossauro)
-    arte/                desenhos SVG feitos em código (personagens, rostos, itens)
+    arte/                desenhos SVG feitos em código (personagens, rostos, itens, cenários por tema)
     kit-phaser/          HUD, efeitos, sons, XP e montarCena() dos jogos do antigo app/
+                         papel.js: visual "papel recortado" do quebra-cabeça para Phaser
+                         (cartões, adesivos, botões, HUD e tela final), usado pela chuva e pelo cuidar
     atividade/           contrato antigo de atividade (usado pela sequência e pelo quebra-cabeça)
 ```
 

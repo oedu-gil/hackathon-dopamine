@@ -5,7 +5,8 @@ import { estado, registrarAcerto } from './progresso.js'
 
 // Monta uma cena do kit (Chuva de emoções, Cuidar do amigo, Plataforma do amigo) no
 // formato do contrato (jogos/contrato.js). A Boot carrega a arte e inicia a cena `chave`.
-export function montarCena(elemento, Cena, chave, { tema, nivel = 1, opcoes = {}, aoTerminar, aoSair }) {
+// `preparar` (opcional): promessa extra a esperar antes de criar o jogo, como fontes próprias.
+export function montarCena(elemento, Cena, chave, { tema, nivel = 1, opcoes = {}, aoTerminar, aoSair }, { preparar } = {}) {
   let metricas = { attempts: 0, correct: 0, hints: 0 }
   let emAndamento = true
   let cancelado = false
@@ -39,8 +40,7 @@ export function montarCena(elemento, Cena, chave, { tema, nivel = 1, opcoes = {}
   }
 
   // o canvas só desenha com a fonte do jogo depois que ela carregou
-  document.fonts
-    .load('400 20px Fredoka')
+  Promise.all([document.fonts.load('400 20px Fredoka'), preparar?.()])
     .catch(() => {})
     .then(() => {
       if (cancelado) return
