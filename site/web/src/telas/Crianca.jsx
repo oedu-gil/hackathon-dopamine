@@ -42,8 +42,9 @@ function Palco({ tema, nome, xp }) {
           <h1>Oi, {nome}!</h1>
           <div className="xp-linha">
             <span className="xp-estrela"><Icone nome="estrela" tamanho={28} /></span>
-            <div className="xp" role="progressbar" aria-valuemin={0} aria-valuemax={XP_POR_ITEM} aria-valuenow={resto} aria-label="XP até o próximo item">
-              <span style={{ width: `${(resto / XP_POR_ITEM) * 100}%` }} />
+            <div className="xp" role="progressbar" aria-valuemin={0} aria-valuemax={XP_POR_ITEM} aria-valuenow={proximo ? resto : XP_POR_ITEM} aria-label="XP até o próximo item">
+              {/* coleção completa: barra cheia, em vez de mostrar o resto da divisão */}
+              <span style={{ width: proximo ? `${(resto / XP_POR_ITEM) * 100}%` : '100%' }} />
             </div>
             {proximo && <img className="xp-proximo" src={proximo.img} alt={`Próximo: ${proximo.nome}`} />}
           </div>
