@@ -1,0 +1,379 @@
+<meta charset="utf-8">
+<title>Direções do quebra-cabeça</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@500;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Lexend:wght@400;600;700&display=swap">
+<style>
+/* Layout: página de estudo em coluna única; cada direção = cabeçalho, duas telas (tablet 4:3 e computador 16:10) e ficha técnica. As telas usam a paleta fixa da própria direção. */
+:root {
+  --bg: #eef0ec;
+  --surface: #ffffff;
+  --fg: #1d2421;
+  --muted: #5a6560;
+  --line: #d3d8d3;
+  --accent: #23556e;
+  --font-display: "Bricolage Grotesque", "Atkinson Hyperlegible", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #151a18; --surface: #1f2522; --fg: #e7ece9; --muted: #a2ada8; --line: #36403b; --accent: #8cc3dd; color-scheme: dark } }
+:root[data-theme="dark"] { --bg: #151a18; --surface: #1f2522; --fg: #e7ece9; --muted: #a2ada8; --line: #36403b; --accent: #8cc3dd; color-scheme: dark }
+
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.55; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 72px; display: grid; gap: 56px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.12; }
+h1 { font-size: clamp(30px, 5vw, 48px); font-weight: 800; letter-spacing: -0.01em; }
+h2 { font-size: clamp(24px, 3.4vw, 34px); font-weight: 800; }
+h3 { font-size: 17px; font-weight: 600; }
+p { margin: 0; max-width: 68ch; }
+.eyebrow { font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+header.intro { display: grid; gap: 14px; }
+.status { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 4px 12px; font-size: 14px; }
+.chip b { color: var(--accent); }
+.controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.controls span { color: var(--muted); font-size: 14px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.seg button { font: inherit; font-size: 15px; border: 0; background: none; color: var(--fg); padding: 8px 16px; cursor: pointer; min-height: 40px; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--surface); font-weight: 700; }
+.seg button:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+
+section.dir { display: grid; gap: 22px; border-top: 1px solid var(--line); padding-top: 32px; }
+.dir-head { display: grid; gap: 8px; }
+.letter { font-family: var(--font-display); font-weight: 800; color: var(--accent); }
+.refs { font-size: 14px; color: var(--muted); }
+.screens { display: grid; grid-template-columns: 1fr 1.25fr; gap: 20px; align-items: end; }
+@media (max-width: 760px) { .screens { grid-template-columns: 1fr; } }
+figure { margin: 0; display: grid; gap: 8px; min-width: 0; }
+figcaption { font-size: 13px; color: var(--muted); }
+.device { position: relative; width: 100%; max-width: 100%; border-radius: 18px; background: #101412; padding: 10px; }
+.device.desk { border-radius: 10px; padding: 26px 8px 8px; }
+.device.desk::before { content: ""; position: absolute; top: 9px; left: 12px; width: 42px; height: 8px; border-radius: 4px; background: radial-gradient(circle at 4px 4px, #e46a5e 3.5px, transparent 4px), radial-gradient(circle at 20px 4px, #e4b85e 3.5px, transparent 4px), radial-gradient(circle at 36px 4px, #6ebf73 3.5px, transparent 4px); }
+.screen { position: relative; overflow: hidden; border-radius: 9px; }
+.tab .screen { aspect-ratio: 4 / 3; }
+.desk .screen { aspect-ratio: 16 / 10; border-radius: 3px; }
+.stage { position: absolute; left: 50%; top: 50%; width: 960px; height: 600px; transform-origin: 0 0; }
+
+.spec { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 28px; }
+@media (max-width: 760px) { .spec { grid-template-columns: 1fr; } }
+.spec div { display: grid; gap: 4px; min-width: 0; }
+.spec p { font-size: 15px; color: var(--fg); }
+.proscons { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 640px) { .proscons { grid-template-columns: 1fr; } }
+.proscons div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 6px; }
+.proscons ul { margin: 0; padding-left: 18px; font-size: 15px; display: grid; gap: 4px; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 16px; }
+.legend figure { grid-template-columns: auto; justify-items: start; }
+.sw { width: 150px; height: 104px; position: relative; overflow: hidden; border-radius: 8px; }
+.sw .stage { left: 0; top: 0; transform: scale(1); width: 150px; height: 104px; }
+
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 680px; font-size: 15px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--font-display); font-weight: 600; }
+tr:last-child td { border-bottom: 0; }
+.common { display: grid; gap: 14px; }
+.common ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80ch; }
+.decision { background: var(--surface); border: 2px solid var(--accent); border-radius: 14px; padding: 20px 22px; display: grid; gap: 8px; }
+
+/* ===== Mock do jogo (960 x 600 lógicos, mesmas medidas do Phaser) ===== */
+.g { position: absolute; inset: 0; font-family: var(--g-font); color: var(--g-ink); background: var(--g-bg); }
+.g .bar { position: absolute; left: 0; top: 0; width: 960px; height: 76px; display: flex; align-items: center; gap: 14px; padding: 0 24px; }
+.g .btn { height: 56px; min-width: 120px; padding: 0 18px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 20px; font-weight: 700; border-radius: var(--g-r); border: var(--g-btn-border); background: var(--g-btn-bg); color: var(--g-ink); }
+.g .btn svg { width: 22px; height: 22px; }
+.g .instr { flex: 1; text-align: center; font-family: var(--g-display); font-size: 30px; font-weight: 700; }
+.g .ref { position: absolute; left: 24px; top: 96px; width: 220px; }
+.g .ref .lbl, .g .prog .lbl { font-size: 17px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.g .ref .pic { width: 220px; height: 132px; border-radius: calc(var(--g-r) * .6); overflow: hidden; border: var(--g-ref-border); }
+.g .ref svg { display: block; width: 100%; height: 100%; }
+.g .prog { position: absolute; left: 24px; top: 272px; width: 220px; }
+.g .dots { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; width: 150px; }
+.g .dots i { aspect-ratio: 1; border-radius: var(--g-dot-r); border: 2px solid var(--g-ink); }
+.g .dots i.on { background: var(--g-ink); }
+.g .board { position: absolute; left: 268px; top: 96px; width: 540px; height: 324px; padding: 10px; background: var(--g-board-bg); border: var(--g-board-border); border-radius: var(--g-r); box-shadow: var(--g-board-shadow); display: grid; grid-template-columns: repeat(5, 104px); grid-template-rows: repeat(3, 104px); }
+.g .cell { position: relative; box-shadow: inset 0 0 0 1px var(--g-grid); }
+.g .cell .coord { position: absolute; left: 6px; top: 4px; font-size: 13px; font-weight: 700; color: var(--g-grid-ink); display: var(--g-coords, none); }
+.g .cell.hint::after { content: ""; position: absolute; inset: 5px; border: 4px dashed var(--g-hint); border-radius: calc(var(--g-r) * .4); }
+.g .cell.hint .hint-tag { position: absolute; inset: auto 8px 8px auto; font-size: 13px; font-weight: 700; background: var(--g-hint); color: var(--g-hint-ink); border-radius: 6px; padding: 2px 7px; }
+.g .piece { position: relative; width: 104px; height: 104px; }
+.g .piece svg { display: block; width: 100%; height: 100%; }
+.g .cell .piece.placed .ok { position: absolute; right: 5px; bottom: 5px; width: 24px; height: 24px; border-radius: 50%; background: var(--g-ok-bg); color: var(--g-ok-ink); display: grid; place-items: center; box-shadow: 0 0 0 2px var(--g-ok-ring); }
+.g .cell .piece.placed .ok svg { width: 14px; height: 14px; }
+.g .tray { position: absolute; left: 268px; top: 440px; width: 668px; height: 140px; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 12px; padding: 12px 14px; background: var(--g-tray-bg); border: var(--g-tray-border); border-radius: var(--g-r); }
+.g .tray .piece { width: 72px; height: 72px; border-radius: var(--g-piece-r); box-shadow: var(--g-piece-shadow); outline: var(--g-piece-outline); overflow: hidden; }
+.g .tray .piece.sel { transform: translateY(-8px) scale(1.08); outline: 5px solid var(--g-sel); outline-offset: 2px; box-shadow: 0 10px 18px rgba(0,0,0,.28); overflow: visible; z-index: 2; }
+.g .tray .piece.sel svg { border-radius: var(--g-piece-r); }
+.g .tray .piece.sel .sel-tag { position: absolute; left: 50%; top: -30px; transform: translateX(-50%); white-space: nowrap; font-size: 13px; font-weight: 700; background: var(--g-sel); color: var(--g-sel-ink); border-radius: 6px; padding: 2px 8px; }
+.g .tray-lbl { position: absolute; left: 24px; top: 448px; width: 220px; font-size: 17px; font-weight: 700; display: grid; gap: 4px; }
+.g .tray-lbl small { font-weight: 400; font-size: 15px; color: var(--g-ink-soft); }
+.g .deco { position: absolute; pointer-events: none; }
+
+/* Direção A — Bandeja de madeira */
+.dA { --g-bg: #dfe3d7; --g-ink: #26332c; --g-ink-soft: #4b5a51; --g-font: "Atkinson Hyperlegible", sans-serif; --g-display: "Andika", sans-serif; --g-r: 18px; --g-btn-border: 2px solid #26332c; --g-btn-bg: #f4f2ea; --g-ref-border: 6px solid #f4f2ea; --g-board-bg: #c49a69; --g-board-border: 0; --g-board-shadow: inset 0 4px 10px rgba(60,35,10,.45), 0 2px 0 #fff6; --g-grid: rgba(70,40,15,.35); --g-grid-ink: #5a3b1d; --g-tray-bg: #cfd5c6; --g-tray-border: 0; --g-piece-r: 8px; --g-piece-shadow: 0 3px 0 #9aa08f, 0 5px 10px rgba(0,0,0,.18); --g-piece-outline: 0; --g-sel: #1f4e79; --g-sel-ink: #fff; --g-hint: #1f4e79; --g-hint-ink: #fff; --g-ok-bg: #f4f2ea; --g-ok-ink: #26332c; --g-ok-ring: #26332c; --g-dot-r: 50%; }
+.dA .board { background-image: repeating-linear-gradient(92deg, rgba(255,255,255,.06) 0 3px, transparent 3px 14px), linear-gradient(#c49a69, #b8895a); }
+.dA .cell:not(:has(.piece)) { background: rgba(80,50,20,.18); }
+
+/* Direção B — Papel recortado */
+.dB { --g-bg: #ffd9a8; --g-ink: #2a1f3d; --g-ink-soft: #57466e; --g-font: "Atkinson Hyperlegible", sans-serif; --g-display: "Baloo 2", sans-serif; --g-r: 22px; --g-btn-border: 3px solid #2a1f3d; --g-btn-bg: #fff; --g-ref-border: 6px solid #fff; --g-board-bg: #fffaf2; --g-board-border: 3px solid #2a1f3d; --g-board-shadow: 8px 8px 0 #2a1f3d; --g-grid: #e8d8c4; --g-grid-ink: #8a6b4f; --g-tray-bg: #7fc8a9; --g-tray-border: 3px solid #2a1f3d; --g-piece-r: 6px; --g-piece-shadow: 3px 3px 0 #2a1f3d; --g-piece-outline: 4px solid #fff; --g-sel: #6a3fc8; --g-sel-ink: #fff; --g-hint: #6a3fc8; --g-hint-ink: #fff; --g-ok-bg: #fff; --g-ok-ink: #2a1f3d; --g-ok-ring: #2a1f3d; --g-dot-r: 4px; }
+.dB .tray .piece { overflow: visible; }
+.dB .tray .piece:nth-child(odd) { rotate: -3deg; }
+.dB .tray .piece:nth-child(3n) { rotate: 2.5deg; }
+.dB .tray .piece.sel { rotate: 0deg; }
+.dB .ref .pic { rotate: -2deg; box-shadow: 4px 4px 0 #2a1f3d; }
+
+/* Direção C — Mesa de montagem */
+.dC { --g-bg: #e6ebef; --g-ink: #13202b; --g-ink-soft: #46576a; --g-font: "Atkinson Hyperlegible", sans-serif; --g-display: "Lexend", sans-serif; --g-r: 6px; --g-btn-border: 2px solid #13202b; --g-btn-bg: #fff; --g-ref-border: 2px solid #13202b; --g-board-bg: #fff; --g-board-border: 2px solid #13202b; --g-board-shadow: none; --g-grid: #b7c3cd; --g-grid-ink: #46576a; --g-coords: block; --g-tray-bg: #d6dee5; --g-tray-border: 2px dashed #8a9aa8; --g-piece-r: 2px; --g-piece-shadow: none; --g-piece-outline: 2px solid #13202b; --g-sel: #d95d00; --g-sel-ink: #fff; --g-hint: #d95d00; --g-hint-ink: #fff; --g-ok-bg: #13202b; --g-ok-ink: #fff; --g-ok-ring: #fff; --g-dot-r: 2px; }
+.dC .instr { font-size: 26px; font-weight: 600; }
+.dC .bar { border-bottom: 2px solid #13202b; background: #fff; }
+.dC .cell.hint::after { border-radius: 0; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .g .tray .piece { transition: transform .2s ease-out; }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="img-trem" viewBox="0 0 500 300">
+      <rect width="500" height="300" fill="#a8d8ea"/>
+      <circle cx="420" cy="62" r="34" fill="#ffd166"/>
+      <ellipse cx="95" cy="58" rx="46" ry="16" fill="#fff"/><ellipse cx="120" cy="48" rx="28" ry="16" fill="#fff"/>
+      <ellipse cx="250" cy="40" rx="40" ry="13" fill="#fff"/>
+      <path d="M0 175 Q120 110 240 168 T500 150 V300 H0Z" fill="#8cc084"/>
+      <path d="M0 225 Q150 186 300 220 T500 210 V300 H0Z" fill="#5e9c5a"/>
+      <rect x="0" y="262" width="500" height="38" fill="#c9b48a"/>
+      <g fill="#6b4f3a"><rect x="0" y="258" width="500" height="6"/><rect x="0" y="270" width="500" height="4"/></g>
+      <g fill="#8a6a4f"><rect x="8" y="262" width="10" height="16"/><rect x="58" y="262" width="10" height="16"/><rect x="108" y="262" width="10" height="16"/><rect x="158" y="262" width="10" height="16"/><rect x="208" y="262" width="10" height="16"/><rect x="258" y="262" width="10" height="16"/><rect x="308" y="262" width="10" height="16"/><rect x="358" y="262" width="10" height="16"/><rect x="408" y="262" width="10" height="16"/><rect x="458" y="262" width="10" height="16"/></g>
+      <g fill="#eef2f5"><circle cx="333" cy="112" r="14"/><circle cx="350" cy="88" r="19"/><circle cx="374" cy="62" r="24"/></g>
+      <rect x="22" y="182" width="118" height="60" rx="6" fill="#ffbe0b"/><rect x="34" y="194" width="40" height="26" rx="3" fill="#fff3c4"/><rect x="88" y="194" width="40" height="26" rx="3" fill="#fff3c4"/>
+      <rect x="140" y="226" width="22" height="7" fill="#333d47"/>
+      <rect x="162" y="182" width="118" height="60" rx="6" fill="#3a86ff"/><rect x="174" y="194" width="40" height="26" rx="3" fill="#d6e6ff"/><rect x="228" y="194" width="40" height="26" rx="3" fill="#d6e6ff"/>
+      <rect x="280" y="226" width="22" height="7" fill="#333d47"/>
+      <rect x="302" y="172" width="100" height="70" rx="8" fill="#d1495b"/>
+      <rect x="320" y="132" width="22" height="42" fill="#333d47"/><rect x="314" y="126" width="34" height="10" rx="3" fill="#333d47"/>
+      <rect x="392" y="138" width="56" height="104" rx="6" fill="#a63446"/><rect x="402" y="150" width="36" height="30" rx="4" fill="#d6eef7"/>
+      <rect x="386" y="130" width="68" height="12" rx="4" fill="#333d47"/>
+      <path d="M448 222 L478 248 H448Z" fill="#333d47"/>
+      <g fill="#2b2d42"><circle cx="50" cy="248" r="15"/><circle cx="112" cy="248" r="15"/><circle cx="190" cy="248" r="15"/><circle cx="252" cy="248" r="15"/><circle cx="332" cy="246" r="19"/><circle cx="378" cy="246" r="19"/><circle cx="426" cy="246" r="19"/></g>
+      <g fill="#edf2f4"><circle cx="50" cy="248" r="5"/><circle cx="112" cy="248" r="5"/><circle cx="190" cy="248" r="5"/><circle cx="252" cy="248" r="5"/><circle cx="332" cy="246" r="6"/><circle cx="378" cy="246" r="6"/><circle cx="426" cy="246" r="6"/></g>
+    </symbol>
+    <symbol id="img-baleia" viewBox="0 0 500 300">
+      <rect width="500" height="300" fill="#2a7fb8"/>
+      <rect width="500" height="98" fill="#cfe8f2"/>
+      <circle cx="70" cy="48" r="28" fill="#ffd166"/>
+      <path d="M0 98 Q25 86 50 98 T100 98 T150 98 T200 98 T250 98 T300 98 T350 98 T400 98 T450 98 T500 98 V112 H0Z" fill="#5fa8d3"/>
+      <path d="M330 92 H420 L408 108 H342Z" fill="#e76f51"/><rect x="372" y="50" width="4" height="42" fill="#3d2c2e"/><path d="M376 54 L410 86 H376Z" fill="#fff"/>
+      <g fill="#cdeaf7"><circle cx="150" cy="78" r="6"/><circle cx="168" cy="64" r="7"/><circle cx="188" cy="74" r="6"/><circle cx="170" cy="88" r="5"/></g>
+      <path d="M168 120 Q164 100 170 92" stroke="#cdeaf7" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path d="M60 196 Q100 120 250 124 Q350 128 388 176 Q404 206 376 226 Q300 262 180 254 Q86 244 60 196Z" fill="#20406a"/>
+      <path d="M380 184 Q428 150 474 118 Q458 166 476 210 Q430 198 384 204Z" fill="#20406a"/>
+      <path d="M86 214 Q180 256 300 242 Q352 236 374 222 Q300 250 190 246 Q114 240 86 214Z" fill="#9cc7e0"/>
+      <g stroke="#7aaed0" stroke-width="3"><path d="M150 228 L156 246"/><path d="M190 232 L194 250"/><path d="M230 234 L232 250"/><path d="M270 232 L270 248"/></g>
+      <circle cx="122" cy="186" r="7" fill="#fff"/><circle cx="124" cy="187" r="4" fill="#0b132b"/>
+      <path d="M210 196 Q240 214 270 200" stroke="#162f50" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <rect y="276" width="500" height="24" fill="#e9c46a"/>
+      <g fill="#2a9d8f"><path d="M30 280 Q20 250 34 232 Q42 256 38 280Z"/><path d="M46 280 Q50 248 62 240 Q60 262 54 280Z"/><path d="M450 280 Q440 246 456 226 Q464 254 460 280Z"/></g>
+      <g fill="#f4a261"><path d="M400 252 Q414 240 428 252 Q414 264 400 252Z M428 252 L438 244 V260Z"/><path d="M330 268 Q340 260 350 268 Q340 276 330 268Z M350 268 L357 263 V273Z"/></g>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header class="intro">
+    <span class="eyebrow">Quebra-cabeça · Etapa 2 · estudo para escolha do grupo</span>
+    <h1>Três direções para o quebra-cabeça</h1>
+    <p>As três telas usam as mesmas medidas do jogo em Phaser (960 × 600, 15 peças em 5 × 3), mostradas num tablet e num computador. A partida está pela metade: 6 peças encaixadas, uma peça selecionada e a dica ligada. Nenhuma direção está aprovada.</p>
+    <div class="status">
+      <span class="chip"><b>Decidido</b> · 15 peças, 5 × 3</span>
+      <span class="chip"><b>Decidido</b> · tablet e computador</span>
+      <span class="chip"><b>Decidido</b> · um tema por partida, em uma palavra</span>
+      <span class="chip">Proposta · sem rotação, modelo visível, peça → destino</span>
+    </div>
+    <div class="controls">
+      <span id="tema-lbl">Tema de exemplo:</span>
+      <div class="seg" role="group" aria-labelledby="tema-lbl">
+        <button type="button" id="t-trem" data-tema="trem" aria-pressed="true">trem</button>
+        <button type="button" id="t-baleia" data-tema="baleia" aria-pressed="false">baleia</button>
+      </div>
+      <span>As imagens são desenhos locais de exemplo, no lugar da imagem gerada a partir da palavra.</span>
+    </div>
+  </header>
+
+  <section class="dir" id="dir-a">
+    <div class="dir-head">
+      <span class="eyebrow"><span class="letter">A</span> · calma e tátil</span>
+      <h2>Bandeja de madeira</h2>
+      <p>Lembra um material Montessori sobre a mesa. O tabuleiro é uma bandeja de madeira rebaixada, as peças são blocos foscos e o fundo é uma cor neutra. Quem chama a atenção é a imagem do tema; a interface fica em segundo plano.</p>
+      <p class="refs">Referências: quebra-cabeças de encaixe Montessori em bandeja; brinquedos de madeira da Grimm's e da PlanToys; a calma dos apps da Sago Mini.</p>
+    </div>
+    <div class="screens" data-dir="dA"></div>
+    <div class="spec">
+      <div><h3>Ilustração, fundos e peças</h3><p>Não há personagem nem cenário em volta, só a imagem do tema. O fundo é liso, verde-acinzentado. As peças são quadrados com cantos levemente arredondados e uma sombra curta, como blocos.</p></div>
+      <div><h3>Paleta, contraste e tipografia</h3><p>A paleta é neutra e quente; o único destaque é um azul-escuro, usado para seleção e dica. O texto tem contraste acima de 10:1. Os títulos usam Andika, fonte feita para leitores iniciantes; o resto usa Atkinson Hyperlegible.</p></div>
+      <div><h3>Densidade e áreas de toque</h3><p>A densidade é baixa: 4 grupos fixos (modelo, progresso, tabuleiro e bandeja) e 3 botões. No tablet, cada casa do tabuleiro mede cerca de 2,1 cm e cada peça da bandeja cerca de 1,5 cm; o mínimo recomendado é 0,9 cm.</p></div>
+      <div><h3>Movimento e som</h3><p>A peça desliza até a casa em 0,2 s, sem quicar. O som opcional é um "toc" de madeira e começa desligado. Com movimento reduzido, a peça aparece direto no lugar.</p></div>
+      <div><h3>O que muda com o hiperfoco</h3><p>Só a imagem e a palavra da instrução ("Monte o trem"). A madeira, as cores e o layout não mudam, então a criança reencontra o mesmo ambiente em qualquer tema.</p></div>
+      <div><h3>Estados sem depender de cor</h3><p>A peça selecionada sobe, ganha borda grossa e a etiqueta "Esta peça". A peça encaixada recebe um selo com ✓. A dica aparece como contorno tracejado e etiqueta.</p></div>
+    </div>
+    <div class="proscons">
+      <div><h3>Vantagens</h3><ul><li>Tem o menor nível de estímulo das três.</li><li>Não infantiliza: funciona dos 4 aos 12 anos.</li><li>Qualquer imagem combina com o fundo neutro.</li></ul></div>
+      <div><h3>Limites</h3><ul><li>Para algumas crianças, pode parecer pouco empolgante.</li><li>A textura de madeira precisa ser bem desenhada para não ficar artificial.</li></ul></div>
+    </div>
+  </section>
+
+  <section class="dir" id="dir-b">
+    <div class="dir-head">
+      <span class="eyebrow"><span class="letter">B</span> · lúdica e expressiva</span>
+      <h2>Papel recortado</h2>
+      <p>As peças parecem adesivos com borda branca, sobre uma folha colada em cartolina colorida. Os contornos são grossos e as sombras são chapadas, sem desfoque.</p>
+      <p class="refs">Referências: colagens de Eric Carle ("A lagarta comilona"); as cores chapadas da Toca Boca; livros de adesivos.</p>
+    </div>
+    <div class="screens" data-dir="dB"></div>
+    <div class="spec">
+      <div><h3>Ilustração, fundos e peças</h3><p>O fundo é uma cartolina de cor única. O tabuleiro é uma folha com contorno e sombra chapada. As peças são adesivos com borda branca de 4 px, um pouco inclinados na bandeja; a peça só fica reta ao ser selecionada.</p></div>
+      <div><h3>Paleta, contraste e tipografia</h3><p>A paleta é saturada, mas limitada a 3 cores de apoio e um roxo de destaque. O contorno escuro mantém o contraste acima de 12:1. Os títulos usam Baloo 2, arredondada; o resto usa Atkinson Hyperlegible.</p></div>
+      <div><h3>Densidade e áreas de toque</h3><p>São os mesmos 4 grupos de A, mas com mais peso visual: cada bloco tem contorno e sombra. Os tamanhos de toque são os mesmos de A.</p></div>
+      <div><h3>Movimento e som</h3><p>A peça "descola" (sobe) ao ser selecionada e cola com um leve achatamento. O som opcional é de papel e começa desligado. Com movimento reduzido, as peças ficam retas e sem animação.</p></div>
+      <div><h3>O que muda com o hiperfoco</h3><p>A imagem, a palavra da instrução e a cor da cartolina, escolhida de uma lista curta para combinar com a imagem. Contorno, peças e layout não mudam.</p></div>
+      <div><h3>Estados sem depender de cor</h3><p>Os mesmos sinais de A (subir, borda grossa, etiqueta e selo ✓). A inclinação deixa ainda mais claro o que está na bandeja e o que já foi encaixado.</p></div>
+    </div>
+    <div class="proscons">
+      <div><h3>Vantagens</h3><ul><li>É a mais atraente para as crianças menores.</li><li>Tem identidade forte e memorável para o pitch.</li><li>Os contornos grossos ajudam a separar as peças do fundo.</li></ul></div>
+      <div><h3>Limites</h3><ul><li>Tem mais estímulo visual; pode sobrecarregar parte das crianças.</li><li>Pode parecer infantil para crianças de 9 a 12 anos.</li><li>A cor da cartolina pode brigar com algumas imagens geradas.</li></ul></div>
+    </div>
+  </section>
+
+  <section class="dir" id="dir-c">
+    <div class="dir-head">
+      <span class="eyebrow"><span class="letter">C</span> · estruturada e neutra quanto à idade</span>
+      <h2>Mesa de montagem</h2>
+      <p>Lembra um manual de montagem: linhas retas, grade numerada e uma única cor de destaque. O tabuleiro tem coordenadas (A1 a E3), que dão ao adulto uma forma objetiva de orientar sem pegar a peça ("coloque em B2").</p>
+      <p class="refs">Referências: manuais de montagem da LEGO; a interface de papelão do Nintendo Labo; sinalização de oficina e de ambiente técnico.</p>
+    </div>
+    <div class="screens" data-dir="dC"></div>
+    <div class="spec">
+      <div><h3>Ilustração, fundos e peças</h3><p>Não há decoração. O fundo é cinza-azulado, o tabuleiro é branco com grade fina e coordenadas, e as peças são quadrados de canto reto com contorno de 2 px. A bandeja é uma área tracejada, como uma área de peças soltas.</p></div>
+      <div><h3>Paleta, contraste e tipografia</h3><p>A paleta é fria e neutra; o único destaque é um laranja forte para seleção e dica. O texto tem contraste acima de 14:1. Os títulos usam Lexend, feita para fluência de leitura; o resto usa Atkinson Hyperlegible.</p></div>
+      <div><h3>Densidade e áreas de toque</h3><p>Tem mais informação na tela (as coordenadas), mas com ordem bem rígida. Os tamanhos de toque são os mesmos de A. As coordenadas podem ser escondidas como apoio do PDI.</p></div>
+      <div><h3>Movimento e som</h3><p>A peça vai em linha reta até a casa em 0,15 s. O som opcional é um clique mecânico curto e começa desligado. Com movimento reduzido, a peça aparece direto no lugar.</p></div>
+      <div><h3>O que muda com o hiperfoco</h3><p>Só a imagem e a palavra. A "mesa" é sempre a mesma, o que favorece previsibilidade e rotina.</p></div>
+      <div><h3>Estados sem depender de cor</h3><p>A peça selecionada sobe e ganha borda grossa e etiqueta. A peça encaixada recebe um selo ✓ escuro. A dica usa contorno tracejado, etiqueta e coordenada.</p></div>
+    </div>
+    <div class="proscons">
+      <div><h3>Vantagens</h3><ul><li>É a mais respeitosa com as crianças mais velhas.</li><li>É previsível e organizada.</li><li>As coordenadas viram um apoio verbal para o adulto e um possível apoio do PDI.</li></ul></div>
+      <div><h3>Limites</h3><ul><li>Pode parecer fria ou "de escola" para as crianças de 4 a 6 anos.</li><li>As coordenadas acrescentam informação que nem toda criança precisa.</li></ul></div>
+    </div>
+  </section>
+
+  <section class="dir" id="comparacao">
+    <div class="dir-head">
+      <span class="eyebrow">Comparação</span>
+      <h2>Lado a lado</h2>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th scope="col">Critério</th><th scope="col">A · Bandeja de madeira</th><th scope="col">B · Papel recortado</th><th scope="col">C · Mesa de montagem</th></tr></thead>
+        <tbody>
+          <tr><td>Estímulo visual</td><td>Baixo</td><td>Médio a alto</td><td>Baixo a médio</td></tr>
+          <tr><td>Faixa etária em que funciona melhor</td><td>4 a 12</td><td>4 a 8</td><td>7 a 12</td></tr>
+          <tr><td>Convivência com qualquer imagem</td><td>Muito boa (fundo neutro)</td><td>Média (cor da cartolina)</td><td>Muito boa (fundo neutro)</td></tr>
+          <tr><td>Apoio para o adulto mediar</td><td>Apontar a casa</td><td>Apontar a casa</td><td>Dizer a coordenada</td></tr>
+          <tr><td>Custo de execução até 31/10</td><td>Médio (textura de madeira)</td><td>Médio (inclinação e sombras)</td><td>Baixo (formas simples)</td></tr>
+          <tr><td>Impacto no pitch</td><td>Médio</td><td>Alto</td><td>Médio</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="dir common" id="regras">
+    <div class="dir-head">
+      <span class="eyebrow">Vale para qualquer direção</span>
+      <h2>Regras comuns</h2>
+    </div>
+    <h3>Layout no tablet e no computador</h3>
+    <ul>
+      <li>Tablet só na horizontal (proposta, pendente). Modelo e progresso ficam à esquerda, o tabuleiro no centro e a bandeja embaixo, com as 15 peças em até 2 linhas no começo.</li>
+      <li>Computador: o mesmo layout, ampliado cerca de 1,4×. Quando o grupo escolher a direção, o protótipo vai medir também janelas menores. A escala FIT, sozinha, não comprova usabilidade.</li>
+      <li>Alvos de toque de pelo menos 72 px lógicos nas peças e 56 px de altura nos botões.</li>
+    </ul>
+    <h3>Regras para as imagens personalizadas (geradas a partir da palavra)</h3>
+    <ul>
+      <li>Formato 5:3, para que cada peça seja um quadrado; outros formatos recebem margem, sem distorcer a imagem.</li>
+      <li>Um assunto principal grande, que ocupe pelo menos 3 das 5 colunas, e um cenário com regiões distintas (céu, chão, objeto), para que cada peça tenha alguma pista.</li>
+      <li>Evitar áreas grandes de cor uniforme, que geram peças idênticas, e texto dentro da imagem.</li>
+      <li>Cores sólidas, sem flashes nem padrões listrados de alto contraste.</li>
+      <li>Sempre com uma descrição em texto, para leitores de tela e para o adulto.</li>
+    </ul>
+    <h3>Estímulos ajustáveis</h3>
+    <ul>
+      <li>Som desligado por padrão, com botão sempre visível.</li>
+      <li>Movimento reduzido segue a preferência do sistema ou a configuração da atividade.</li>
+      <li>Nenhum estado depende só de cor: selecionado, encaixado e dica também têm forma, posição e texto.</li>
+    </ul>
+  </section>
+
+  <div class="decision">
+    <h3>Decisão do grupo</h3>
+    <p>Escolham uma direção (A, B ou C) ou uma combinação explícita, por exemplo "A com as coordenadas de C como apoio opcional". A escolha vai para <code>docs/quebra-cabeca/DIRECAO-ARTISTICA.md</code> e só então começa o detalhamento das interações e o protótipo.</p>
+  </div>
+</div>
+
+<script>
+const PLACED = [0, 1, 2, 5, 6, 10];
+const TRAY = [12, 7, 3, 14, 8, 11, 4, 13, 9];
+const SELECTED = 7;
+let tema = 'trem';
+
+const icon = {
+  back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+  hint: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9V16h7v-2.1A6 6 0 0 0 12 3z"/></svg>',
+  mute: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l4 6M21 9l-4 6"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>',
+};
+const crop = i => `<svg viewBox="${(i % 5) * 100} ${Math.floor(i / 5) * 100} 100 100" aria-hidden="true"><use href="#img-${tema}" width="500" height="300"/></svg>`;
+const coord = i => 'ABCDE'[i % 5] + (Math.floor(i / 5) + 1);
+
+function gameHTML(dir) {
+  const cells = Array.from({ length: 15 }, (_, i) => {
+    const placed = PLACED.includes(i);
+    const hint = i === SELECTED;
+    return `<div class="cell${hint ? ' hint' : ''}"><span class="coord">${coord(i)}</span>${placed ? `<div class="piece placed">${crop(i)}<span class="ok">${icon.check}</span></div>` : ''}${hint ? '<span class="hint-tag">Dica</span>' : ''}</div>`;
+  }).join('');
+  const tray = TRAY.map(i => `<div class="piece${i === SELECTED ? ' sel' : ''}">${crop(i)}${i === SELECTED ? '<span class="sel-tag">Esta peça</span>' : ''}</div>`).join('');
+  const dots = Array.from({ length: 15 }, (_, i) => `<i class="${i < PLACED.length ? 'on' : ''}"></i>`).join('');
+  return `<div class="g ${dir}">
+    <div class="bar"><span class="btn">${icon.back}Sair</span><span class="instr">Monte o ${tema === 'trem' ? 'trem' : 'desenho da baleia'}</span><span class="btn">${icon.hint}Ajuda</span><span class="btn">${icon.mute}Som</span></div>
+    <div class="ref"><div class="lbl">Modelo</div><div class="pic"><svg viewBox="0 0 500 300" role="img" aria-label="Imagem completa"><use href="#img-${tema}"/></svg></div></div>
+    <div class="prog"><div class="lbl">${PLACED.length} de 15 encaixadas</div><div class="dots">${dots}</div></div>
+    <div class="board">${cells}</div>
+    <div class="tray-lbl">Peças<small>Toque numa peça e depois na casa.</small></div>
+    <div class="tray">${tray}</div>
+  </div>`;
+}
+
+function render() {
+  for (const host of document.querySelectorAll('.screens')) {
+    const dir = host.dataset.dir;
+    host.innerHTML = `
+      <figure><div class="device tab"><div class="screen"><div class="stage">${gameHTML(dir)}</div></div></div><figcaption>Tablet na horizontal (1024 × 768): casa do tabuleiro ≈ 2,1 cm, peça da bandeja ≈ 1,5 cm.</figcaption></figure>
+      <figure><div class="device desk"><div class="screen"><div class="stage">${gameHTML(dir)}</div></div></div><figcaption>Computador (janela de 1440 × 900): o mesmo layout, ampliado; o jogo abre direto, sem o menu.</figcaption></figure>`;
+  }
+  fit();
+}
+function fit() {
+  for (const screen of document.querySelectorAll('.screen')) {
+    const stage = screen.querySelector('.stage');
+    const s = Math.min(screen.clientWidth / 960, screen.clientHeight / 600);
+    stage.style.transform = `scale(${s}) translate(-50%, -50%)`;
+  }
+}
+for (const b of document.querySelectorAll('[data-tema]')) b.addEventListener('click', () => {
+  tema = b.dataset.tema;
+  document.querySelectorAll('[data-tema]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  render();
+});
+new ResizeObserver(fit).observe(document.querySelector('.wrap'));
+render();
+</script>
