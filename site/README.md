@@ -1,6 +1,6 @@
 # Site Dopamine
 
-O site que integra a escola, a família e a criança. Os jogos ficam na raiz do repo (`src/games/`) e a leitura do PDI fica em `pdi/`. O site usa os dois.
+O site que integra a escola, a família e a criança. Os jogos ficam em `hub/` e a leitura do PDI fica em `pdi/`. O site usa os dois.
 
 - `site/web`: React + Vite (porta 5180). Áreas: login, escola, desempenho, família e criança.
 - `site/server`: Node + Express (porta 3001). Fala com o Supabase e chama `pdi/` para ler o PDI. As chaves ficam só aqui.
@@ -38,11 +38,21 @@ Contas de demonstração (senha `demo`): `escola@demo.com`, `familia@demo.com`, 
 3. **Criança:** escolhe o tema de hiperfoco, joga só os jogos aprovados, ganha XP e desbloqueia itens da coleção.
 4. **Escola > Ver desempenho:** relatório simplificado por jogo.
 
-## Integração com os jogos (a combinar)
+## Jogos e tags do PDI
 
-Hoje a tela do jogo (`site/web/src/telas/Jogo.jsx`) é um placeholder que simula uma partida. O ponto único de integração é `site/web/src/jogos/integracao.js`, que segue `src/core/contracts.js`. O site monta uma `activity` (`activityId`, `gameId`, `theme`, `images`) e recebe um resultado como o de `createResult()` (`status`, `attempts`, `correct`, `hints`). Ainda falta combinar com a equipe dos jogos como cada jogo é carregado (importando a cena ou por iframe) e de onde vêm as imagens de cada tema.
+Os jogos moram em `hub/src/jogos/` (cada um com `manifesto.js` e `index.js`, contrato em `hub/src/jogos/contrato.js`). O site importa direto de lá pelo alias `@hub` (`site/web/vite.config.js`) e abre o jogo com `montar()` em `site/web/src/jogos/integracao.js`. O Phaser vem do `site/web`, o `hub/` não precisa de `npm install` para o site funcionar.
 
-O catálogo de jogos e as habilidades que cada um trabalha estão em `schema.sql` (tabela `jogos`). Por enquanto são **provisórios**.
+Como as tags do PDI viram jogos:
+
+1. A IA lê o PDI e devolve os tópicos (tags de habilidade, em `pdi/src/habilidades.js`).
+2. O manifesto de cada jogo declara quais habilidades ele treina (`habilidades`).
+3. O servidor sugere os jogos que treinam pelo menos uma tag do PDI, com os que cobrem mais tags primeiro (`sugerirJogos` em `site/server/src/regras.js`). Na tela da escola, as tags do jogo que vieram do PDI aparecem em destaque.
+4. A escola aprova. A criança só vê os aprovados, e o jogo abre com o tema dela e o nível do PDI.
+5. Ao terminar (ou sair), o jogo envia `{ status, attempts, correct, hints }` para `/alunos/:id/resultados`.
+
+**Catálogo automático:** ao subir, o servidor copia os manifestos do hub para a tabela `jogos` do Supabase e acrescenta, como "sugerido", os jogos novos para quem já tem PDI (decisões da escola não mudam). Também dá para rodar à mão com `cd site/server && npm run sincronizar-jogos`.
+
+Limitação: os temas do site (trem, dinossauro, avião, navio) e os do hub (trem, aranha, avião, dinossauro) ainda são diferentes. Para o navio, os jogos usam o tema trem.
 
 ## Identidade visual (Gump)
 
