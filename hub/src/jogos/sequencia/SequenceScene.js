@@ -1,6 +1,6 @@
 import { BaseGameScene } from '../../compartilhado/atividade/BaseGameScene.js';
 import { computeLayout } from './layout.js';
-import { choose, createRound, createSession, hintText, showHint, unlock, validateSequenceExtras } from './rules.js';
+import { choose, createRounds, createSession, hintText, showHint, unlock, validateSequenceExtras } from './rules.js';
 import regularFont from './assets/fonts/atkinson-hyperlegible-400.woff2';
 import boldFont from './assets/fonts/atkinson-hyperlegible-700.woff2';
 
@@ -17,7 +17,9 @@ export const EXIT_EVENT = 'activity-exit';
 export class SequenceScene extends BaseGameScene {
   init(activity) {
     super.init(validateSequenceExtras(activity));
-    this.round = createRound(this.activity.images);
+    this.rounds = createRounds(this.activity.images);
+    this.roundIndex = 0;
+    this.round = this.rounds[0];
     this.session = createSession(this.metrics);
     this.message = '';
     this.showEnd = false;
@@ -75,7 +77,7 @@ export class SequenceScene extends BaseGameScene {
     const tray = this.add.graphics().fillStyle(C.tray, 1);
     tray.fillRoundedRect(L.tray.x, L.tray.y, L.tray.w, L.tray.h, { tl: L.tray.radius, tr: 0, bl: 0, br: 0 });
     this.ui.add(tray);
-    this.ui.add(this.text(L.trayTitle.x, L.trayTitle.y, this.showEnd ? 'Muito bem' : 'Escolha uma', 18, { bold: true }));
+    this.ui.add(this.text(L.trayTitle.x, L.trayTitle.y, this.showEnd ? 'Muito bem' : `Escolha uma · ${this.roundIndex + 1} de ${this.rounds.length}`, 18, { bold: true }));
 
     this.optionViews = [];
     if (this.showEnd) {
@@ -185,18 +187,32 @@ export class SequenceScene extends BaseGameScene {
   onRight(view) {
     this.message = '';
     this.msgLine.setText('');
-    this.finish('completed');
+    const last = this.roundIndex === this.rounds.length - 1;
+    if (last) this.finish('completed');
     // O avanço depende do relógio, não do tween: um resize no meio do voo não trava o jogo.
     const done = () => {
-      this.message = 'Você completou!';
+      this.message = last ? 'Você completou!' : 'Muito bem!';
       this.render();
-      this.time.delayedCall(700, () => { this.showEnd = true; this.render(); });
+      this.time.delayedCall(last ? 700 : 900, () => (last ? this.showFinal() : this.nextRound()));
     };
     if (this.reducedMotion) return done();
     const target = this.layout.slots[4];
     this.ui.bringToTop(view);
     this.tweens.add({ targets: view, x: target.x, y: target.y, scale: this.layout.slot / this.layout.opt, duration: FLIGHT_MS, ease: 'Cubic.easeOut' });
     this.time.delayedCall(FLIGHT_MS + 10, done);
+  }
+
+  showFinal() {
+    this.showEnd = true;
+    this.render();
+  }
+
+  nextRound() {
+    this.roundIndex++;
+    this.round = this.rounds[this.roundIndex];
+    this.session = createSession(this.metrics);
+    this.message = '';
+    this.render();
   }
 
   replay() {
