@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#f4efe4"><title>Complete a sequência</title><link rel="icon" href="data:,"></head>
+<body class="seq">
+  <main>
+    <h1 hidden>Complete a sequência</h1>
+    <section id="seq-game" aria-label="Atividade: o que vem depois na sequência?"></section>
+    <button id="seq-exit" hidden aria-label="Sair da atividade">✕ Sair</button>
+
+    <section class="seq-overlay" id="seq-loading"><p role="status">Preparando as imagens…</p></section>
+    <section class="seq-overlay" id="seq-error" hidden>
+      <p role="alert">Não conseguimos abrir as imagens.</p>
+      <div class="seq-actions"><button class="primary" id="seq-retry">Tentar de novo</button><button id="seq-back">Voltar</button></div>
+    </section>
+    <section class="seq-overlay" id="seq-left" hidden>
+      <p>Você saiu da atividade.</p>
+      <p class="note">Na plataforma, esta tela será substituída pela volta ao menu dela.</p>
+      <button class="primary" id="seq-reenter">Entrar de novo</button>
+    </section>
+
+    <div class="seq-scrim" id="seq-confirm" hidden>
+      <div class="seq-dialog" role="dialog" aria-modal="true" aria-labelledby="seq-confirm-text">
+        <p id="seq-confirm-text">Quer sair da atividade?</p>
+        <div class="seq-actions"><button class="primary" id="seq-stay">Continuar</button><button id="seq-leave">Sair</button></div>
+      </div>
+    </div>
+    <pre id="seq-debug" hidden></pre>
+  </main>
+  <script type="module" src="/src/games/sequence/main.js"></script>
+</body>
+</html>
