@@ -43,3 +43,10 @@ Contas de demonstração (senha `demo`): `escola@demo.com`, `familia@demo.com`, 
 Hoje a tela do jogo (`site/web/src/telas/Jogo.jsx`) é um placeholder que simula uma partida. O ponto único de integração é `site/web/src/jogos/integracao.js`, que segue `src/core/contracts.js`. O site monta uma `activity` (`activityId`, `gameId`, `theme`, `images`) e recebe um resultado como o de `createResult()` (`status`, `attempts`, `correct`, `hints`). Ainda falta combinar com a equipe dos jogos como cada jogo é carregado (importando a cena ou por iframe) e de onde vêm as imagens de cada tema.
 
 O catálogo de jogos e as habilidades que cada um trabalha estão em `schema.sql` (tabela `jogos`). Por enquanto são **provisórios**.
+
+## Identidade visual (Gump)
+
+- Nome do produto: **Gump**. Mascote: beija-flor (`site/web/public/gump-beija-flor.svg`); ícone da aba: `site/web/public/favicon.svg`. No código, use o componente `site/web/src/telas/Logo.jsx`.
+- Paleta (tokens em `site/web/src/estilo.css`): verde esmeralda `#2E9E6B`, verde forte `#1F7A50` (botões e texto), rosa rubi `#D9406E`, pêssego `#FF9F6B`, texto `#1E3B2F`, fundo creme rosado `#FFF6F0`.
+- Fontes: Fredoka (logo e títulos) e Atkinson Hyperlegible (texto).
+- Já redesenhados: login (tela dividida) e área da escola. Faltam família, desempenho e criança.
