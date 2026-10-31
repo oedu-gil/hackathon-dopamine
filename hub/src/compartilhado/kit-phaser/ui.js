@@ -143,13 +143,34 @@ export function botao(scene, x, y, w, h, texto, aoClicar, cor = 0x2f6fed) {
   }
 }
 
-export function criarHud(scene, ctx) {
+// Parte do HUD que não depende do desenho: som, música, progresso e o que acontece no acerto
+// e no erro. `atualizar(estado)` redesenha o progresso; `mostrarDesbloqueio(item)` comemora.
+export function ligarHud(scene, ctx, { atualizar, mostrarDesbloqueio }) {
   // som e música valem para a cena inteira; a música para quando a cena termina
   configurarAudio({ sons: ctx.sons, musica: ctx.musica })
   iniciarMusica()
   scene.events.once('shutdown', pararMusica)
   scene.events.once('destroy', pararMusica)
 
+  atualizar(ctx.estado())
+
+  return {
+    // `origem` (opcional): objeto de onde saem as estrelinhas do acerto
+    acerto(origem) {
+      ctx.registrarTentativa(true)
+      sons.acerto()
+      if (origem) confete(scene, origem.x, origem.y - 20)
+      const e = atualizar(ctx.registrarAcerto())
+      if (e.novoItem) mostrarDesbloqueio(e.novoItem)
+    },
+    erro() {
+      ctx.registrarTentativa(false)
+      sons.erro()
+    },
+  }
+}
+
+export function criarHud(scene, ctx) {
   const larguraBarra = 220
   // fixo na tela (scrollFactor 0) e acima do cenário, para cenas com câmera que rola
   const fixo = (o) => o.setScrollFactor(0).setDepth(40)
@@ -204,22 +225,7 @@ export function criarHud(scene, ctx) {
     scene.time.delayedCall(2200, () => aviso.destroy())
   }
 
-  atualizar(ctx.estado())
-
-  return {
-    // `origem` (opcional): objeto de onde saem as estrelinhas do acerto
-    acerto(origem) {
-      ctx.registrarTentativa(true)
-      sons.acerto()
-      if (origem) confete(scene, origem.x, origem.y - 20)
-      const e = atualizar(ctx.registrarAcerto())
-      if (e.novoItem) mostrarDesbloqueio(e.novoItem)
-    },
-    erro() {
-      ctx.registrarTentativa(false)
-      sons.erro()
-    },
-  }
+  return ligarHud(scene, ctx, { atualizar, mostrarDesbloqueio })
 }
 
 export function telaFinal(scene, ctx, mensagem) {

@@ -1,9 +1,19 @@
 import Phaser from 'phaser'
 import { EMOCOES } from './emocoes.js'
 import { sons } from '../../compartilhado/kit-phaser/audio.js'
-import { caixaComIcone, caixaTexto, criarHud, telaFinal, embaralhar } from '../../compartilhado/kit-phaser/ui.js'
-import { imagem } from '../../compartilhado/kit-phaser/arte.js'
-import { balancar, confete, estourar, nuvens, respirar } from '../../compartilhado/kit-phaser/efeitos.js'
+import { embaralhar } from '../../compartilhado/kit-phaser/ui.js'
+import { balancar, confete, estourar } from '../../compartilhado/kit-phaser/efeitos.js'
+import {
+  FONTES,
+  PAPEL,
+  adesivo,
+  carregarCenario,
+  cartao,
+  criarHudPapel,
+  desenharCenario,
+  rotulo,
+  telaFinalPapel,
+} from '../../compartilhado/kit-phaser/papel.js'
 
 const ACERTOS_POR_ALVO = 4
 const META = 12
@@ -12,10 +22,12 @@ const RAIO_SUPER = 85
 const DURACAO_SUPER = 6000
 const INTERVALO_BONUS = 14000
 const TAMANHO_ROSTO = 56
+const CHAO = 388 // altura do personagem, em pé no chão do cenário
 
 // Rostos caem e a criança pega só a emoção pedida. Começa devagar, com poucos rostos, e vai
 // acelerando conforme ela acerta. Errar não tira pontos. De vez em quando cai uma estrela
 // dourada que dá um "super" por alguns segundos (a criança pega rostos num raio maior).
+// Visual "papel recortado" (kit-phaser/papel.js): cenário do tema e rostos como adesivos.
 export default class ChuvaEmocoes extends Phaser.Scene {
   constructor() {
     super('ChuvaEmocoes')
@@ -25,9 +37,13 @@ export default class ChuvaEmocoes extends Phaser.Scene {
     this.ctx = this.registry.get('ctx')
   }
 
+  preload() {
+    carregarCenario(this, this.ctx.hiperfoco.id)
+  }
+
   create() {
     const { hiperfoco, nivel } = this.ctx
-    this.cameras.main.setBackgroundColor(hiperfoco.cor)
+    desenharCenario(this, hiperfoco.id)
 
     this.emocoes = EMOCOES.slice(0, [3, 5, 7][nivel - 1] ?? 3)
     this.acertos = 0
@@ -38,20 +54,14 @@ export default class ChuvaEmocoes extends Phaser.Scene {
     this.superAte = 0
     this.proximoBonus = this.time.now + INTERVALO_BONUS
 
-    nuvens(this)
-    this.hud = criarHud(this, this.ctx)
-    this.titulo = caixaComIcone(this, 400, 92, {}, { fontSize: '28px', color: '#ffffff' }, { alpha: 0.4, tamanho: 48 })
-    this.dica = caixaTexto(
-      this,
-      400,
-      150,
-      '',
-      { fontSize: '20px', color: '#ffe9a8' },
-      { px: 12, py: 5, alpha: 0.35 },
-    )
-    this.aura = this.add.circle(400, 410, RAIO_SUPER, 0xffd447, 0.25).setVisible(false)
-    this.jogador = imagem(this, 400, 405, hiperfoco.arte, 84)
-    respirar(this, this.jogador)
+    this.hud = criarHudPapel(this, this.ctx)
+    this.titulo = this.criarPedido()
+    this.dica = rotulo(this, 400, 158, '', { tamanho: 20, cor: '#ffffff', fundo: PAPEL.destaque, py: 6, depth: 30 })
+    this.aura = this.add
+      .circle(400, CHAO, RAIO_SUPER, PAPEL.amarelo, 0.35)
+      .setStrokeStyle(3, PAPEL.tinta, 0.6)
+      .setVisible(false)
+    this.jogador = adesivo(this, 400, CHAO, hiperfoco.arte, 84, { sombra: 4 }).setDepth(5)
 
     this.setas = this.input.keyboard.createCursorKeys()
     const seguir = (p) => {
@@ -84,10 +94,37 @@ export default class ChuvaEmocoes extends Phaser.Scene {
     })
   }
 
+  // Cartão do pedido: "Pegue: [rosto] Triste". O rosto é o mesmo adesivo que cai do céu.
+  criarPedido() {
+    const y = 96
+    const tamanho = 50
+    const folga = 12
+    const fundo = cartao(this, 400, y, 10, 10, { raio: 20, sombra: 5 }).setDepth(30)
+    const estilo = { fontFamily: FONTES.titulo, fontSize: '30px', color: PAPEL.tintaCss }
+    const antes = this.add.text(0, y + 2, 'Pegue:', estilo).setOrigin(0, 0.5).setDepth(31)
+    const depois = this.add.text(0, y + 2, '', estilo).setOrigin(0, 0.5).setDepth(31)
+    let rosto = null
+    return {
+      definir: (emocao) => {
+        if (!rosto) rosto = adesivo(this, 0, y, emocao.arte, tamanho, { parado: true }).setDepth(31)
+        else rosto.trocar(emocao.arte, { parado: true })
+        depois.setText(emocao.nome)
+        const total = antes.width + tamanho + depois.width + folga * 2
+        let x = 400 - total / 2
+        antes.setX(x)
+        x += antes.width + folga
+        rosto.setX(x + tamanho / 2)
+        x += tamanho + folga
+        depois.setX(x)
+        fundo.desenhar(total + 44, 68)
+      },
+    }
+  }
+
   novoAlvo() {
     const outras = this.emocoes.filter((e) => e !== this.alvo)
     this.alvo = embaralhar(outras)[0]
-    this.titulo.definir({ antes: 'Pegue:', icone: this.alvo.arte, depois: this.alvo.nome })
+    this.titulo.definir(this.alvo)
   }
 
   soltar() {
@@ -99,7 +136,7 @@ export default class ChuvaEmocoes extends Phaser.Scene {
       emocao = null
       this.proximoBonus = this.time.now + INTERVALO_BONUS
     }
-    const obj = imagem(this, x, -30, bonus ? 'estrela_bonus' : emocao.arte, TAMANHO_ROSTO)
+    const obj = adesivo(this, x, -40, bonus ? 'estrela_bonus' : emocao.arte, TAMANHO_ROSTO).setDepth(10)
     this.itens.push({ obj, emocao, bonus, fase: Math.random() * 6.28 })
   }
 
@@ -118,8 +155,8 @@ export default class ChuvaEmocoes extends Phaser.Scene {
     const queda = this.velocidadeQueda()
     for (const item of [...this.itens]) {
       item.obj.y += queda * passo
-      // os rostos balançam enquanto caem
-      if (this.ctx.efeitos) item.obj.setAngle(Math.sin(this.time.now / 220 + item.fase) * 14)
+      // os rostos balançam de leve enquanto caem, como papel
+      if (this.ctx.efeitos) item.obj.setAngle(Math.sin(this.time.now / 300 + item.fase) * 8)
       const perto =
         Math.abs(item.obj.x - this.jogador.x) < raio && Math.abs(item.obj.y - this.jogador.y) < raio
       if (perto) this.pegar(item)
@@ -176,6 +213,6 @@ export default class ChuvaEmocoes extends Phaser.Scene {
 
   terminar() {
     this.fim = true
-    telaFinal(this, this.ctx, 'Muito bem!\nVocê reconheceu as emoções!')
+    telaFinalPapel(this, this.ctx, 'Muito bem!\nVocê reconheceu as emoções!')
   }
 }
