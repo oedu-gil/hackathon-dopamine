@@ -77,3 +77,9 @@ A habilidade `cooperacao` (Cooperação) é aceita pela leitura do PDI e corresp
 Para testar o percurso completo, entre como escola, envie um PDF fictício que descreva explicitamente um objetivo de cooperação em dupla (texto de exemplo em `docs/cooperativo/PDI-COOPERACAO-EXEMPLO.txt`), revise o resultado e aprove Guerra de tortas. Depois entre como criança para abrir o jogo. PDIs antigos não são reclassificados automaticamente e jogos não são liberados sem aprovação da escola. O envio de um novo PDI reinicia as aprovações do aluno, conforme o fluxo existente.
 
 Teste automatizado `site/server/src/cooperacao.test.js` liga o catálogo de habilidades, o prompt, o processamento de resposta simulada da LLM e o manifesto real do jogo. Não usa a API paga nem modifica dados de alunos.
+
+## Experimentar Guerra de Tortas dentro do site
+
+A página inicial possui o botão Experimentar Guerra de Tortas, que abre #/experimentar/guerra-tortas dentro da aplicação React. O jogo é montado no palco do site e volta à página inicial ao sair, com confirmação. Esta entrada pública/adulta não consulta a API nem grava XP, PDI ou resultados: permite conhecer a brincadeira mesmo se o servidor estiver indisponível. O perfil infantil continua na área de jogos aprovados pela escola e é redirecionado ao tentar essa rota.
+
+Verificação reproduzível: node tools/verificar-demo-tortas.cjs <modulo-playwright>. O teste bloqueia toda API, entra pela página inicial, inicia a demonstração, defende, lança e acerta uma torta, verifica confirmação/saída e desmontagem, e confere o redirecionamento do perfil infantil. O acesso infantil com XP permanece no percurso PDI → aprovação → criança; não é substituído pela demonstração.

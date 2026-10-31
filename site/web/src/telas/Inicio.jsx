@@ -55,7 +55,14 @@ export default function Inicio({ areaDoUsuario }) {
           ))}
         </div>
 
-        <h1 className="vitrine-marca"><Logo tamanho={140} animado /></h1>
+        <div className="vitrine-convite">
+          <h1 className="vitrine-marca"><Logo tamanho={140} animado /></h1>
+          {areaDoUsuario !== '/crianca' && (
+            <Link className="botao demo-tortas-entrada" to="/experimentar/guerra-tortas">
+              <Icone nome="jogar" tamanho={24} /> Experimentar Guerra de Tortas
+            </Link>
+          )}
+        </div>
 
         <button type="button" className="vitrine-pausa" onClick={() => setPausado(!pausado)} aria-pressed={pausado}>
           <Icone nome={pausado ? 'jogar' : 'pausar'} tamanho={20} /> {pausado ? 'Continuar' : 'Pausar'}
