@@ -1,0 +1,145 @@
+/* Hub de jogos: área da criança (DESIGN.md). Cores calmas, fonte grande e arredondada,
+   alvos de toque grandes, movimento só como feedback curto. */
+:root {
+  --papel: #f4efe4;
+  --cartao: #fffdf8;
+  --tinta: #1f2a2e;
+  --suave: #5f584d;
+  --borda: #d9cfbd;
+  --tema: #3d6b56;
+  font-family: 'Fredoka', ui-rounded, system-ui, sans-serif;
+  font-size: 20px;
+  line-height: 1.35;
+  color: var(--tinta);
+  background: var(--papel);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--papel); }
+[hidden] { display: none !important; }
+
+button {
+  font: inherit;
+  font-weight: 600;
+  color: var(--tinta);
+  min-height: 56px;
+  min-width: 56px;
+  padding: 0 20px;
+  border: 2px solid var(--tinta);
+  border-radius: 16px;
+  background: var(--cartao);
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 120ms ease-out;
+}
+button:active { transform: scale(0.97); }
+button:focus-visible { outline: 4px solid var(--tema); outline-offset: 3px; }
+button.principal { background: var(--tema); border-color: var(--tema); color: #fff; }
+
+.moldura { min-height: 100dvh; display: flex; flex-direction: column; }
+
+/* Mesma barra em todas as telas: botão, título, personagem do tema. */
+.topo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-height: 80px;
+  padding: 12px 16px;
+  border-bottom: 4px solid var(--tema);
+  background: var(--cartao);
+}
+.topo-botao { justify-self: start; }
+.topo-titulo { margin: 0; font-size: 28px; font-weight: 600; text-align: center; }
+.topo-tema { justify-self: end; width: 56px; height: 56px; }
+
+.conteudo { flex: 1; display: flex; flex-direction: column; padding: 24px 16px; }
+
+.grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 24px;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.cartao {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 200px;
+  padding: 20px 16px;
+  border: 3px solid var(--borda);
+  border-radius: 24px;
+  background: var(--cartao);
+}
+.cartao:hover { border-color: var(--tema); }
+.cartao img { width: 112px; height: 112px; object-fit: contain; }
+.cartao-nome { font-size: 22px; text-align: center; }
+
+.aviso {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 520px;
+  margin: auto;
+  padding: 32px 24px;
+  text-align: center;
+  background: var(--cartao);
+  border: 3px solid var(--borda);
+  border-radius: 24px;
+}
+.aviso img { width: 160px; height: 160px; object-fit: contain; }
+.aviso p { margin: 0; font-size: 22px; }
+.aviso .principal { min-width: 200px; min-height: 64px; font-size: 24px; }
+
+/* O jogo ocupa todo o espaço abaixo da barra. */
+.moldura-jogo { height: 100dvh; }
+.moldura-jogo .conteudo { padding: 0; position: relative; min-height: 0; }
+.palco { position: absolute; inset: 0; overflow: auto; }
+.palco canvas { display: block; touch-action: none; }
+.aviso.sobre { position: absolute; inset: 0; margin: 0; max-width: none; border: 0; border-radius: 0; justify-content: center; }
+
+.escurecer {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(31, 42, 46, 0.45);
+}
+.dialogo {
+  width: 100%;
+  max-width: 380px;
+  padding: 28px 24px;
+  text-align: center;
+  background: var(--papel);
+  border: 3px solid var(--tinta);
+  border-radius: 24px;
+}
+.dialogo p { margin: 0 0 24px; font-size: 24px; font-weight: 600; }
+.acoes { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.acoes button { min-width: 140px; }
+
+@media (max-width: 560px) {
+  .topo { grid-template-columns: auto 1fr auto; }
+  .topo-titulo { font-size: 22px; }
+  .grade { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .cartao { min-height: 168px; }
+  .cartao img { width: 88px; height: 88px; }
+  .cartao-nome { font-size: 19px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button { transition: none; }
+  button:active { transform: none; }
+}

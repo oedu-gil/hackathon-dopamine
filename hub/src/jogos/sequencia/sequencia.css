@@ -1,0 +1,25 @@
+/* Estilos só da sequência, presos ao elemento .seq que o index.js cria. */
+@font-face { font-family:'AtkinsonSeq'; src:url('./assets/fonts/atkinson-hyperlegible-400.woff2') format('woff2'); font-weight:400; }
+@font-face { font-family:'AtkinsonSeqBold'; src:url('./assets/fonts/atkinson-hyperlegible-700.woff2') format('woff2'); font-weight:700; }
+
+.seq { --paper:#f4efe4; --card:#fffdf8; --ink:#1f2a2e; --muted:#6b6458; --ok:#2f6b4f;
+  position:relative; height:100%; overflow:hidden; overscroll-behavior:none; background:var(--paper); color:var(--ink);
+  font-family:'AtkinsonSeq', system-ui, sans-serif; -webkit-tap-highlight-color:transparent; }
+.seq [hidden] { display:none !important; }
+.seq .seq-game { position:absolute; inset:0; }
+.seq canvas { display:block; touch-action:none; }
+.seq button { font-family:'AtkinsonSeqBold', system-ui, sans-serif; font-size:17px; color:var(--ink); min-height:48px; min-width:48px; padding:0 14px;
+  border:2px solid var(--ink); border-radius:10px; background:var(--card); cursor:pointer; touch-action:manipulation; user-select:none; -webkit-user-select:none; }
+.seq button.primary { background:var(--ink); color:var(--card); }
+.seq button:focus-visible { outline:3px solid var(--ok); outline-offset:3px; }
+
+.seq .seq-overlay { position:absolute; inset:0; z-index:3; background:var(--paper); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:24px; text-align:center; }
+.seq .seq-overlay p { margin:0; font-size:20px; max-width:28ch; }
+.seq .seq-overlay .note { font-size:15px; color:var(--muted); }
+.seq .seq-actions { display:flex; gap:16px; flex-wrap:wrap; justify-content:center; }
+
+.seq .seq-scrim { position:absolute; inset:0; z-index:4; background:rgba(31,42,46,.45); display:flex; align-items:center; justify-content:center; padding:16px; }
+.seq .seq-dialog { background:var(--paper); border:3px solid var(--ink); border-radius:16px; padding:24px; max-width:340px; width:100%; text-align:center; }
+.seq .seq-dialog p { font-family:'AtkinsonSeqBold', system-ui, sans-serif; font-size:20px; margin:0 0 20px; }
+.seq .seq-dialog button { min-width:120px; }
+

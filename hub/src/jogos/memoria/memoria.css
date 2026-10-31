@@ -1,0 +1,73 @@
+/* Estilos só do jogo da memória, presos ao elemento .memoria que o index.js cria. */
+.memoria {
+  font-family: ui-rounded, 'Arial Rounded MT Bold', 'Trebuchet MS', Arial, sans-serif;
+  color: #273f50;
+  background: #ead7b8;
+  font-synthesis: none;
+  color-scheme: light;
+  box-sizing: border-box;
+  min-height: 100%;
+  padding: clamp(16px, 3vw, 32px);
+  background: #ead7b8 url('./assets/light-oak.svg') center top / 1600px 1000px;
+}
+.memoria * { box-sizing: border-box; }
+.memoria button, .memoria input { font: inherit; }
+.memoria button { cursor: pointer; touch-action: manipulation; }
+.memoria button:disabled { cursor: wait; }
+.memoria button:focus-visible, .memoria input:focus-visible { outline: 3px solid #273f50; outline-offset: 5px; }
+.memoria [hidden] { display: none !important; }
+.memoria .album { max-width: 780px; margin: auto; }
+.memoria header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.memoria .brand, .memoria #theme {
+  background: #fffaf0;
+  border-radius: 12px;
+  padding: 8px 14px;
+  box-shadow: 0 2px 2px #795a3420, 0 5px 12px #795a3410;
+}
+.memoria .brand { display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: 15px; }
+.memoria .brand > span { font-size: 26px; color: #476a84; }
+.memoria #theme { color: #385569; font-size: 14px; overflow-wrap: anywhere; max-width: 100%; }
+.memoria .heading {
+  max-width: 630px;
+  margin: 24px auto 20px;
+  padding: 22px 24px;
+  text-align: center;
+  background: #fffaf0;
+  border-radius: 20px;
+  box-shadow: 0 2px 1px #795a3420, 0 7px 20px #795a3412;
+}
+.memoria .eyebrow { font-size: 14px; font-weight: 700; letter-spacing: .3px; color: #385569; margin: 0; }
+.memoria h1 { font-size: clamp(34px, 5vw, 44px); font-weight: 700; line-height: 1.15; margin: 8px 0 12px; }
+.memoria #message { max-width: 440px; margin: auto; font-size: 18px; line-height: 1.45; min-height: 52px; text-wrap: balance; }
+.memoria .board { max-width: 580px; width: 100%; aspect-ratio: 3/2; position: relative; margin: auto; }
+.memoria #canvas-host, .memoria #cards { position: absolute; inset: 0; }
+.memoria canvas { display: block; }
+.memoria #cards { pointer-events: none; }
+.memoria .card-button { position: absolute; background: transparent; border: 0; border-radius: 19px; padding: 0; color: #273f50; pointer-events: auto; touch-action: manipulation; }
+.memoria .card-button[aria-disabled=true] { cursor: default; }
+.memoria .card-button:focus-visible { outline-offset: 1px; }
+.memoria footer { max-width: 580px; min-height: 64px; margin: 18px auto 0; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 16px; }
+.memoria #progress { display: grid; gap: 7px; justify-items: center; background: #fffaf0; padding: 10px 14px; border-radius: 14px; box-shadow: 0 2px 3px #795a341c; }
+.memoria #progress-text { font-size: 14px; }
+.memoria .pair-markers { display: flex; gap: 9px; }
+.memoria .pair-markers > span { display: block; width: 19px; height: 22px; border: 2px solid #9ab1c0; background: #e4edf2; border-radius: 5px; box-shadow: 3px 2px 0 #c4d2d9; }
+.memoria .pair-markers > .found { background: #355e4e; border-color: #355e4e; color: #fffaf0; }
+.memoria .pair-markers > .found::after { content: '✓'; display: block; text-align: center; font: 700 14px/18px Arial, sans-serif; }
+.memoria #action { background: #476a84; color: #fffefa; border: 0; border-radius: 18px; padding: 16px 23px; min-height: 56px; font-size: 19px; font-weight: 700; box-shadow: 0 3px 0 #304f64, 0 6px 10px #795a3426; }
+.memoria #action:disabled { opacity: .7; }
+.memoria #action:active:not(:disabled) { box-shadow: 0 1px 0 #304f64, 0 3px 6px #795a3426; transform: translateY(2px); }
+.memoria #error { max-width: 580px; margin: 20px auto; font-size: 17px; line-height: 1.5; background: #fffaf0; padding: 20px; border-radius: 18px; }
+@media (max-width: 460px) {
+  .memoria { padding: 16px; }
+  .memoria header { gap: 8px; }
+  .memoria .brand { font-size: 13px; padding: 6px 10px; }
+  .memoria #theme { font-size: 13px; padding: 8px 10px; }
+  .memoria .heading { margin: 18px auto 14px; padding: 16px 14px; }
+  .memoria .eyebrow { font-size: 13px; }
+  .memoria h1 { font-size: 34px; margin: 7px 0 9px; }
+  .memoria #message { font-size: 17px; min-height: 50px; }
+  .memoria .board { aspect-ratio: 2/2.7; }
+  .memoria footer { margin-top: 12px; }
+  .memoria #progress { padding: 9px 11px; }
+  .memoria #action { font-size: 17px; padding: 15px 18px; }
+}
