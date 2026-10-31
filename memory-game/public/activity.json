@@ -1,0 +1,8 @@
+{
+  "theme": "Transportes",
+  "images": [
+    { "id": "train", "url": "./assets/train.svg", "description": "Trem" },
+    { "id": "rocket", "url": "./assets/rocket.svg", "description": "Foguete" },
+    { "id": "sailboat", "url": "./assets/sailboat.svg", "description": "Veleiro" }
+  ]
+}
