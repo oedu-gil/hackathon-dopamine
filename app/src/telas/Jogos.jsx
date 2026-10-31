@@ -99,7 +99,7 @@ export default function Jogos({
           Desempenho (educador)
         </button>
         <button className="secundario" onClick={trocar}>
-          Trocar hiperfoco
+          Trocar tema
         </button>
       </div>
     </section>

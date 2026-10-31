@@ -139,7 +139,7 @@ rotas.patch('/alunos/:alunoId/jogos/:jogoId', soEscola, async (req, res) => {
 
 rotas.patch('/alunos/:alunoId/hiperfoco', async (req, res) => {
   const { hiperfoco } = req.body ?? {}
-  if (typeof hiperfoco !== 'string' || !hiperfoco) return res.status(400).json({ erro: 'Hiperfoco inválido.' })
+  if (typeof hiperfoco !== 'string' || !hiperfoco) return res.status(400).json({ erro: 'Tema inválido.' })
   const [aluno] = await q(db.from('alunos').update({ hiperfoco }).eq('id', req.params.alunoId).select())
   res.json(aluno)
 })
