@@ -92,10 +92,10 @@ label { display: flex; flex-direction: column; gap: 6px; font-weight: 700; }
 .capa-rodape span { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
 .capa-rodape strong { font-family: var(--titulo); font-weight: 600; color: var(--tinta); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .capa-rodape small { color: var(--suave); font-size: 0.8rem; }
-/* Marca no centro: sem caixa, só um brilho claro atrás para destacar das capas. */
+/* Marca no centro: sem caixa, só uma sombra escura e esfumada atrás para destacar das capas. */
 .vitrine-marca { position: relative; z-index: 2; margin: 0; display: grid; place-items: center; }
-.vitrine-marca::before { content: ''; position: absolute; inset: -60% -35%; z-index: -1; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 246, 240, 0.97), rgba(255, 246, 240, 0.85) 45%, rgba(255, 246, 240, 0)); filter: blur(6px); }
-.vitrine-marca .logo { font-size: clamp(72px, 13vw, 168px) !important; filter: drop-shadow(0 6px 18px rgba(30, 59, 47, 0.25)); }
+.vitrine-marca::before { content: ''; position: absolute; inset: -60% -35%; z-index: -1; border-radius: 50%; background: radial-gradient(closest-side, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.35) 50%, rgba(0, 0, 0, 0)); filter: blur(10px); }
+.vitrine-marca .logo { font-size: clamp(72px, 13vw, 168px) !important; filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.35)); }
 .vitrine-pausa { position: absolute; z-index: 2; right: 16px; bottom: 16px; border: none; background: rgba(255, 255, 255, 0.92); }
 
 /* ---------------------------------------------------------------- Login: cartão sobre o cenário */
