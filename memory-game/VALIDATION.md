@@ -1,0 +1,72 @@
+# Verificação da entrega — 30/10/2026 (America/Sao_Paulo)
+
+## Instalação e comandos
+
+- `npm ci --offline --ignore-scripts`: instalação própria pelo lockfile, a partir do cache local; 17 pacotes instalados.
+- `npm test`: 8 testes passaram.
+- `npm run build`: sucesso. O bundle inclui Phaser: aproximadamente 1,37 MB / 360 KB gzip. Vite informa o aviso de chunk acima de 500 KB; não foi ocultado.
+- `npm run dev`: porta 5181.
+- `npm run preview`: porta 4181.
+
+## Navegador (Chromium automatizado)
+
+- Renderer WebGL observado; tabuleiro e três SVGs carregados.
+- Começar por Enter posiciona o foco na primeira carta; Espaço abre a carta.
+- Clique repetido na carta aberta é ignorado. Durante comparação sem par, uma terceira carta não altera o estado.
+- Comparações sem par fecham automaticamente após 1,2 segundo; todas as cartas permanecem bloqueadas para cliques, teclado e toque durante a pausa.
+- Partida completa: três pares visíveis, mensagem de conclusão e Jogar novamente.
+- Reinício: todas as cartas fechadas e contador 0 de 3 pares.
+- Larguras 320, 460, 461, 736 e 1280: sem transbordamento horizontal, alvos maiores que 44 px e layout de duas/três colunas alinhado ao canvas.
+- Contexto móvel emulado, 390 × 844, toque real do driver: abertura da carta confirmada.
+- Preferência de movimento reduzido do sistema refletida no controle; alteração manual disponível.
+- Falha de um SVG: partida bloqueada, aviso visível e recuperação após tentar carregar novamente.
+- Configuração com zero imagens: mensagem de validação e recuperação confirmadas.
+- Build servido: uma partida completa, um canvas, nenhuma exceção de página e nenhuma resposta HTTP de erro. Assets solicitados somente ao servidor local.
+
+As falhas de recurso foram simuladas apenas por interceptação no navegador, sem alterar os arquivos de demonstração. Os testes de navegador desta entrega foram executados pelo driver disponível na sessão; não são parte de `npm test` e não instalam Playwright no pacote. Não houve verificação em aparelho móvel físico, leitor de tela ou com crianças/responsáveis.
+
+## Atualização: fechamento automático
+
+- Duração: `MISMATCH_DELAY_MS = 1200`, no relógio da cena Phaser. O timer é criado uma vez por erro e removido no shutdown da cena.
+- Botão Tentar de novo removido; ação manual não encerra mais a comparação.
+- Desenvolvimento: fechamento observado em aproximadamente 1218 ms; cliques repetidos e Enter não alteraram as cartas bloqueadas. Redimensionamento durante a pausa não reiniciou o timer. Nova escolha aceita após fechar.
+- Build servido: comparações fecharam automaticamente, três pares concluídos e reinício verificado. Toque emulado durante a pausa não abriu outra carta; desbloqueio automático confirmado.
+- Oito testes Node e build passaram após a alteração. A mensagem anterior de fechamento manual foi substituída pelo estado automático.
+
+## Atualização: cartas com virada em Phaser
+
+- Cartas persistentes compostas de containers, graphics, image e text Phaser; frente e verso trocam no meio do giro. Tween de 420 ms estreita a carta, eleva o corpo e ajusta sombra/sombreamento. Não há movimento contínuo.
+- A pausa de 1200 ms começa após terminar a abertura da segunda carta. As duas cartas erradas viram de volta juntas; o tabuleiro só desbloqueia após terminar o fechamento.
+- Navegador: amostra visual do canvas durante o giro; entradas repetidas ignoradas durante abertura e fechamento; partida completa no build, três erros fechando automaticamente e reinício confirmado, sem exceções de página.
+- Resize para 320 px durante uma virada manteve alinhamento e desbloqueio (duas colunas, sem overflow). Preferência reduzida pode ser ativada no meio do giro para concluir imediatamente.
+- Toque emulado confirmou bloqueio durante a virada e alteração da preferência durante animação sem travar a partida.
+- Oito testes Node e build passaram. Verificação em aparelho físico permanece pendente.
+
+## Atualização: mesa de madeira clara fosca
+
+- Fundo SVG local de madeira clara com veios pouco contrastados; etiquetas de papel para título e controles. Cor de tema do navegador alinhada à mesa.
+- Build concluído. No preview, SVG respondeu HTTP 200; larguras 320, 390, 736 e 1000 px sem overflow e com apenas um canvas.
+- Inspeção visual em desktop e captura mobile; clique abriu a carta e a animação terminou normalmente com o novo enquadramento.
+- Mudança restrita à apresentação, sem alteração nas regras ou no tempo das comparações.
+
+## Atualização: textos e espaçamentos para crianças
+
+- Título “Cadê o par?”, instrução curta, “Vamos brincar!” e “Brincar de novo”; mensagens breves de orientação e incentivo. Preferência renomeada para “Menos movimento”.
+- Tipografia maior e arredondada; título entre 34 e 44 px, instrução entre 17 e 18 px, botão com altura mínima de 56 px. Nomes das figuras ampliados dentro das cartas Phaser.
+- Três marcadores de pares com confirmação por símbolo, texto e cor; reset confirmado ao iniciar outra partida.
+- Build concluído, larguras 320, 390, 460, 736 e 1000 px sem overflow horizontal. Em 390 × 844, o botão inicial ficou inteiro no viewport após compactar o tabuleiro mobile.
+- Partida completa no preview: progresso 3 de 3, três marcadores concluídos, mensagem final e reinício verificados. Enter/Espaço preservados; nenhuma exceção de página.
+
+## Atualização: retirada do controle de movimento
+
+- Controle “Menos movimento” e seu espaço removidos da tela infantil. A preferência de movimento reduzido do sistema permanece automática, sem controles extras.
+- Build concluído. No navegador: nenhum elemento do antigo controle; virada ativa por padrão; mudança da preferência do sistema durante o giro concluiu a animação sem travar.
+- Estudos do novo verso foram preparados fora do código do jogo; a arte atual aguarda escolha da direção pelo usuário.
+
+## Atualização: verso temático minimalista
+
+- Mantidos terracota, creme e moldura da direção Sol de brincar; somente o símbolo central varia pelo campo `backImage` da atividade. Demonstração local: trem minimalista para Transportes.
+- Uma textura de verso compartilhada por todas as seis cartas; frentes carregadas com namespace separado para evitar colisão entre IDs das figuras e o verso.
+- Nove testes aprovados, incluindo validação do arquivo de verso, origem local e manutenção dos pares ao alterar o símbolo. Build concluído.
+- Preview: inspeção visual, abertura/fechamento, partida completa, reinício e nova abertura confirmados; 320 px sem overflow.
+- Configuração interceptada no navegador com tema Espaço e outra imagem de verso carregou sem modificar o código. Falha do arquivo de verso bloqueou a partida e recuperou após tentar novamente. Arquivos originais não foram alterados por essas simulações.
