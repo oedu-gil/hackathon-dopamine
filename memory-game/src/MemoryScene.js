@@ -11,10 +11,11 @@ export class MemoryScene extends Phaser.Scene {
     this.ui = ui;
   }
   preload() {
-    for (const image of this.activity.images) this.load.image(image.id, image.url);
+    for (const image of this.activity.images) this.load.image(`front:${image.id}`, image.url);
+    this.load.image('card-back', this.activity.backImage.url);
   }
   create() {
-    if (this.activity.images.some(image => !this.textures.exists(image.id))) {
+    if (!this.textures.exists('card-back') || this.activity.images.some(image => !this.textures.exists(`front:${image.id}`))) {
       this.ui.fail('Não foi possível abrir todas as imagens. Confira os arquivos da atividade e tente novamente.');
       return;
     }
@@ -34,10 +35,13 @@ export class MemoryScene extends Phaser.Scene {
     const shadow = this.add.graphics();
     const body = this.add.container();
     const edge = this.add.graphics();
-    const back = this.add.graphics();
+    const back = this.add.container();
+    const backPaper = this.add.graphics();
+    const backIcon = this.add.image(0, 0, 'card-back');
+    back.add([backPaper, backIcon]);
     const front = this.add.container();
     const paper = this.add.graphics();
-    const image = this.add.image(0, 0, card.id);
+    const image = this.add.image(0, 0, `front:${card.id}`);
     const label = this.add.text(0, 0, card.description, {
       fontFamily: 'Arial Rounded MT Bold, Trebuchet MS, Arial, sans-serif', fontSize: '17px', color: '#273f50', align: 'center'
     }).setOrigin(.5);
@@ -47,7 +51,7 @@ export class MemoryScene extends Phaser.Scene {
     body.add([edge, back, front, shade]);
     root.add([shadow, body]);
     front.setVisible(false);
-    return { root, shadow, body, edge, back, front, paper, image, label, check, shade,
+    return { root, shadow, body, edge, back, backPaper, backIcon, front, paper, image, label, check, shade,
       open: false, matched: false, progress: 1, fromOpen: false, toOpen: false };
   }
   select(index) {
@@ -132,7 +136,7 @@ export class MemoryScene extends Phaser.Scene {
       this.round = new MemoryRound(this.activity.images);
       this.round.start();
       this.views.forEach((view, index) => {
-        view.image.setTexture(this.round.cards[index].id);
+        view.image.setTexture(`front:${this.round.cards[index].id}`);
         view.label.setText(this.round.cards[index].description);
         view.open = view.fromOpen = view.toOpen = view.matched = false;
         view.progress = 1;
@@ -149,15 +153,12 @@ export class MemoryScene extends Phaser.Scene {
       const left = -w / 2, top = -h / 2;
       view.root.setPosition(x + w / 2, y + h / 2);
       view.shadow.clear().fillStyle(0x273f50, .12).fillRoundedRect(left + 1, top + 2, w - 2, h - 1, 18);
-      view.edge.clear().fillStyle(0xc4d2d9).fillRoundedRect(left, top + 3, w, h, 19);
-      view.back.clear().fillStyle(0xe4edf2).lineStyle(2, 0x9ab1c0);
-      view.back.fillRoundedRect(left, top, w, h, 19).strokeRoundedRect(left, top, w, h, 19);
-      view.back.lineStyle(1, 0xb9cbd6).strokeRoundedRect(left + 9, top + 9, w - 18, h - 18, 12);
-      view.back.lineStyle(2, 0x476a84);
-      view.back.beginPath();
-      view.back.moveTo(0, -10);view.back.lineTo(-14, -14);view.back.lineTo(-14, 9);
-      view.back.lineTo(0, 13);view.back.lineTo(14, 9);view.back.lineTo(14, -14);
-      view.back.lineTo(0, -10);view.back.lineTo(0, 13);view.back.strokePath();
+      view.edge.clear().fillStyle(0xa85440).fillRoundedRect(left, top + 3, w, h, 19);
+      view.backPaper.clear().fillStyle(0xc97055).lineStyle(2, 0xa85440);
+      view.backPaper.fillRoundedRect(left, top, w, h, 19).strokeRoundedRect(left, top, w, h, 19);
+      view.backPaper.lineStyle(1.5, 0xfff0d0, .6).strokeRoundedRect(left + 10, top + 10, w - 20, h - 20, 12);
+      const iconSize = Math.min(w, h) * .76;
+      view.backIcon.setScale(Math.min(iconSize / view.backIcon.width, iconSize / view.backIcon.height));
       view.paper.clear().fillStyle(0xfffefa).lineStyle(2, view.matched ? 0x355e4e : 0x9ab1c0);
       view.paper.fillRoundedRect(left, top, w, h, 19).strokeRoundedRect(left, top, w, h, 19);
       view.image.setPosition(0, -h * .08);

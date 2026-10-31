@@ -25,15 +25,27 @@ O preview fica em http://127.0.0.1:4181 . Publique o conteúdo de `dist/` em um 
 
 1. Coloque três imagens distintas em `public/assets/` (PNG, JPEG, WebP ou SVG confiável).
 2. Edite `public/activity.json`: `theme` é o interesse; cada imagem possui `id` único, `url` relativa ao arquivo da atividade e `description` curta (idealmente até três palavras).
-3. Execute novamente o build para atualizar uma entrega já gerada.
+3. Configure `backImage` com `url` e `description` do símbolo que representa esse interesse. É uma imagem adicional, compartilhada por todas as cartas. Prefira um SVG ou PNG transparente, com uma única figura central em creme (`#fff0d0`) e sem texto. A cor terracota (`#c97055`) pode ser usada nos recortes internos. A moldura, o fundo e as proporções são desenhados pelo jogo e permanecem iguais para qualquer tema.
+4. Execute novamente o build para atualizar uma entrega já gerada.
 
 Não inclua nome, foto ou outros dados pessoais se não forem necessários. O jogo não transmite resultados nem salva informações da criança. Não há API de geração de imagens ou tela de upload nesta versão. Os SVGs de transportes foram desenhados como demonstração local e podem ser substituídos. Cada arquivo é usado duas vezes, sem cortes ou distorção; IDs e caminhos repetidos são rejeitados. Não é feita análise visual do conteúdo para identificar arquivos distintos com a mesma imagem.
 
 ## Direção visual
 
-Mesa de madeira clara fosca, vista de cima, com veios discretos e iluminação uniforme. A textura SVG local `public/assets/light-oak.svg` foi desenhada para esta demonstração e não depende de imagens remotas. Cartas mantêm frente e verso claros; título e controles usam superfícies de papel para preservar a leitura sobre a madeira. O fundo é estático e não acrescenta movimento contínuo.
+Mesa de madeira clara fosca, vista de cima, com veios discretos e iluminação uniforme. A textura SVG local `public/assets/light-oak.svg` foi desenhada para esta demonstração e não depende de imagens remotas. As frentes permanecem claras; o verso usa terracota e um símbolo minimalista do interesse da criança, no estilo Sol de brincar. As seis cartas compartilham exatamente o mesmo verso, sem pistas sobre os pares; título e controles usam superfícies de papel para preservar a leitura sobre a madeira. O fundo é estático e não acrescenta movimento contínuo.
 
 Os textos usam convites curtos, como “Cadê o par?” e “Vamos brincar!”, com letras maiores e formas arredondadas. Três marcadores de cartas acompanham os pares encontrados, com marca de confirmação além da cor. No celular, o tabuleiro foi compactado para aproximar o botão de início das cartas.
+
+Exemplo do símbolo de verso no arquivo de atividade:
+
+```json
+"backImage": {
+  "url": "./assets/back-transport.svg",
+  "description": "Símbolo de trem para o tema Transportes"
+}
+```
+
+O jogo não infere nem gera o símbolo a partir do nome do tema; a configuração local aponta para a ilustração preparada para aquele interesse. Para mudar o hiperfoco, substitua o tema, as três figuras dos pares e esse símbolo. O exemplo atual usa um trem minimalista em todas as cartas.
 
 ## Interações
 

@@ -62,3 +62,11 @@ As falhas de recurso foram simuladas apenas por interceptação no navegador, se
 - Controle “Menos movimento” e seu espaço removidos da tela infantil. A preferência de movimento reduzido do sistema permanece automática, sem controles extras.
 - Build concluído. No navegador: nenhum elemento do antigo controle; virada ativa por padrão; mudança da preferência do sistema durante o giro concluiu a animação sem travar.
 - Estudos do novo verso foram preparados fora do código do jogo; a arte atual aguarda escolha da direção pelo usuário.
+
+## Atualização: verso temático minimalista
+
+- Mantidos terracota, creme e moldura da direção Sol de brincar; somente o símbolo central varia pelo campo `backImage` da atividade. Demonstração local: trem minimalista para Transportes.
+- Uma textura de verso compartilhada por todas as seis cartas; frentes carregadas com namespace separado para evitar colisão entre IDs das figuras e o verso.
+- Nove testes aprovados, incluindo validação do arquivo de verso, origem local e manutenção dos pares ao alterar o símbolo. Build concluído.
+- Preview: inspeção visual, abertura/fechamento, partida completa, reinício e nova abertura confirmados; 320 px sem overflow.
+- Configuração interceptada no navegador com tema Espaço e outra imagem de verso carregou sem modificar o código. Falha do arquivo de verso bloqueou a partida e recuperou após tentar novamente. Arquivos originais não foram alterados por essas simulações.

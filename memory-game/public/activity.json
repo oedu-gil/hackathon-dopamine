@@ -1,8 +1,24 @@
 {
   "theme": "Transportes",
   "images": [
-    { "id": "train", "url": "./assets/train.svg", "description": "Trem" },
-    { "id": "rocket", "url": "./assets/rocket.svg", "description": "Foguete" },
-    { "id": "sailboat", "url": "./assets/sailboat.svg", "description": "Veleiro" }
-  ]
+    {
+      "id": "train",
+      "url": "./assets/train.svg",
+      "description": "Trem"
+    },
+    {
+      "id": "rocket",
+      "url": "./assets/rocket.svg",
+      "description": "Foguete"
+    },
+    {
+      "id": "sailboat",
+      "url": "./assets/sailboat.svg",
+      "description": "Veleiro"
+    }
+  ],
+  "backImage": {
+    "url": "./assets/back-transport.svg",
+    "description": "Símbolo de trem para o tema Transportes"
+  }
 }

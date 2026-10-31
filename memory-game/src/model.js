@@ -11,7 +11,12 @@ export function validateActivity(value, baseUrl = 'https://local.invalid/activit
     ids.add(image.id.trim()); urls.add(url.href);
     return Object.freeze({ id: image.id.trim(), url: url.href, description: image.description.trim() });
   });
-  return Object.freeze({ theme: value.theme.trim(), images: Object.freeze(images) });
+  const back = value.backImage;
+  if (!back || typeof back.url !== 'string' || !back.url.trim() || typeof back.description !== 'string' || !back.description.trim()) throw new Error('Escolha um símbolo para o verso, com caminho e descrição.');
+  const backUrl = new URL(back.url, base);
+  if (!['http:', 'https:'].includes(backUrl.protocol) || backUrl.origin !== base.origin || backUrl.username || backUrl.password) throw new Error('O símbolo do verso precisa ser servido junto com o jogo.');
+  const backImage = Object.freeze({ url: backUrl.href, description: back.description.trim() });
+  return Object.freeze({ theme: value.theme.trim(), images: Object.freeze(images), backImage });
 }
 
 export function shuffledDeck(images, random = Math.random) {

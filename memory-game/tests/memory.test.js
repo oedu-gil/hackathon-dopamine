@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { validateActivity, MemoryRound, shuffledDeck, cardLayout } from '../src/model.js';
-const fixture = () => ({ theme: 'Transportes', images: ['train', 'rocket', 'sailboat'].map(id => ({ id, url: `./assets/${id}.svg`, description: id })) });
+const fixture = () => ({ theme: 'Transportes', backImage: { url: './assets/back-transport.svg', description: 'Trem do verso' }, images: ['train', 'rocket', 'sailboat'].map(id => ({ id, url: `./assets/${id}.svg`, description: id })) });
 const images = () => validateActivity(fixture()).images;
 const round = () => new MemoryRound(images(), () => .999);
 const indices = (state, id) => state.cards.flatMap((card, i) => card.id === id ? [i] : []);
@@ -16,6 +16,18 @@ test('configuration requires three distinct local files and usable descriptions'
     const value = fixture(); Object.assign(value.images[0], patch);
     assert.throws(() => validateActivity(value));
   }
+});
+
+test('the themed back is one shared local image, validated separately from the pairs', () => {
+  const actual = validateActivity(fixture(), 'https://example.test/memory/activity.json');
+  assert.equal(actual.backImage.url, 'https://example.test/memory/assets/back-transport.svg');
+  assert.equal(actual.backImage.description, 'Trem do verso');
+  for (const backImage of [undefined, {}, { url: './assets/back.svg', description: '' }, { url: 'javascript:alert(1)', description: 'Trem' }, { url: 'https://other.test/back.svg', description: 'Trem' }]) {
+    assert.throws(() => validateActivity({ ...fixture(), backImage }));
+  }
+  // Customizing the back must not change the six-card deck or its pair identities.
+  const other = validateActivity({ ...fixture(), backImage: { url: './assets/dinosaur.svg', description: 'Dinossauro' } }, 'https://example.test/memory/activity.json');
+  assert.deepEqual(shuffledDeck(actual.images, () => .5), shuffledDeck(other.images, () => .5));
 });
 
 test('shuffling preserves exactly two copies of each source and stable unique card keys', () => {
@@ -92,5 +104,5 @@ test('bundled standalone activity references existing assets', async () => {
   const file = new URL('../public/activity.json', import.meta.url);
   const value = JSON.parse(await readFile(file, 'utf8'));
   validateActivity(value);
-  for (const image of value.images) assert.ok((await readFile(new URL(image.url, file))).length > 0);
+  for (const image of [...value.images, value.backImage]) assert.ok((await readFile(new URL(image.url, file))).length > 0);
 });
