@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ead7b8"><link rel="icon" href="data:,"><title>Álbum de descobertas · Memória</title></head>
+<body>
+<main class="album" aria-labelledby="title">
+  <header><span class="brand"><span aria-hidden="true">▱</span> Álbum de descobertas</span><span id="theme"></span></header>
+  <section class="heading"><p class="eyebrow">Jogo da memória</p><h1 id="title">Cadê o par?</h1><p id="message" role="status" aria-live="polite" aria-atomic="true">Preparando a brincadeira…</p></section>
+  <div id="error" role="alert" hidden></div>
+  <div id="board" class="board" role="group" aria-label="Tabuleiro com seis cartas" aria-busy="true">
+    <div id="canvas-host" aria-hidden="true"></div>
+    <div id="cards"></div>
+  </div>
+  <footer><span id="progress"><span class="pair-markers" aria-hidden="true"><span></span><span></span><span></span></span><span id="progress-text">0 de 3 pares</span></span><button id="action" type="button" disabled>Só um instante…</button></footer>
+  <noscript>Ative o JavaScript para jogar.</noscript>
+</main>
+<script type="module" src="/src/main.js"></script>
+</body></html>

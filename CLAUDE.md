@@ -4,6 +4,8 @@ Projeto de um grupo para um hackathon sobre **educação**. A ideia e o escopo d
 
 @IDEIA.md
 
+O padrão de design do site e dos jogos está em `DESIGN.md` (skill de projeto `design-tea`). Siga-o ao criar ou ajustar qualquer tela ou jogo.
+
 **Público-alvo: crianças neurodivergentes de 4 a 10 anos**, com um estilo único para toda a faixa (a dificuldade se ajusta pelo nível do PDI, não por modos por idade). Considere isso em textos, visual, sons e ritmo dos jogos.
 
 ## Regras de trabalho com a IA
