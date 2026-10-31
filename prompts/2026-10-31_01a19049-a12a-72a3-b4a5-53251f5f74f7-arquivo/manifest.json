@@ -1,0 +1,24 @@
+{
+  "format": "gzip split into ordered binary parts, lossless native JSONL snapshot",
+  "parts": [
+    {
+      "file": "conversa.jsonl.gz.001",
+      "bytes": 50331648,
+      "sha256": "2e7bf86529869a50fdf767a4d0c26d628b0cc03e72d4fa542467c4f36ea6c297"
+    },
+    {
+      "file": "conversa.jsonl.gz.002",
+      "bytes": 50331648,
+      "sha256": "2903177a1ea859978080796bc96ae59ec4c42cc4f32c0522c7124b51e8601aec"
+    },
+    {
+      "file": "conversa.jsonl.gz.003",
+      "bytes": 39904302,
+      "sha256": "5161cf2418773e2a8ad4b75b4e5ec89699ce12525a6db2256b7dd66d9e48f0f8"
+    }
+  ],
+  "sha256_gzip": "d60c76d92db3ca9df184ca9237c7319f3dca7fac45770c6880629952ab7f1905",
+  "sha256_native_jsonl": "0b13b2564ddfd3d298f97c4bfc8176a5ccfd5ee973a7e9dd9b9a23e6c62cb305",
+  "native_bytes": 194155359,
+  "restore": "Concatenate parts in filename order as binary, then decompress gzip. Native transcript bytes must match sha256_native_jsonl."
+}
