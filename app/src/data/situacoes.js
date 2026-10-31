@@ -91,4 +91,130 @@ export const SITUACOES = [
       { texto: 'Dar risada e espalhar', feedback: 'Espalhar pode magoar muito o amigo.' },
     ],
   },
+
+  // ---- nível 1 ----
+  {
+    nivel: 1,
+    texto: 'Um amigo derrubou o lanche no chão e ficou chateado.',
+    cara: '😞',
+    opcoes: [
+      { texto: 'Oferecer um pedaço do seu lanche', certo: true, feedback: 'Dividir ajuda o amigo a se sentir melhor.' },
+      { texto: 'Dizer que a culpa é dele', feedback: 'Culpar só deixa o amigo pior.' },
+      { texto: 'Ir embora comendo o seu lanche', feedback: 'Ele ficaria sozinho e ainda mais triste.' },
+    ],
+  },
+  {
+    nivel: 1,
+    texto: 'Um amigo está com medo do trovão.',
+    cara: '😨',
+    opcoes: [
+      { texto: 'Ficar perto e dizer: estou aqui com você', certo: true, feedback: 'Companhia faz o medo diminuir.' },
+      { texto: 'Dizer que ele é bobo por ter medo', feedback: 'Todo mundo sente medo às vezes.' },
+      { texto: 'Sair correndo e deixá-lo sozinho', feedback: 'Ele precisava de alguém por perto.' },
+    ],
+  },
+  {
+    nivel: 1,
+    texto: 'Um amigo emprestou um lápis para você.',
+    cara: '🙂',
+    opcoes: [
+      { texto: 'Dizer obrigado e devolver depois', certo: true, feedback: 'Agradecer e devolver mostra respeito.' },
+      { texto: 'Guardar na mochila sem falar nada', feedback: 'O lápis é dele, então é preciso devolver.' },
+      { texto: 'Quebrar a ponta de propósito', feedback: 'Cuidar das coisas dos outros é importante.' },
+    ],
+  },
+  {
+    nivel: 1,
+    texto: 'Você chegou à sala e um amigo disse bom dia.',
+    cara: '😄',
+    opcoes: [
+      { texto: 'Responder: bom dia!', certo: true, feedback: 'Cumprimentar faz o amigo se sentir bem-vindo.' },
+      { texto: 'Olhar para o chão e não responder', feedback: 'Ele pode achar que você não quer conversar.' },
+      { texto: 'Dizer: me deixa em paz', feedback: 'Palavras gentis ajudam mais.' },
+    ],
+  },
+
+  // ---- nível 2 ----
+  {
+    nivel: 2,
+    texto: 'Um amigo não foi escolhido para o time e ficou triste.',
+    cara: '😢',
+    opcoes: [
+      { texto: 'Convidar o amigo para o seu time', certo: true, feedback: 'Incluir faz a pessoa se sentir importante.' },
+      { texto: 'Rir dele', feedback: 'Rir de quem está triste machuca.' },
+      { texto: 'Fingir que não viu', feedback: 'Ele precisava de um gesto de amizade.' },
+    ],
+  },
+  {
+    nivel: 2,
+    texto: 'Um amigo está falando e você quer contar uma novidade.',
+    cara: '🗣️',
+    opcoes: [
+      { texto: 'Esperar ele terminar e depois contar', certo: true, feedback: 'Esperar a vez de falar mostra respeito.' },
+      { texto: 'Interromper gritando', feedback: 'Interromper atrapalha a conversa.' },
+      { texto: 'Ir embora sem dizer nada', feedback: 'Dá para esperar só um pouquinho.' },
+    ],
+  },
+  {
+    nivel: 2,
+    texto: 'Um amigo derrubou os seus blocos sem querer.',
+    cara: '😬',
+    opcoes: [
+      { texto: 'Respirar fundo e dizer: tudo bem, vamos montar de novo', certo: true, feedback: 'Calma ajuda a resolver o problema juntos.' },
+      { texto: 'Derrubar os blocos dele também', feedback: 'Revidar só cria outro problema.' },
+      { texto: 'Chorar e gritar com ele', feedback: 'Foi sem querer, e gritar não conserta.' },
+    ],
+  },
+  {
+    nivel: 2,
+    texto: 'Um amigo não entendeu a regra do jogo.',
+    cara: '🤔',
+    opcoes: [
+      { texto: 'Explicar de novo com calma', certo: true, feedback: 'Explicar com paciência ajuda todo mundo a brincar.' },
+      { texto: 'Dizer que ele é lento', feedback: 'Isso o deixaria envergonhado.' },
+      { texto: 'Jogar sem ele', feedback: 'Ele ficaria de fora da brincadeira.' },
+    ],
+  },
+
+  // ---- nível 3 ----
+  {
+    nivel: 3,
+    texto: 'Um amigo contou uma mentira para não ficar encrencado.',
+    cara: '😬',
+    opcoes: [
+      { texto: 'Conversar e incentivá-lo a falar a verdade', certo: true, feedback: 'Ajudar o amigo a ser honesto é cuidar dele.' },
+      { texto: 'Espalhar a mentira para a turma', feedback: 'Isso só aumenta o problema.' },
+      { texto: 'Rir e ajudar a mentir', feedback: 'A mentira pode deixar tudo pior depois.' },
+    ],
+  },
+  {
+    nivel: 3,
+    texto: 'Um grupo está deixando um colega de fora da brincadeira.',
+    cara: '😔',
+    opcoes: [
+      { texto: 'Chamar o colega e incluí-lo', certo: true, feedback: 'Incluir faz o colega se sentir parte do grupo.' },
+      { texto: 'Entrar na brincadeira e ignorar o colega', feedback: 'Ele continuaria sozinho e triste.' },
+      { texto: 'Rir junto com o grupo', feedback: 'Isso machuca quem está de fora.' },
+    ],
+  },
+  {
+    nivel: 3,
+    texto: 'Um amigo ganhou o jogo e você perdeu.',
+    cara: '😎',
+    opcoes: [
+      { texto: 'Parabenizar o amigo e pedir uma revanche', certo: true, feedback: 'Saber perder também é uma habilidade.' },
+      { texto: 'Dizer que ele trapaceou, sem provas', feedback: 'Acusar sem provas magoa o amigo.' },
+      { texto: 'Jogar o tabuleiro no chão', feedback: 'Isso estraga o jogo para todos.' },
+    ],
+  },
+  {
+    nivel: 3,
+    texto: 'Um amigo diz que está bem, mas parece chateado.',
+    cara: '😶',
+    opcoes: [
+      { texto: 'Perguntar com carinho se ele quer conversar', certo: true, feedback: 'Perceber os sinais ajuda a cuidar do amigo.' },
+      { texto: 'Acreditar e nunca mais perguntar', feedback: 'Ele pode precisar de ajuda mesmo assim.' },
+      { texto: 'Fazer piadas até ele rir', feedback: 'Respeite o tempo dele em vez de forçar.' },
+    ],
+  },
 ]

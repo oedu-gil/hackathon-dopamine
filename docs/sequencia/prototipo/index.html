@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sequência — protótipo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* Protótipo de revisão (HTML puro). Não é o código de produção em Phaser. */
+  :root {
+    --paper:#f4efe4; --card:#fffdf8; --ink:#1f2a2e; --muted:#6b6458; --gap:#7d7262; --tray:#e8e0cf; --ok:#2f6b4f;
+    --g:10px;
+    --slot:clamp(72px, calc((100vw - 64px) / 3), 112px);
+    --opt:clamp(120px, 36vw, 170px);
+  }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { margin:0; height:100%; }
+  body { background:var(--paper); color:var(--ink); font-family:'Atkinson Hyperlegible',system-ui,sans-serif; overscroll-behavior:none; }
+  button { font:inherit; font-weight:700; color:var(--ink); cursor:pointer; touch-action:manipulation; user-select:none; -webkit-user-select:none; }
+  button:focus-visible { outline:3px solid var(--ok); outline-offset:3px; }
+  [hidden] { display:none !important; }
+
+  .screen { min-height:100dvh; display:flex; flex-direction:column; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+  .center { align-items:center; justify-content:center; text-align:center; gap:16px; padding:24px; }
+  .center p { margin:0; font-size:20px; max-width:28ch; }
+  .center .icon { width:96px; height:96px; }
+
+  .btn { border:2px solid var(--ink); background:var(--card); border-radius:10px; min-width:48px; min-height:48px; padding:0 14px; display:inline-flex; align-items:center; gap:6px; }
+  .btn.primary { background:var(--ink); color:var(--card); }
+  .btn[aria-pressed="true"] { background:var(--tray); }
+
+  /* Jogo */
+  .game { display:grid; grid-template-rows:auto auto 1fr auto; min-height:100dvh; }
+  .top { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; }
+  .head { text-align:center; padding:0 16px; }
+  .head h1 { margin:0; font-size:22px; }
+  .head .ctx { margin:4px 0 0; font-size:17px; color:var(--muted); font-weight:400; min-height:1.3em; }
+  .main { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:12px 16px; }
+  .board { display:flex; flex-wrap:wrap; justify-content:center; gap:30px var(--g); max-width:calc(3 * var(--slot) + 2 * var(--g)); list-style:none; margin:0; padding:0; }
+  .slot { width:var(--slot); height:var(--slot); background:var(--card); border:3px solid var(--ink); border-radius:12px; padding:calc(var(--slot) * .08); position:relative; }
+  .slot .n { position:absolute; bottom:-25px; left:0; right:0; text-align:center; font-size:14px; color:var(--muted); }
+  .slot.gap { border-style:dashed; border-color:var(--gap); background:transparent; display:flex; align-items:center; justify-content:center; font-size:calc(var(--slot) * .4); font-weight:700; color:var(--gap); }
+  .slot.done { border:4px solid var(--ok); background:var(--card); }
+  .slot.done::after { content:"✓"; position:absolute; top:-12px; right:-12px; width:28px; height:28px; border-radius:50%; background:var(--ok); color:#fff; font-size:17px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+  .hint { min-height:1.5em; margin:22px 0 0; font-size:20px; font-weight:700; text-align:center; }
+  .msg { min-height:1.4em; margin:0; font-size:19px; font-weight:700; text-align:center; }
+
+  .tray { background:var(--tray); padding:16px 16px calc(24px + env(safe-area-inset-bottom)); text-align:center; }
+  .tray h2 { margin:0 0 12px; font-size:18px; }
+  .opts { display:flex; justify-content:center; gap:24px; }
+  .opt { width:var(--opt); height:var(--opt); background:var(--card); border:3px solid var(--ink); border-radius:16px; padding:10px; box-shadow:0 5px 0 var(--ink); transition:transform .08s, box-shadow .08s; }
+  .opt:active { transform:translateY(3px); box-shadow:0 2px 0 var(--ink); }
+  .opt[disabled] { cursor:default; }
+  .end { display:flex; justify-content:center; gap:16px; flex-wrap:wrap; }
+  svg.img { width:100%; height:100%; display:block; pointer-events:none; }
+
+  /* Tablet e telas largas: fileira única */
+  @media (min-width:600px) {
+    :root { --slot:clamp(96px, calc((100vw - 140px) / 5), 150px); --opt:clamp(140px, 20vw, 190px); --g:16px; }
+    .board { max-width:none; flex-wrap:nowrap; }
+    .head h1 { font-size:28px; }
+    .head .ctx { font-size:19px; }
+  }
+  /* Celular deitado: fileira à esquerda, opções à direita */
+  @media (orientation:landscape) and (max-height:500px) {
+    :root { --slot:clamp(64px, calc((100vw - 380px) / 5), 100px); --opt:clamp(104px, 28vh, 130px); --g:10px; }
+    .game { grid-template-columns:1fr auto; grid-template-rows:auto auto 1fr; }
+    .top { grid-column:1 / 3; padding:8px 16px; }
+    .head { grid-column:1; }
+    .head h1 { font-size:20px; }
+    .main { grid-column:1; }
+    .board { flex-wrap:nowrap; max-width:none; }
+    .tray { grid-column:2; grid-row:2 / 4; display:flex; flex-direction:column; justify-content:center; padding:12px 20px; border-radius:16px 0 0 0; }
+  }
+
+  /* Diálogo de saída */
+  .scrim { position:fixed; inset:0; background:rgba(31,42,46,.45); display:flex; align-items:center; justify-content:center; padding:16px; z-index:10; }
+  .dialog { background:var(--paper); border:3px solid var(--ink); border-radius:16px; padding:24px; max-width:340px; width:100%; text-align:center; }
+  .dialog p { font-size:20px; font-weight:700; margin:0 0 20px; }
+  .dialog .end .btn { min-width:120px; justify-content:center; }
+
+  .flyer { position:fixed; z-index:5; pointer-events:none; }
+  .debug { position:fixed; left:0; right:0; bottom:0; z-index:20; background:rgba(255,255,255,.92); border:1px solid #999; border-radius:6px; padding:6px 8px; font:12px/1.4 ui-monospace,monospace; max-width:260px; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="dino" viewBox="0 0 400 400"><path d="M70 260 Q80 190 170 205 L205 135 Q220 95 280 115 L330 140 L325 185 L255 185 L235 255 L240 320 H205 L195 280 H150 L140 320 H105 L110 265 L45 240 Z" fill="#54876b"/><circle cx="280" cy="142" r="7" fill="#17312b"/><path d="M125 205 L142 178 L158 205 M164 205 L181 180 L194 211" fill="#54876b"/></symbol>
+    <symbol id="ovo" viewBox="0 0 400 400"><path d="M200 70 C275 70 320 190 320 255 C320 320 265 350 200 350 C135 350 80 320 80 255 C80 190 125 70 200 70 Z" fill="#e9d9b0" stroke="#8a7350" stroke-width="10"/><circle cx="170" cy="190" r="18" fill="#c4a56b"/><circle cx="235" cy="250" r="24" fill="#c4a56b"/><circle cx="160" cy="285" r="12" fill="#c4a56b"/></symbol>
+    <symbol id="loco" viewBox="0 0 400 400"><rect x="70" y="170" width="200" height="110" rx="12" fill="#2b6e4f"/><rect x="230" y="110" width="100" height="170" rx="10" fill="#2b6e4f"/><rect x="250" y="130" width="60" height="50" rx="6" fill="#dff1e8"/><rect x="100" y="110" width="36" height="60" fill="#2b6e4f"/><circle cx="120" cy="300" r="32" fill="#173a2c"/><circle cx="210" cy="300" r="32" fill="#173a2c"/><circle cx="295" cy="300" r="32" fill="#173a2c"/></symbol>
+    <symbol id="vagao" viewBox="0 0 400 400"><rect x="60" y="160" width="280" height="120" rx="60" fill="#b5652a"/><circle cx="130" cy="300" r="32" fill="#4a2a12"/><circle cx="270" cy="300" r="32" fill="#4a2a12"/><rect x="185" y="135" width="30" height="30" fill="#b5652a"/></symbol>
+  </defs>
+</svg>
+
+<!-- Carregando -->
+<section class="screen center" id="s-loading">
+  <svg class="icon" viewBox="0 0 96 96" aria-hidden="true"><rect x="8" y="28" width="22" height="22" rx="4" fill="none" stroke="#1f2a2e" stroke-width="3"/><rect x="37" y="28" width="22" height="22" rx="4" fill="none" stroke="#1f2a2e" stroke-width="3"/><rect x="66" y="28" width="22" height="22" rx="4" fill="none" stroke="#7d7262" stroke-width="3" stroke-dasharray="4 4"/></svg>
+  <p role="status">Preparando as imagens…</p>
+</section>
+
+<!-- Falha de imagem -->
+<section class="screen center" id="s-error" hidden>
+  <p role="alert">Não conseguimos abrir as imagens.</p>
+  <div class="end"><button class="btn primary" id="retry">Tentar de novo</button><button class="btn" data-leave>Voltar</button></div>
+</section>
+
+<!-- Atividade -->
+<section class="screen game" id="s-game" hidden>
+  <div class="top">
+    <button class="btn" id="exit" aria-label="Sair da atividade">✕ Sair</button>
+    <button class="btn" id="hintBtn" aria-pressed="false">💡 Dica</button>
+  </div>
+  <div class="head">
+    <h1>O que vem depois?</h1>
+    <p class="ctx" id="ctx"></p>
+  </div>
+  <div class="main">
+    <ol class="board" id="board" aria-label="Sequência"></ol>
+    <p class="hint" id="hint" aria-live="polite"></p>
+    <p class="msg" id="msg" aria-live="polite"></p>
+  </div>
+  <div class="tray" id="tray">
+    <h2 id="trayTitle">Escolha uma</h2>
+    <div class="opts" id="opts"></div>
+    <div class="end" id="end" hidden><button class="btn primary" id="again">Jogar de novo</button><button class="btn" data-leave>Sair</button></div>
+  </div>
+</section>
+
+<!-- Saída concluída (simula a plataforma) -->
+<section class="screen center" id="s-left" hidden>
+  <p>Você saiu da atividade.</p>
+  <p style="font-size:15px;color:#6b6458">(No produto, aqui a plataforma assume.)</p>
+  <button class="btn primary" id="reenter">Entrar de novo</button>
+</section>
+
+<div class="scrim" id="confirm" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="confirmTxt">
+    <p id="confirmTxt">Quer sair da atividade?</p>
+    <div class="end"><button class="btn primary" id="stay">Continuar</button><button class="btn" id="leave">Sair</button></div>
+  </div>
+</div>
+
+<div class="debug" id="debug" hidden></div>
+
+<script>
+// Parâmetros de revisão: ?tema=trem  ?falha=1  ?rm=1  ?contexto=0  ?debug=1
+const q = new URLSearchParams(location.search);
+const THEMES = {
+  dino: { phrase:'Os dinossauros e os ovos fizeram uma fila.', A:{ id:'dino', label:'dino' }, B:{ id:'ovo', label:'ovo' } },
+  trem: { phrase:'O trem está montando os vagões.', A:{ id:'loco', label:'locomotiva' }, B:{ id:'vagao', label:'vagão' } },
+};
+const theme = THEMES[q.get('tema')] ?? THEMES.dino;
+const reducedMotion = q.get('rm') === '1' || matchMedia('(prefers-reduced-motion: reduce)').matches;
+let failNext = q.get('falha') === '1';
+
+const $ = id => document.getElementById(id);
+const screens = ['s-loading', 's-error', 's-game', 's-left'];
+const show = id => screens.forEach(s => $(s).hidden = s !== id);
+const svg = id => `<svg class="img" role="img"><use href="#${id}"/></svg>`;
+
+let state, busy, timers = [];
+const later = (fn, ms) => timers.push(setTimeout(fn, ms));
+const clearTimers = () => { timers.forEach(clearTimeout); timers = []; };
+
+function log(text) {
+  if (q.get('debug') !== '1') return;
+  const m = state?.metrics ?? {};
+  state.events.push(text);
+  $('debug').hidden = false;
+  $('debug').innerHTML = `tentativas ${m.attempts} · acertos ${m.correct} · dicas ${m.hints}<br>` + state.events.slice(-5).join('<br>');
+}
+
+function finish(status) {
+  if (state.finished) return;
+  state.finished = true;
+  log(`finish('${status}')`);
+}
+
+function load() {
+  clearTimers();
+  show('s-loading');
+  later(() => {
+    if (failNext) { failNext = false; show('s-error'); $('retry').focus(); return; }
+    start();
+  }, 700);
+}
+
+function start() {
+  state = { metrics:{ attempts:0, correct:0, hints:0 }, finished:false, hintShown:false, events:[] };
+  busy = false;
+  const pattern = [theme.A, theme.B, theme.A, theme.B];
+  $('board').innerHTML = pattern.map((p, i) => `<li class="slot" aria-label="${i + 1}: ${p.label}">${svg(p.id)}<span class="n" aria-hidden="true">${i + 1}</span></li>`).join('')
+    + `<li class="slot gap" id="gapSlot" aria-label="5: lacuna">?<span class="n" aria-hidden="true">5</span></li>`;
+  const options = Math.random() < .5 ? [theme.A, theme.B] : [theme.B, theme.A];
+  $('opts').innerHTML = options.map(o => `<button class="opt" data-id="${o.id}" aria-label="${o.label}">${svg(o.id)}</button>`).join('');
+  $('opts').hidden = false; $('end').hidden = true; $('trayTitle').textContent = 'Escolha uma';
+  $('ctx').textContent = q.get('contexto') === '0' ? '' : theme.phrase;
+  $('hint').textContent = ''; $('msg').textContent = '';
+  $('hintBtn').disabled = false; $('hintBtn').setAttribute('aria-pressed', 'false');
+  show('s-game');
+  log('início');
+}
+
+function choose(btn) {
+  if (busy || state.finished) return;
+  busy = true;
+  state.metrics.attempts++;
+  const right = btn.dataset.id === theme.A.id;
+  if (right) state.metrics.correct++;
+  log(`escolheu ${btn.getAttribute('aria-label')} → ${right ? 'certo' : 'errado'}`);
+  right ? onRight(btn) : onWrong(btn);
+}
+
+function onWrong(btn) {
+  $('msg').textContent = 'Quase! Olhe a fila de novo.';
+  if (!reducedMotion) btn.animate([{ transform:'translateY(0)' }, { transform:'translateY(-18px)' }, { transform:'translateY(0)' }], { duration:320, easing:'ease-out' });
+  later(() => { busy = false; }, reducedMotion ? 150 : 400);
+}
+
+function onRight(btn) {
+  $('msg').textContent = '';
+  finish('completed');
+  const gap = $('gapSlot');
+  const fill = () => {
+    gap.className = 'slot done';
+    gap.innerHTML = `${svg(theme.A.id)}<span class="n" aria-hidden="true">5</span>`;
+    gap.setAttribute('aria-label', `5: ${theme.A.label}`);
+    if (state.hintShown) $('hint').textContent = [theme.A, theme.B, theme.A, theme.B, theme.A].map(p => p.label).join(' · ');
+    $('msg').textContent = 'Você completou!';
+    $('hintBtn').disabled = true;
+    later(() => { $('opts').hidden = true; $('end').hidden = false; $('trayTitle').textContent = 'Muito bem'; $('again').focus(); }, 700);
+  };
+  if (reducedMotion) return fill();
+  const a = btn.getBoundingClientRect(), b = gap.getBoundingClientRect();
+  const fly = btn.cloneNode(true);
+  Object.assign(fly.style, { left:a.left + 'px', top:a.top + 'px', width:a.width + 'px', height:a.height + 'px', margin:0, transformOrigin:'0 0' });
+  fly.className = 'opt flyer';
+  document.body.append(fly);
+  btn.style.visibility = 'hidden';
+  const s = b.width / a.width;
+  fly.animate([{ transform:'none' }, { transform:`translate(${b.left - a.left}px, ${b.top - a.top}px) scale(${s})` }], { duration:250, easing:'cubic-bezier(.2,.8,.2,1)', fill:'forwards' })
+    .finished.then(() => { fly.remove(); fill(); });
+}
+
+$('opts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (b) choose(b); });
+$('hintBtn').addEventListener('click', () => {
+  if (state.finished) return;
+  if (!state.hintShown) { state.hintShown = true; state.metrics.hints++; log('dica'); }
+  $('hint').textContent = [theme.A, theme.B, theme.A, theme.B].map(p => p.label).join(' · ') + ' · ?';
+  $('hintBtn').setAttribute('aria-pressed', 'true');
+});
+$('again').addEventListener('click', load);
+$('retry').addEventListener('click', load);
+$('exit').addEventListener('click', () => { if (state.finished) return leave(); $('confirm').hidden = false; $('stay').focus(); });
+$('stay').addEventListener('click', () => { $('confirm').hidden = true; $('exit').focus(); });
+$('leave').addEventListener('click', leave);
+document.querySelectorAll('[data-leave]').forEach(b => b.addEventListener('click', leave));
+$('reenter').addEventListener('click', load);
+function leave() {
+  $('confirm').hidden = true;
+  clearTimers();
+  if (state && !state.finished) finish('abandoned');
+  show('s-left');
+  $('reenter').focus();
+}
+load();
+</script>
+</body>
+</html>

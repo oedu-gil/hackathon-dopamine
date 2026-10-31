@@ -4,6 +4,8 @@ Projeto de um grupo para um hackathon sobre **educação**. A ideia e o escopo d
 
 @IDEIA.md
 
+**Público-alvo: crianças neurodivergentes de 4 a 10 anos**, com um estilo único para toda a faixa (a dificuldade se ajusta pelo nível do PDI, não por modos por idade). Considere isso em textos, visual, sons e ritmo dos jogos.
+
 ## Regras de trabalho com a IA
 
 - **A autonomia do grupo conta na avaliação.** Não tome decisões de ideia, design, tecnologia ou ferramentas sem perguntar. Apresente opções com prós e contras e deixe o grupo escolher.

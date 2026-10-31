@@ -1,0 +1,646 @@
+<meta charset="utf-8">
+<title>Protótipo do quebra-cabeça</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap">
+<style>
+/* Layout: página de revisão. No alto, o aparelho com o jogo interativo (960 x 600 lógicos, escala FIT); ao lado (ou abaixo no celular), o painel do revisor com apoios, atalhos de estado e a contagem. O jogo usa a paleta fixa da direção B; a moldura da página segue o tema do visitante. */
+:root {
+  --bg: #f1eee9;
+  --surface: #ffffff;
+  --fg: #221b2e;
+  --muted: #5d5468;
+  --line: #d9d2cc;
+  --accent: #6a3fc8;
+  --bezel: #1b1426;
+  --font-display: "Bricolage Grotesque", "Atkinson Hyperlegible", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #17131d; --surface: #221d2a; --fg: #ece8f1; --muted: #a99fb5; --line: #3a3345; --accent: #b59af0; --bezel: #050307; color-scheme: dark } }
+:root[data-theme="dark"] { --bg: #17131d; --surface: #221d2a; --fg: #ece8f1; --muted: #a99fb5; --line: #3a3345; --accent: #b59af0; --bezel: #050307; color-scheme: dark }
+
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.5; }
+.wrap { max-width: 1280px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 32px 64px; display: grid; gap: 28px; }
+h1, h2, h3 { font-family: var(--font-display); margin: 0; line-height: 1.15; text-wrap: balance; }
+h1 { font-size: clamp(28px, 4.4vw, 42px); font-weight: 800; }
+h2 { font-size: 20px; font-weight: 800; }
+h3 { font-size: 15px; font-weight: 600; }
+p { margin: 0; max-width: 70ch; }
+.eyebrow { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+header.intro { display: grid; gap: 10px; }
+code { font-size: .92em; }
+
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; align-items: start; }
+@media (max-width: 980px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+.viewer { display: grid; gap: 12px; min-width: 0; }
+.devices { display: flex; flex-wrap: wrap; gap: 8px; }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.seg button, .tool { font: inherit; font-size: 14px; border: 0; background: none; color: var(--fg); padding: 8px 12px; cursor: pointer; min-height: 40px; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--surface); font-weight: 700; }
+.seg button:focus-visible, .tool:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
+.frame-host { display: flex; justify-content: center; }
+.device { background: var(--bezel); border-radius: 22px; padding: 14px; max-width: 100%; }
+.device.desk { border-radius: 10px; padding: 26px 8px 8px; position: relative; }
+.device.desk::before { content: ""; position: absolute; top: 9px; left: 12px; width: 42px; height: 8px; background: radial-gradient(circle at 4px 4px, #e46a5e 3.5px, transparent 4px), radial-gradient(circle at 20px 4px, #e4b85e 3.5px, transparent 4px), radial-gradient(circle at 36px 4px, #6ebf73 3.5px, transparent 4px); }
+.screen { position: relative; overflow: hidden; border-radius: 8px; background: #120d1a; }
+.desk .screen { border-radius: 2px; }
+.stage { position: absolute; left: 0; top: 0; width: 960px; height: 600px; transform-origin: 0 0; }
+.dev-note { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.panel { display: grid; gap: 14px; min-width: 0; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.row { display: grid; gap: 6px; }
+.row > label, .row > .lbl { font-size: 14px; font-weight: 700; }
+.hint-txt { font-size: 13px; color: var(--muted); }
+input[type="text"] { font: inherit; font-size: 15px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--fg); min-height: 40px; width: 100%; box-sizing: border-box; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; cursor: pointer; }
+.check input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--accent); flex: none; }
+.swatches { display: flex; gap: 8px; }
+.swatches button { width: 40px; height: 40px; border-radius: 10px; border: 2px solid var(--line); cursor: pointer; }
+.swatches button[aria-pressed="true"] { border-color: var(--fg); box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
+.tools { display: flex; flex-wrap: wrap; gap: 8px; }
+.tool { border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+.metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.metrics div { border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; display: grid; }
+.metrics b { font-family: var(--font-display); font-size: 26px; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.metrics span { font-size: 13px; color: var(--muted); }
+#log { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 13px; }
+#log li { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; overflow-x: auto; }
+#log code { white-space: pre; }
+.states { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px 24px; }
+.states li { font-size: 15px; }
+.states ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+
+/* ===== Jogo (direção B · Papel recortado) — paleta fixa ===== */
+.g { --ink: #2a1f3d; --ink-soft: #57466e; --paper: #fffaf2; --grid: #e8d8c4; --tray: #7fc8a9; --sel: #6a3fc8; --card: #ffd9a8;
+  position: absolute; inset: 0; width: 960px; height: 600px; overflow: hidden; background: var(--card); color: var(--ink); font-family: "Atkinson Hyperlegible", system-ui, sans-serif; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+.g button { font: inherit; color: inherit; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.g button:focus-visible { outline: 4px solid var(--sel); outline-offset: 3px; }
+.g .bar { position: absolute; left: 0; top: 0; width: 960px; height: 72px; box-sizing: border-box; padding: 0 24px; display: flex; align-items: center; gap: 14px; }
+.g .gbtn { height: 56px; min-width: 120px; padding: 0 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 20px; font-weight: 700; border-radius: 22px; border: 3px solid var(--ink); background: #fff; box-shadow: 3px 3px 0 var(--ink); cursor: pointer; flex: none; }
+.g .gbtn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+.g .gbtn svg { width: 22px; height: 22px; flex: none; }
+.g .gbtn[aria-pressed="true"] { background: var(--ink); color: #fff; }
+.g .gbtn:disabled { opacity: .45; cursor: default; box-shadow: none; }
+.g .gbtn.primary { background: var(--sel); color: #fff; }
+.g .gbtn.big { height: 64px; font-size: 24px; padding: 0 28px; }
+.g #b-ajuda { min-width: 136px; }
+.g .instr { flex: 1; min-width: 0; text-align: center; display: grid; gap: 0; }
+.g .instr .main { font-family: "Baloo 2", system-ui, sans-serif; font-size: 27px; font-weight: 800; line-height: 1.05; }
+.g .instr .sub { font-size: 16px; color: var(--ink-soft); line-height: 1.2; }
+.g .left { position: absolute; left: 24px; top: 86px; width: 220px; }
+.g .lbl { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+.g .pic { width: 220px; height: 132px; box-sizing: border-box; border: 6px solid #fff; border-radius: 12px; overflow: hidden; rotate: -2deg; box-shadow: 4px 4px 0 var(--ink); background: #fff; }
+.g .pic svg { display: block; width: 100%; height: 100%; }
+.g .cap { margin-top: 12px; font-size: 15px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.g .cap b { font-weight: 700; }
+.g .prog { position: absolute; left: 24px; top: 300px; width: 220px; }
+.g .prog .lbl { font-variant-numeric: tabular-nums; }
+.g .dots { display: grid; grid-template-columns: repeat(5, 18px); gap: 5px; }
+.g .dots i { width: 18px; height: 18px; box-sizing: border-box; border-radius: 4px; border: 2px solid var(--ink); background: rgba(255,255,255,.5); }
+.g .dots i.on { background: var(--ink); }
+.g .boardbg { position: absolute; left: 352px; top: 84px; width: 500px; height: 308px; box-sizing: border-box; background: var(--paper); border: 3px solid var(--ink); border-radius: 22px; box-shadow: 8px 8px 0 var(--ink); }
+.g .guide { position: absolute; left: 362px; top: 94px; width: 480px; height: 288px; opacity: 0; pointer-events: none; }
+.g.guide-on .guide { opacity: .18; }
+.g .cell { position: absolute; width: 96px; height: 96px; border: 0; padding: 0; background: transparent; box-shadow: inset 0 0 0 1px var(--grid); cursor: pointer; }
+.g .traybg { position: absolute; left: 24px; top: 404px; width: 912px; height: 184px; box-sizing: border-box; background: var(--tray); border: 3px solid var(--ink); border-radius: 22px; }
+.g .slot { position: absolute; width: 72px; height: 72px; box-sizing: border-box; border: 3px dashed rgba(42,31,61,.32); border-radius: 8px; pointer-events: none; }
+.g .pc { position: absolute; left: 0; top: 0; width: 96px; height: 96px; border: 0; padding: 0; background: none; transform-origin: 0 0; cursor: pointer; z-index: 2; transition: transform .2s cubic-bezier(.2, .8, .2, 1); }
+.g .pc .in { position: absolute; inset: 0; display: block; background: #fff; border-radius: 6px; outline: 5px solid #fff; box-shadow: 4px 4px 0 5px var(--ink); rotate: var(--tilt, 0deg); transition: transform .15s ease-out, rotate .15s ease-out; }
+.g .pc .in svg { display: block; width: 100%; height: 100%; border-radius: 6px; }
+.g .pc.ok .in { outline: 0; box-shadow: none; border-radius: 0; rotate: 0deg; }
+.g .pc.ok .in svg { border-radius: 0; }
+.g .pc.ok { cursor: default; z-index: 1; }
+.g .pc.sel { z-index: 5; }
+.g .pc.sel .in { transform: translateY(-10px) scale(1.08); rotate: 0deg; outline: 7px solid var(--sel); box-shadow: 6px 12px 0 7px rgba(42,31,61,.35); }
+.g .pc.moving { z-index: 6; }
+.g .pc .badge { position: absolute; right: 6px; bottom: 6px; width: 26px; height: 26px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2px var(--ink); display: none; place-items: center; }
+.g .pc .badge svg { width: 16px; height: 16px; }
+.g .pc.ok .badge { display: grid; }
+.g.done .pc .badge { display: none; }
+.g .pc .tag { position: absolute; left: 50%; top: -48px; transform: translateX(-50%); white-space: nowrap; font-size: 18px; font-weight: 700; background: var(--sel); color: #fff; border-radius: 8px; padding: 2px 10px; display: none; }
+.g .pc.sel.intray .tag { display: block; }
+.g .pc.glue .in { animation: glue .18s ease-out; }
+@keyframes glue { 0% { transform: scale(1.06, .9); } 100% { transform: none; } }
+.g .hintbox { position: absolute; width: 96px; height: 96px; pointer-events: none; z-index: 4; display: none; }
+.g .hintbox::after { content: ""; position: absolute; inset: 5px; border: 4px dashed var(--sel); border-radius: 10px; }
+.g .hintbox span { position: absolute; right: 8px; bottom: 8px; font-size: 14px; font-weight: 700; background: var(--sel); color: #fff; border-radius: 6px; padding: 1px 8px; }
+.g .back { position: absolute; width: 72px; height: 72px; box-sizing: border-box; border: 3px dashed var(--sel); border-radius: 8px; background: rgba(255,255,255,.85); color: var(--sel); font-size: 13px; font-weight: 700; line-height: 1.1; padding: 4px; cursor: pointer; z-index: 3; display: none; }
+.g .ov { position: absolute; inset: 0; background: var(--card); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 18px; text-align: center; z-index: 10; }
+.g .ov h2 { font-family: "Baloo 2", system-ui, sans-serif; font-size: 38px; font-weight: 800; line-height: 1.05; }
+.g .ov p { font-size: 19px; max-width: 560px; }
+.g .ov .acts { display: flex; gap: 16px; }
+.g .ov .bigpic { width: 360px; height: 216px; box-sizing: border-box; border: 8px solid #fff; border-radius: 16px; overflow: hidden; rotate: -2deg; box-shadow: 6px 6px 0 var(--ink); }
+.g .ov .bigpic svg { display: block; width: 100%; height: 100%; }
+.g .ov .exit { position: absolute; left: 24px; top: 8px; }
+.g .ov .cap2 { font-size: 17px; max-width: 420px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.g .ov .paperstack { width: 120px; height: 84px; position: relative; }
+.g .ov .paperstack i { position: absolute; inset: 0; border: 3px solid var(--ink); border-radius: 10px; background: #fff; }
+.g .ov .paperstack i:nth-child(1) { rotate: -8deg; background: var(--tray); }
+.g .ov .paperstack i:nth-child(2) { rotate: 5deg; background: var(--paper); }
+.g .donebox { position: absolute; left: 24px; top: 404px; width: 912px; height: 184px; box-sizing: border-box; background: #fff; border: 3px solid var(--ink); border-radius: 22px; display: none; align-items: center; justify-content: space-between; gap: 20px; padding: 0 32px; z-index: 7; }
+.g .donebox h2 { font-family: "Baloo 2", system-ui, sans-serif; font-size: 36px; font-weight: 800; margin: 0; line-height: 1.05; }
+.g .donebox p { font-size: 17px; color: var(--ink-soft); }
+.g .donebox .acts { display: flex; gap: 14px; }
+.g .sticker { position: absolute; left: 770px; top: 62px; z-index: 7; font-family: "Baloo 2", system-ui, sans-serif; font-size: 30px; font-weight: 800; background: #ffd166; border: 3px solid var(--ink); border-radius: 16px; padding: 2px 18px; rotate: 8deg; box-shadow: 4px 4px 0 var(--ink); display: none; }
+.g.done .donebox { display: flex; }
+.g.done .sticker { display: block; }
+.g .scrim { position: absolute; inset: 0; background: rgba(42,31,61,.5); display: none; align-items: center; justify-content: center; z-index: 20; }
+.g .dlg { width: 540px; box-sizing: border-box; background: #fff; border: 3px solid var(--ink); border-radius: 22px; box-shadow: 8px 8px 0 var(--ink); padding: 28px 30px; display: grid; gap: 14px; text-align: left; }
+.g .dlg h2 { font-family: "Baloo 2", system-ui, sans-serif; font-size: 32px; font-weight: 800; line-height: 1.05; margin: 0; }
+.g .dlg p { font-size: 18px; }
+.g .dlg .acts { display: flex; gap: 14px; justify-content: flex-end; margin-top: 6px; }
+.g .rotate { position: absolute; inset: 0; z-index: 30; background: var(--card); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 22px; }
+.g .rotate h2 { font-family: "Baloo 2", system-ui, sans-serif; font-size: 44px; font-weight: 800; margin: 0; }
+.g .rotate p { font-size: 22px; }
+.g.portrait .rotate { display: flex; }
+.g.rm .pc, .g.rm .pc .in { transition: none !important; animation: none !important; }
+.g.rm .pc .in, .g.rm .pic, .g.rm .ov .bigpic, .g.rm .sticker { rotate: 0deg !important; }
+.g.rm .pc { --tilt: 0deg !important; }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="blur" x="0" y="0" width="1" height="1"><feGaussianBlur stdDeviation="14" edgeMode="duplicate"/></filter>
+    <symbol id="img-trem" viewBox="0 0 500 300">
+      <rect width="500" height="300" fill="#a8d8ea"/>
+      <circle cx="420" cy="62" r="34" fill="#ffd166"/>
+      <ellipse cx="95" cy="58" rx="46" ry="16" fill="#fff"/><ellipse cx="120" cy="48" rx="28" ry="16" fill="#fff"/>
+      <ellipse cx="250" cy="40" rx="40" ry="13" fill="#fff"/>
+      <path d="M0 175 Q120 110 240 168 T500 150 V300 H0Z" fill="#8cc084"/>
+      <path d="M0 225 Q150 186 300 220 T500 210 V300 H0Z" fill="#5e9c5a"/>
+      <rect x="0" y="262" width="500" height="38" fill="#c9b48a"/>
+      <g fill="#6b4f3a"><rect x="0" y="258" width="500" height="6"/><rect x="0" y="270" width="500" height="4"/></g>
+      <g fill="#8a6a4f"><rect x="8" y="262" width="10" height="16"/><rect x="58" y="262" width="10" height="16"/><rect x="108" y="262" width="10" height="16"/><rect x="158" y="262" width="10" height="16"/><rect x="208" y="262" width="10" height="16"/><rect x="258" y="262" width="10" height="16"/><rect x="308" y="262" width="10" height="16"/><rect x="358" y="262" width="10" height="16"/><rect x="408" y="262" width="10" height="16"/><rect x="458" y="262" width="10" height="16"/></g>
+      <g fill="#eef2f5"><circle cx="333" cy="112" r="14"/><circle cx="350" cy="88" r="19"/><circle cx="374" cy="62" r="24"/></g>
+      <rect x="22" y="182" width="118" height="60" rx="6" fill="#ffbe0b"/><rect x="34" y="194" width="40" height="26" rx="3" fill="#fff3c4"/><rect x="88" y="194" width="40" height="26" rx="3" fill="#fff3c4"/>
+      <rect x="140" y="226" width="22" height="7" fill="#333d47"/>
+      <rect x="162" y="182" width="118" height="60" rx="6" fill="#3a86ff"/><rect x="174" y="194" width="40" height="26" rx="3" fill="#d6e6ff"/><rect x="228" y="194" width="40" height="26" rx="3" fill="#d6e6ff"/>
+      <rect x="280" y="226" width="22" height="7" fill="#333d47"/>
+      <rect x="302" y="172" width="100" height="70" rx="8" fill="#d1495b"/>
+      <rect x="320" y="132" width="22" height="42" fill="#333d47"/><rect x="314" y="126" width="34" height="10" rx="3" fill="#333d47"/>
+      <rect x="392" y="138" width="56" height="104" rx="6" fill="#a63446"/><rect x="402" y="150" width="36" height="30" rx="4" fill="#d6eef7"/>
+      <rect x="386" y="130" width="68" height="12" rx="4" fill="#333d47"/>
+      <path d="M448 222 L478 248 H448Z" fill="#333d47"/>
+      <g fill="#2b2d42"><circle cx="50" cy="248" r="15"/><circle cx="112" cy="248" r="15"/><circle cx="190" cy="248" r="15"/><circle cx="252" cy="248" r="15"/><circle cx="332" cy="246" r="19"/><circle cx="378" cy="246" r="19"/><circle cx="426" cy="246" r="19"/></g>
+      <g fill="#edf2f4"><circle cx="50" cy="248" r="5"/><circle cx="112" cy="248" r="5"/><circle cx="190" cy="248" r="5"/><circle cx="252" cy="248" r="5"/><circle cx="332" cy="246" r="6"/><circle cx="378" cy="246" r="6"/><circle cx="426" cy="246" r="6"/></g>
+    </symbol>
+    <symbol id="img-baleia" viewBox="0 0 500 300">
+      <rect width="500" height="300" fill="#2a7fb8"/>
+      <rect width="500" height="98" fill="#cfe8f2"/>
+      <circle cx="70" cy="48" r="28" fill="#ffd166"/>
+      <path d="M0 98 Q25 86 50 98 T100 98 T150 98 T200 98 T250 98 T300 98 T350 98 T400 98 T450 98 T500 98 V112 H0Z" fill="#5fa8d3"/>
+      <path d="M330 92 H420 L408 108 H342Z" fill="#e76f51"/><rect x="372" y="50" width="4" height="42" fill="#3d2c2e"/><path d="M376 54 L410 86 H376Z" fill="#fff"/>
+      <g fill="#cdeaf7"><circle cx="150" cy="78" r="6"/><circle cx="168" cy="64" r="7"/><circle cx="188" cy="74" r="6"/><circle cx="170" cy="88" r="5"/></g>
+      <path d="M168 120 Q164 100 170 92" stroke="#cdeaf7" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path d="M60 196 Q100 120 250 124 Q350 128 388 176 Q404 206 376 226 Q300 262 180 254 Q86 244 60 196Z" fill="#20406a"/>
+      <path d="M380 184 Q428 150 474 118 Q458 166 476 210 Q430 198 384 204Z" fill="#20406a"/>
+      <path d="M86 214 Q180 256 300 242 Q352 236 374 222 Q300 250 190 246 Q114 240 86 214Z" fill="#9cc7e0"/>
+      <g stroke="#7aaed0" stroke-width="3"><path d="M150 228 L156 246"/><path d="M190 232 L194 250"/><path d="M230 234 L232 250"/><path d="M270 232 L270 248"/></g>
+      <circle cx="122" cy="186" r="7" fill="#fff"/><circle cx="124" cy="187" r="4" fill="#0b132b"/>
+      <path d="M210 196 Q240 214 270 200" stroke="#162f50" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <rect y="276" width="500" height="24" fill="#e9c46a"/>
+      <g fill="#2a9d8f"><path d="M30 280 Q20 250 34 232 Q42 256 38 280Z"/><path d="M46 280 Q50 248 62 240 Q60 262 54 280Z"/><path d="M450 280 Q440 246 456 226 Q464 254 460 280Z"/></g>
+      <g fill="#f4a261"><path d="M400 252 Q414 240 428 252 Q414 264 400 252Z M428 252 L438 244 V260Z"/><path d="M330 268 Q340 260 350 268 Q340 276 330 268Z M350 268 L357 263 V273Z"/></g>
+    </symbol>
+    <symbol id="img-foguete" viewBox="0 0 300 300">
+      <rect width="300" height="300" fill="#26305e"/>
+      <g fill="#fff8d6"><circle cx="40" cy="44" r="3"/><circle cx="96" cy="26" r="2"/><circle cx="252" cy="40" r="3"/><circle cx="214" cy="96" r="2"/><circle cx="60" cy="130" r="2"/><circle cx="268" cy="150" r="2.5"/><circle cx="30" cy="200" r="2"/></g>
+      <circle cx="236" cy="72" r="26" fill="#ffd166"/><circle cx="246" cy="64" r="24" fill="#26305e"/>
+      <path d="M0 250 Q150 196 300 250 V300 H0Z" fill="#8f6fd6"/>
+      <g fill="#6c4fb8"><circle cx="70" cy="262" r="10"/><circle cx="212" cy="270" r="14"/><circle cx="140" cy="282" r="7"/></g>
+      <path d="M128 214 L150 260 L172 214Z" fill="#ff9f1c"/><path d="M138 214 L150 244 L162 214Z" fill="#ffd166"/>
+      <path d="M150 40 Q190 86 186 168 L186 214 H114 L114 168 Q110 86 150 40Z" fill="#f1f3f8"/>
+      <path d="M150 40 Q174 64 182 98 H118 Q126 64 150 40Z" fill="#e63946"/>
+      <circle cx="150" cy="134" r="18" fill="#7ec8e3" stroke="#3d4a6b" stroke-width="6"/>
+      <path d="M114 168 L84 214 H114Z M186 168 L216 214 H186Z" fill="#e63946"/>
+      <rect x="140" y="186" width="20" height="28" fill="#c9cfdd"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header class="intro">
+    <span class="eyebrow">Quebra-cabeça · Etapa 4 · protótipo para revisão do grupo</span>
+    <h1>Protótipo do quebra-cabeça</h1>
+    <p>Direção B, Papel recortado. Dá para jogar de verdade: toque numa peça e depois na casa dela. O painel liga os apoios propostos, troca o aparelho e leva direto aos estados que o grupo precisa revisar. Este protótipo é separado do jogo em Phaser e não é a implementação.</p>
+  </header>
+
+  <div class="layout">
+    <section class="viewer" aria-label="Jogo no aparelho">
+      <div class="devices">
+        <div class="seg" role="group" aria-label="Aparelho" id="devseg">
+          <button type="button" id="dv-t8" data-dev="t8" aria-pressed="false">Tablet 8″</button>
+          <button type="button" id="dv-t10" data-dev="t10" aria-pressed="true">Tablet 10″</button>
+          <button type="button" id="dv-nb" data-dev="nb" aria-pressed="false">Notebook</button>
+          <button type="button" id="dv-mon" data-dev="mon" aria-pressed="false">Monitor</button>
+          <button type="button" id="dv-port" data-dev="port" aria-pressed="false">Tablet em retrato</button>
+        </div>
+      </div>
+      <div class="frame-host"><div class="device" id="device"><div class="screen" id="screen"><div class="stage" id="stage"></div></div></div></div>
+      <p class="dev-note" id="devnote"></p>
+    </section>
+
+    <aside class="panel" aria-label="Painel do revisor">
+      <div class="card">
+        <h2>Atividade de exemplo</h2>
+        <div class="row">
+          <label for="tema">Tema (palavra ou frase)</label>
+          <input type="text" id="tema" value="trem a vapor no campo" maxlength="90">
+          <span class="hint-txt">No jogo real, a imagem vem gerada a partir deste texto. Aqui ele só muda a legenda.</span>
+        </div>
+        <div class="row">
+          <span class="lbl" id="img-lbl">Imagem de exemplo</span>
+          <div class="seg" role="group" aria-labelledby="img-lbl" id="imgseg">
+            <button type="button" id="im-trem" data-img="trem" aria-pressed="true">Trem 5:3</button>
+            <button type="button" id="im-baleia" data-img="baleia" aria-pressed="false">Baleia 5:3</button>
+            <button type="button" id="im-foguete" data-img="foguete" aria-pressed="false">Foguete 1:1</button>
+          </div>
+          <span class="hint-txt">A imagem quadrada mostra como fica uma imagem fora de 5:3: inteira, com a sobra preenchida por ela mesma desfocada.</span>
+        </div>
+        <div class="row">
+          <span class="lbl" id="card-lbl">Cor da cartolina</span>
+          <div class="swatches" role="group" aria-labelledby="card-lbl" id="cardseg">
+            <button type="button" id="cd-pessego" data-card="#ffd9a8" style="background:#ffd9a8" aria-pressed="true" aria-label="Pêssego"></button>
+            <button type="button" id="cd-menta" data-card="#cdeedd" style="background:#cdeedd" aria-pressed="false" aria-label="Menta"></button>
+            <button type="button" id="cd-ceu" data-card="#cfe3ff" style="background:#cfe3ff" aria-pressed="false" aria-label="Céu"></button>
+            <button type="button" id="cd-lavanda" data-card="#e6dcff" style="background:#e6dcff" aria-pressed="false" aria-label="Lavanda"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Ajustes da atividade</h2>
+        <span class="hint-txt">Decidido pelo grupo: a peça errada fica no tabuleiro, sem imagem-guia, com cor da cartolina.</span>
+        <label class="check"><input type="checkbox" id="op-rm"><span>Movimento reduzido</span></label>
+        <label class="check"><input type="checkbox" id="op-fail"><span>Simular falha ao carregar a imagem</span></label>
+        <span class="hint-txt">O som fica no botão Som do jogo e começa desligado.</span>
+      </div>
+
+      <div class="card">
+        <h2>Ir para um estado</h2>
+        <div class="tools">
+          <button type="button" class="tool" id="go-new">Nova partida</button>
+          <button type="button" class="tool" id="go-mid">Meio da partida</button>
+          <button type="button" class="tool" id="go-almost">Falta uma peça</button>
+        </div>
+        <span class="hint-txt">Os atalhos não contam tentativas.</span>
+      </div>
+
+      <div class="card">
+        <h2>Contagem da partida</h2>
+        <div class="metrics">
+          <div><b id="m-att">0</b><span>tentativas</span></div>
+          <div><b id="m-ok">0</b><span>acertos</span></div>
+          <div><b id="m-hint">0</b><span>ajudas</span></div>
+        </div>
+        <div class="row">
+          <span class="lbl">Resultados enviados (<code>activity-result</code>)</span>
+          <ol id="log"><li class="hint-txt" id="log-empty">Nenhum ainda. Sai um quando a partida termina ou quando a criança sai.</li></ol>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <section class="card" aria-labelledby="checklist-h">
+    <h2 id="checklist-h">O que conferir</h2>
+    <div class="states">
+      <ul>
+        <li>Começo: o modelo grande e o botão Começar.</li>
+        <li>Selecionar, trocar e cancelar a seleção de uma peça.</li>
+        <li>Acerto: a peça fica reta, sem borda, com ✓.</li>
+        <li>Erro: a peça fica como adesivo solto, sem ✓, e pode ser trocada.</li>
+      </ul>
+      <ul>
+        <li>Ajuda com e sem peça selecionada, e o segundo toque, que não conta.</li>
+        <li>Toques rápidos e repetidos: nada duplica.</li>
+        <li>Sair no meio (pede confirmação) e sair no fim (não envia de novo).</li>
+        <li>Falha de imagem, Tentar de novo, tablet em retrato.</li>
+      </ul>
+    </div>
+  </section>
+</div>
+
+<script>
+const N = 15, COLS = 5;
+const DEVICES = {
+  t8:   { w: 960,  h: 600,  pxcm: 56, desk: false, name: 'Tablet de 8″ na horizontal (≈ 960 × 600 px CSS)' },
+  t10:  { w: 1024, h: 768,  pxcm: 52, desk: false, name: 'Tablet de 10″ na horizontal (1024 × 768 px CSS)' },
+  nb:   { w: 1280, h: 650,  pxcm: 38, desk: true,  name: 'Notebook, janela de 1280 × 650 px' },
+  mon:  { w: 1440, h: 800,  pxcm: 38, desk: true,  name: 'Monitor, janela de 1440 × 800 px' },
+  port: { w: 768,  h: 1024, pxcm: 52, desk: false, name: 'Tablet de 10″ em retrato (768 × 1024 px CSS)' },
+};
+const IMAGES = {
+  trem:    { ratio: 5 / 3, desc: 'Trem colorido com locomotiva vermelha soltando fumaça, num campo verde com céu azul.' },
+  baleia:  { ratio: 5 / 3, desc: 'Baleia azul nadando no mar, com um barquinho na superfície e peixes no fundo de areia.' },
+  foguete: { ratio: 1,     desc: 'Foguete branco e vermelho decolando num céu noturno com estrelas e lua.' },
+};
+const icon = {
+  back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
+  hint: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9V16h7v-2.1A6 6 0 0 0 12 3z"/></svg>',
+  soundOff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l4 6M21 9l-4 6"/></svg>',
+  soundOn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="#2a1f3d" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>',
+  tablet: '<svg width="200" height="130" viewBox="0 0 200 130" aria-hidden="true"><rect x="14" y="20" width="56" height="90" rx="9" fill="none" stroke="#2a1f3d" stroke-width="4" stroke-dasharray="7 6" opacity=".5"/><rect x="92" y="34" width="96" height="62" rx="9" fill="#fff" stroke="#2a1f3d" stroke-width="4"/><rect x="102" y="44" width="76" height="42" rx="3" fill="#7fc8a9"/><path d="M58 12 Q86 4 104 22" fill="none" stroke="#6a3fc8" stroke-width="5" stroke-linecap="round"/><path d="M92 22 L105 23 L102 10" fill="none" stroke="#6a3fc8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+};
+
+// ---- Geometria (pixels lógicos 960 x 600) ----
+const cellXY = c => [362 + (c % COLS) * 96, 94 + Math.floor(c / COLS) * 96];
+const slotXY = s => {
+  const row = Math.floor(s / 10), col = s % 10;
+  const count = row === 0 ? 10 : N - 10;
+  const rowW = count * 72 + (count - 1) * 12;
+  return [24 + (912 - rowW) / 2 + col * 84, 418 + row * 84];
+};
+const TILTS = [-3, 2, -1.5, 2.5, -2.5, 1, -3, 2, -1, 2.5, -2, 1.5, -3, 2, -1.5];
+
+// ---- Estado ----
+const opts = { img: 'trem', theme: 'trem a vapor no campo', card: '#ffd9a8', guide: false, wrong: 'stay', rm: matchMedia('(prefers-reduced-motion: reduce)').matches, fail: false, sound: false, dev: 't10' };
+let S, matchNo = 0, timers = [];
+
+function shuffled(seed) {
+  const a = Array.from({ length: N }, (_, i) => i);
+  let x = seed * 9301 + 49297;
+  for (let i = N - 1; i > 0; i--) { x = (x * 9301 + 49297) % 233280; const j = Math.floor((x / 233280) * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+function newMatch() {
+  matchNo++;
+  timers.forEach(clearTimeout); timers = [];
+  const order = shuffled(matchNo + 3);
+  S = {
+    phase: 'loading', activityId: `demo-puzzle-${String(matchNo).padStart(3, '0')}`,
+    slotOf: {}, cellOf: Array(N).fill(null), occ: Array(N).fill(null),
+    sel: null, hint: null, busy: false, finished: false, confirm: false,
+    msg: ['Escolha uma peça', ''], metrics: { attempts: 0, correct: 0, hints: 0 },
+  };
+  order.forEach((p, s) => { S.slotOf[p] = s; });
+  buildGame();
+  render();
+  later(() => { S.phase = opts.fail ? 'error' : 'start'; render(); }, 700);
+}
+const later = (fn, ms) => { const t = setTimeout(fn, ms); timers.push(t); return t; };
+const isOk = p => S.cellOf[p] === p;
+const okCount = () => S.cellOf.filter((c, p) => c === p).length;
+
+// ---- Som opcional (papel), só depois de um toque e só se ligado ----
+let actx;
+function paper() {
+  if (!opts.sound) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const len = Math.floor(actx.sampleRate * 0.07), buf = actx.createBuffer(1, len, actx.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len) ** 2;
+    const src = actx.createBufferSource(), f = actx.createBiquadFilter(), g = actx.createGain();
+    f.type = 'bandpass'; f.frequency.value = 2400; g.gain.value = 0.18;
+    src.buffer = buf; src.connect(f).connect(g).connect(actx.destination); src.start();
+  } catch (e) { /* sem som neste navegador */ }
+}
+
+// ---- Montagem do DOM do jogo ----
+const stage = document.getElementById('stage');
+const crop = p => `<svg viewBox="${(p % COLS) * 100} ${Math.floor(p / COLS) * 100} 100 100" aria-hidden="true"><use href="#comp" width="500" height="300"/></svg>`;
+function compose() {
+  // Monta a imagem no formato 5:3 do tabuleiro: inteira (contain); a sobra recebe a própria imagem ampliada e desfocada.
+  const id = opts.img, r = IMAGES[id].ratio;
+  let old = document.getElementById('comp'); if (old) old.remove();
+  const ns = 'http://www.w3.org/2000/svg', sym = document.createElementNS(ns, 'symbol');
+  sym.id = 'comp'; sym.setAttribute('viewBox', '0 0 500 300');
+  if (Math.abs(r - 5 / 3) < 0.01) sym.innerHTML = `<use href="#img-${id}" width="500" height="300"/>`;
+  else {
+    const cw = r > 5 / 3 ? 500 : 300 * r, ch = r > 5 / 3 ? 500 / r : 300;
+    const kw = r > 5 / 3 ? 300 * r : 500, kh = r > 5 / 3 ? 300 : 500 / r;
+    sym.innerHTML = `<g filter="url(#blur)"><use href="#img-${id}" x="${(500 - kw) / 2}" y="${(300 - kh) / 2}" width="${kw}" height="${kh}"/></g><rect width="500" height="300" fill="#fff" opacity=".22"/><use href="#img-${id}" x="${(500 - cw) / 2}" y="${(300 - ch) / 2}" width="${cw}" height="${ch}"/>`;
+  }
+  document.querySelector('svg defs').appendChild(sym);
+}
+function buildGame() {
+  compose();
+  const cells = Array.from({ length: N }, (_, c) => { const [x, y] = cellXY(c); return `<button type="button" class="cell" data-cell="${c}" style="left:${x}px;top:${y}px" aria-label="Casa linha ${Math.floor(c / COLS) + 1}, coluna ${c % COLS + 1}"></button>`; }).join('');
+  const slots = Array.from({ length: N }, (_, s) => { const [x, y] = slotXY(s); return `<span class="slot" style="left:${x}px;top:${y}px"></span>`; }).join('');
+  const pieces = Array.from({ length: N }, (_, p) => `<button type="button" class="pc" data-p="${p}" style="--tilt:${TILTS[S.slotOf[p]]}deg"><span class="in">${crop(p)}</span><span class="badge">${icon.check}</span><span class="tag">Esta peça</span></button>`).join('');
+  const dots = Array.from({ length: N }, () => '<i></i>').join('');
+  const desc = IMAGES[opts.img].desc;
+  stage.innerHTML = `<div class="g" id="g" role="application" aria-label="Quebra-cabeça. ${desc}">
+    <div class="bar">
+      <button type="button" class="gbtn" id="b-sair">${icon.back}Sair</button>
+      <div class="instr" aria-live="polite"><span class="main" id="i-main"></span><span class="sub" id="i-sub"></span></div>
+      <button type="button" class="gbtn" id="b-ajuda">${icon.hint}Ajuda</button>
+      <button type="button" class="gbtn" id="b-som" aria-pressed="false"></button>
+    </div>
+    <div class="left">
+      <div class="lbl">Modelo</div>
+      <div class="pic"><svg viewBox="0 0 500 300" role="img" aria-label="${desc}"><use href="#comp"/></svg></div>
+      <p class="cap" id="cap"></p>
+    </div>
+    <div class="prog"><div class="lbl" id="prog"></div><div class="dots" id="dots">${dots}</div></div>
+    <div class="boardbg"></div>
+    <svg class="guide" viewBox="0 0 500 300" aria-hidden="true"><use href="#comp"/></svg>
+    ${cells}
+    <div class="traybg"></div>
+    ${slots}
+    ${pieces}
+    <div class="hintbox" id="hintbox"><span>Dica</span></div>
+    <button type="button" class="back" id="b-back">Devolver aqui</button>
+    <div class="sticker">Pronto!</div>
+    <div class="donebox"><div><h2>Você montou a imagem!</h2><p id="done-sub"></p></div><div class="acts"><button type="button" class="gbtn big primary" id="b-again">Montar de novo</button><button type="button" class="gbtn big" id="b-sair2">Sair</button></div></div>
+    <div class="ov" id="ov-loading"><button type="button" class="gbtn exit" id="b-sair5">${icon.back}Sair</button><div class="paperstack"><i></i><i></i><i></i></div><h2>Preparando as peças…</h2></div>
+    <div class="ov" id="ov-error"><div class="paperstack"><i></i><i></i><i></i></div><h2>Não consegui abrir a imagem</h2><p>Pode ser a internet. Tente de novo; se continuar, um adulto pode escolher outra atividade.</p><div class="acts"><button type="button" class="gbtn big primary" id="b-retry">Tentar de novo</button><button type="button" class="gbtn big" id="b-sair3">${icon.back}Sair</button></div></div>
+    <div class="ov" id="ov-start"><button type="button" class="gbtn exit" id="b-sair4">${icon.back}Sair</button><div class="bigpic"><svg viewBox="0 0 500 300" aria-hidden="true"><use href="#comp"/></svg></div><h2>Vamos montar esta imagem</h2><p class="cap2" id="cap2"></p><button type="button" class="gbtn big primary" id="b-start">Começar</button></div>
+    <div class="ov" id="ov-left"><h2>Você saiu do quebra-cabeça</h2><p>No jogo de verdade, aqui a plataforma assume. No protótipo, você pode abrir de novo.</p><button type="button" class="gbtn big primary" id="b-reopen">Abrir de novo</button></div>
+    <div class="scrim" id="scrim"><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlg-h"><h2 id="dlg-h">Quer sair?</h2><p>As peças desta partida não ficam guardadas.</p><div class="acts"><button type="button" class="gbtn" id="b-stay">Continuar montando</button><button type="button" class="gbtn" id="b-leave">Sair</button></div></div></div>
+    <div class="rotate">${icon.tablet}<h2>Gire o tablet</h2><p>O quebra-cabeça funciona com o tablet deitado.</p></div>
+  </div>`;
+  wire();
+}
+
+// ---- Regras ----
+function say(main, sub = '') { S.msg = [main, sub]; }
+function lock(ms) { S.busy = true; later(() => { S.busy = false; render(); }, ms); }
+const dur = ms => (opts.rm ? 0 : ms);
+
+function tapPiece(p) {
+  if (S.phase !== 'play' || S.busy || S.confirm) return;
+  const onBoard = S.cellOf[p] !== null;
+  if (onBoard && (isOk(p) || (S.sel !== null && S.sel !== p))) return tapCell(S.cellOf[p]);
+  if (S.sel === p) { S.sel = null; S.hint = null; say('Escolha uma peça'); }
+  else { S.sel = p; if (S.hint !== p) S.hint = null; say('Agora toque na casa dela', onBoard ? 'Ou devolva para a bandeja' : ''); paper(); }
+  render();
+}
+function tapCell(c) {
+  if (S.phase !== 'play' || S.busy || S.confirm) return;
+  const occ = S.occ[c];
+  if (occ !== null && isOk(occ)) { say('Essa casa já está completa'); return render(); }
+  if (S.sel === null) {
+    if (occ !== null) return tapPiece(occ);
+    say('Primeiro escolha uma peça'); return render();
+  }
+  if (occ === S.sel) { S.sel = null; S.hint = null; say('Escolha uma peça'); return render(); }
+  place(S.sel, c);
+}
+function place(p, c) {
+  S.metrics.attempts++;
+  const from = S.cellOf[p];
+  if (from !== null) S.occ[from] = null;
+  const occ = S.occ[c];
+  if (occ !== null) S.cellOf[occ] = null;            // a peça errada que estava na casa volta ao lugar dela
+  S.cellOf[p] = c; S.occ[c] = p;
+  const right = p === c;
+  paper();
+  if (right) {
+    S.metrics.correct++;
+    S.sel = null; S.hint = null; say('Encaixou!');
+    const el = pieceEl(p); el.classList.add('moving');
+    lock(dur(200));
+    later(() => { el.classList.remove('moving'); if (!opts.rm) { el.classList.add('glue'); later(() => el.classList.remove('glue'), 200); } if (okCount() === N) complete(); }, dur(200));
+  } else if (opts.wrong === 'stay') {
+    S.sel = null; S.hint = null; say('Ela fica em outro lugar', 'Pode trocar quando quiser');
+    lock(dur(200));
+  } else {
+    say('Ela fica em outro lugar', 'Tente outra casa');
+    lock(dur(200) + dur(260) + dur(200));
+    later(() => { S.cellOf[p] = null; S.occ[c] = null; render(); }, dur(200) + dur(260));
+  }
+  render();
+}
+function giveBack() {
+  if (S.phase !== 'play' || S.busy || S.sel === null || S.cellOf[S.sel] === null) return;
+  const p = S.sel; S.occ[S.cellOf[p]] = null; S.cellOf[p] = null;
+  S.sel = null; S.hint = null; say('Escolha uma peça'); lock(dur(200)); render();
+}
+function help() {
+  if (S.phase !== 'play' || S.busy || S.confirm) return;
+  let target = S.sel;
+  if (target === null) { target = Array.from({ length: N }, (_, i) => i).find(i => !isOk(i)); S.sel = target; }
+  if (S.hint === target) { say('A dica já está na tela', 'É a casa com o contorno tracejado'); return render(); }
+  S.hint = target; S.metrics.hints++;
+  say('A dica mostra a casa dela', S.cellOf[target] !== null ? 'Ou devolva para a bandeja' : '');
+  render();
+}
+function complete() { S.phase = 'done'; S.sel = null; S.hint = null; say('Pronto!'); finish('completed'); render(); }
+function finish(status) {
+  if (S.finished) return;
+  S.finished = true;
+  const r = { activityId: S.activityId, gameId: 'puzzle', status, ...S.metrics };
+  const empty = document.getElementById('log-empty'); if (empty) empty.remove();
+  const li = document.createElement('li'); li.innerHTML = `<code>${JSON.stringify(r)}</code>`;
+  document.getElementById('log').prepend(li);
+}
+function askExit() {
+  if (S.phase === 'play') { S.confirm = true; render(); document.getElementById('b-stay').focus(); return; }
+  if (S.phase !== 'done') finish('abandoned');
+  S.phase = 'left'; S.confirm = false; render();
+}
+function jump(n) {
+  // Atalho do revisor: encaixa n peças certas sem contar tentativas.
+  newMatchSilent();
+  for (let p = 0; p < n; p++) { S.cellOf[p] = p; S.occ[p] = p; }
+  S.phase = 'play'; say('Escolha uma peça'); render();
+}
+function newMatchSilent() { newMatch(); timers.forEach(clearTimeout); timers = []; S.phase = 'play'; }
+
+// ---- Desenho ----
+const pieceEl = p => stage.querySelector(`.pc[data-p="${p}"]`);
+function render() {
+  const g = document.getElementById('g'); if (!g) return;
+  g.style.setProperty('--card', opts.card);
+  g.classList.toggle('guide-on', opts.guide);
+  g.classList.toggle('rm', opts.rm);
+  g.classList.toggle('done', S.phase === 'done');
+  g.classList.toggle('portrait', opts.dev === 'port');
+  for (const [id, ph] of [['ov-loading', 'loading'], ['ov-error', 'error'], ['ov-start', 'start'], ['ov-left', 'left']]) document.getElementById(id).style.display = S.phase === ph ? 'flex' : 'none';
+  document.getElementById('scrim').style.display = S.confirm ? 'flex' : 'none';
+  document.getElementById('i-main').textContent = S.msg[0];
+  document.getElementById('i-sub').textContent = S.msg[1];
+  const cap = `<b>Tema:</b> ${escapeHTML(opts.theme || 'sem tema')}`;
+  document.getElementById('cap').innerHTML = cap;
+  document.getElementById('cap2').innerHTML = cap;
+  const som = document.getElementById('b-som');
+  som.innerHTML = (opts.sound ? icon.soundOn : icon.soundOff) + 'Som';
+  som.setAttribute('aria-pressed', String(opts.sound));
+  som.setAttribute('aria-label', opts.sound ? 'Som ligado' : 'Som desligado');
+  document.getElementById('b-ajuda').disabled = S.phase !== 'play';
+  const ok = okCount();
+  document.getElementById('prog').textContent = `${ok} de 15 encaixadas`;
+  document.querySelectorAll('#dots i').forEach((d, i) => d.classList.toggle('on', i < ok));
+  document.getElementById('done-sub').textContent = `As 15 peças estão no lugar.`;
+  for (let p = 0; p < N; p++) {
+    const el = pieceEl(p), c = S.cellOf[p];
+    const [x, y] = c === null ? slotXY(S.slotOf[p]) : cellXY(c);
+    el.style.transform = `translate(${x}px, ${y}px) scale(${c === null ? 0.75 : 1})`;
+    el.classList.toggle('intray', c === null);
+    el.classList.toggle('ok', c === p);
+    el.classList.toggle('sel', S.sel === p);
+    el.setAttribute('aria-pressed', String(S.sel === p));
+    el.setAttribute('aria-label', c === p ? `Peça encaixada, linha ${Math.floor(p / COLS) + 1}, coluna ${p % COLS + 1}` : c === null ? `Peça ${S.slotOf[p] + 1} da bandeja` : `Peça fora do lugar, na linha ${Math.floor(c / COLS) + 1}, coluna ${c % COLS + 1}`);
+    el.tabIndex = c === p || S.phase !== 'play' ? -1 : 0;
+  }
+  const hb = document.getElementById('hintbox');
+  if (S.hint !== null && S.phase === 'play') { const [x, y] = cellXY(S.hint); hb.style.left = x + 'px'; hb.style.top = y + 'px'; hb.style.display = 'block'; } else hb.style.display = 'none';
+  const back = document.getElementById('b-back');
+  if (S.phase === 'play' && S.sel !== null && S.cellOf[S.sel] !== null) { const [x, y] = slotXY(S.slotOf[S.sel]); back.style.left = x + 'px'; back.style.top = y + 'px'; back.style.display = 'block'; } else back.style.display = 'none';
+  document.getElementById('m-att').textContent = S.metrics.attempts;
+  document.getElementById('m-ok').textContent = S.metrics.correct;
+  document.getElementById('m-hint').textContent = S.metrics.hints;
+}
+const escapeHTML = s => s.replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+
+function wire() {
+  const on = (id, fn) => document.getElementById(id).addEventListener('click', fn);
+  stage.querySelectorAll('.pc').forEach(el => el.addEventListener('click', () => tapPiece(+el.dataset.p)));
+  stage.querySelectorAll('.cell').forEach(el => el.addEventListener('click', () => tapCell(+el.dataset.cell)));
+  on('b-back', giveBack);
+  on('b-ajuda', help);
+  on('b-som', () => { opts.sound = !opts.sound; render(); paper(); });
+  for (const id of ['b-sair', 'b-sair2', 'b-sair3', 'b-sair4', 'b-sair5']) on(id, askExit);
+  on('b-stay', () => { S.confirm = false; render(); });
+  on('b-leave', () => { S.confirm = false; finish('abandoned'); S.phase = 'left'; render(); });
+  on('b-start', () => { S.phase = 'play'; say('Escolha uma peça'); render(); });
+  on('b-retry', () => { S.phase = 'loading'; render(); later(() => { S.phase = opts.fail ? 'error' : 'start'; render(); }, 700); });
+  on('b-again', newMatch);
+  on('b-reopen', newMatch);
+}
+
+// ---- Aparelho e escala FIT ----
+const screenEl = document.getElementById('screen'), deviceEl = document.getElementById('device');
+function fit() {
+  const d = DEVICES[opts.dev];
+  deviceEl.classList.toggle('desk', d.desk);
+  const host = deviceEl.parentElement.clientWidth - (d.desk ? 16 : 28);
+  const maxH = Math.max(320, window.innerHeight * 0.72);
+  const k = Math.min(host / d.w, maxH / d.h, 1);
+  const sw = Math.floor(d.w * k), sh = Math.floor(d.h * k);
+  screenEl.style.width = sw + 'px'; screenEl.style.height = sh + 'px';
+  const s = Math.min(d.w / 960, d.h / 600);          // escala FIT do Phaser no aparelho real
+  const sv = s * k;                                   // escala exibida nesta página
+  stage.style.transform = `translate(${(sw - 960 * sv) / 2}px, ${(sh - 600 * sv) / 2}px) scale(${sv})`;
+  const cm = v => (v * s / d.pxcm).toFixed(1).replace('.', ',');
+  document.getElementById('devnote').textContent = opts.dev === 'port'
+    ? `${d.name}. O jogo pede para girar o aparelho e não conta nada enquanto isso.`
+    : `${d.name}. Escala FIT ${s.toFixed(2).replace('.', ',')} · casa ≈ ${cm(96)} cm · peça da bandeja ≈ ${cm(72)} cm · botão ≈ ${cm(56)} cm de altura (aproximado; conferir no aparelho).`;
+}
+
+// ---- Painel ----
+function segment(groupId, attr, apply) {
+  document.querySelectorAll(`#${groupId} [data-${attr}]`).forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll(`#${groupId} [data-${attr}]`).forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    apply(b.dataset[attr]);
+  }));
+}
+segment('devseg', 'dev', v => { opts.dev = v; fit(); render(); });
+segment('imgseg', 'img', v => { opts.img = v; newMatch(); });
+segment('cardseg', 'card', v => { opts.card = v; render(); });
+const rmBox = document.getElementById('op-rm'); rmBox.checked = opts.rm;
+rmBox.addEventListener('change', () => { opts.rm = rmBox.checked; render(); });
+document.getElementById('op-fail').addEventListener('change', e => { opts.fail = e.target.checked; });
+document.getElementById('tema').addEventListener('input', e => { opts.theme = e.target.value; render(); });
+document.getElementById('go-new').addEventListener('click', newMatch);
+document.getElementById('go-mid').addEventListener('click', () => jump(6));
+document.getElementById('go-almost').addEventListener('click', () => jump(14));
+
+new ResizeObserver(fit).observe(document.querySelector('.viewer'));
+newMatch();
+fit();
+</script>

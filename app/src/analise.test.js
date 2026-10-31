@@ -47,11 +47,11 @@ test('a ordem é pelo tempo, não pela ordem da lista', () => {
 test('habilidade reúne as tentativas de todos os jogos que a treinam', () => {
   const tentativas = [
     ...sequencia('xxxx', 'plataforma-amigo'),
-    ...sequencia('oo', 'historia-escolhas'),
+    ...sequencia('oo', 'cuidar-amigo'),
     ...sequencia('xxx', 'chuva-emocoes'),
   ]
   const r = analisar(tentativas, [{ habilidade: 'empatia', nivel: 2 }], JOGOS)
-  assert.equal(r.habilidades[0].tentativas, 6) // empatia: plataforma + história, sem a chuva
+  assert.equal(r.habilidades[0].tentativas, 6) // empatia: plataforma + cuidar do amigo, sem a chuva
   assert.equal(r.habilidades[0].erros, 2)
   assert.equal(r.geral.tentativas, 9)
 })
