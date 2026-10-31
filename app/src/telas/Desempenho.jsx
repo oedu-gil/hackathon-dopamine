@@ -20,7 +20,7 @@ function Barra({ acertos, erros }) {
 function baixarCsv(aluno, tentativas) {
   const nomeJogo = (id) => JOGOS.find((j) => j.id === id)?.nome ?? id
   const linhas = [
-    'data_hora,jogo,nivel,hiperfoco,resultado',
+    'data_hora,jogo,nivel,tema,resultado',
     ...tentativas.map(
       (t) =>
         `${new Date(t.t).toISOString()},${nomeJogo(t.jogo)},${t.nivel},${t.hiperfoco},${t.ok ? 'acerto' : 'erro'}`,

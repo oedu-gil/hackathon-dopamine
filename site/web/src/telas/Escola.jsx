@@ -95,7 +95,7 @@ export default function Escola({ usuario, sair }) {
               <AvatarAluno aluno={dados.aluno} tema={tema} />
               <div>
                 <h1>{dados.aluno.nome}</h1>
-                <p className="ajuda">{tema ? `Hiperfoco: ${tema.nome}` : 'Ainda não escolheu o tema de hiperfoco'}</p>
+                <p className="ajuda">{tema ? `Tema: ${tema.nome}` : 'Ainda não escolheu o tema'}</p>
               </div>
             </section>
           )}
