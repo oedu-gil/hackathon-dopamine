@@ -55,7 +55,7 @@ export default function Inicio({ areaDoUsuario }) {
           ))}
         </div>
 
-        <h1 className="vitrine-marca"><Logo tamanho={140} /></h1>
+        <h1 className="vitrine-marca"><Logo tamanho={140} animado /></h1>
 
         <button type="button" className="vitrine-pausa" onClick={() => setPausado(!pausado)} aria-pressed={pausado}>
           <Icone nome={pausado ? 'jogar' : 'pausar'} tamanho={20} /> {pausado ? 'Continuar' : 'Pausar'}
