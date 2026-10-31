@@ -24,6 +24,7 @@ function fail(text) {
   failed = true; board.hidden = true; board.setAttribute('aria-busy', 'false');
   document.querySelector('#error').hidden = false; document.querySelector('#error').textContent = text;
   message.textContent = 'As figuras ainda não estão prontas.';
+  message.hidden = false;
   action.hidden = false; action.disabled = false; action.textContent = 'Tentar de novo';
 }
 function update(state, layout, width, height) {
@@ -39,13 +40,14 @@ function update(state, layout, width, height) {
     button.firstChild.textContent = '';
   });
   const messages = {
-    ready: 'Vire duas cartas e encontre as figuras iguais.',
+    ready: '',
     playing: state.selected.length ? 'Agora, encontre a figura igual!' : state.pairs ? 'Um par! Vamos achar os outros?' : 'Escolha uma carta!',
     mismatch: 'São diferentes. Vamos tentar de novo!',
     completed: 'Você achou os 3 pares! Muito bem!'
   };
   const actions = { ready: 'Vamos brincar!', completed: 'Brincar de novo' };
   message.textContent = state.interactionLocked && state.phase === 'playing' ? 'Olha a carta virando!' : messages[state.phase];
+  message.hidden = !message.textContent;
   document.querySelector('#progress-text').textContent = `${state.pairs} de 3 pares`;
   progress.setAttribute('aria-label', `${state.pairs} de 3 pares encontrados`);
   progress.querySelectorAll('.pair-markers > span').forEach((marker, index) => {
