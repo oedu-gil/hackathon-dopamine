@@ -1,9 +1,9 @@
-import icone from './assets/trem.svg'
+import icone from './assets/icone.svg';
 
 export default {
   id: 'quebra-cabeca',
   nome: 'Quebra-cabeça',
-  descricao: 'Toque numa peça e depois na casa dela para montar a imagem inteira.',
+  descricao: 'Monte a imagem com 15 peças, olhando o modelo.',
   habilidades: ['relacao-parte-todo'],
   icone,
-}
+};
