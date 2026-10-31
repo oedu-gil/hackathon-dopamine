@@ -48,3 +48,11 @@ As falhas de recurso foram simuladas apenas por interceptação no navegador, se
 - Build concluído. No preview, SVG respondeu HTTP 200; larguras 320, 390, 736 e 1000 px sem overflow e com apenas um canvas.
 - Inspeção visual em desktop e captura mobile; clique abriu a carta e a animação terminou normalmente com o novo enquadramento.
 - Mudança restrita à apresentação, sem alteração nas regras ou no tempo das comparações.
+
+## Atualização: textos e espaçamentos para crianças
+
+- Título “Cadê o par?”, instrução curta, “Vamos brincar!” e “Brincar de novo”; mensagens breves de orientação e incentivo. Preferência renomeada para “Menos movimento”.
+- Tipografia maior e arredondada; título entre 34 e 44 px, instrução entre 17 e 18 px, botão com altura mínima de 56 px. Nomes das figuras ampliados dentro das cartas Phaser.
+- Três marcadores de pares com confirmação por símbolo, texto e cor; reset confirmado ao iniciar outra partida.
+- Build concluído, larguras 320, 390, 460, 736 e 1000 px sem overflow horizontal. Em 390 × 844, o botão inicial ficou inteiro no viewport após compactar o tabuleiro mobile.
+- Partida completa no preview: progresso 3 de 3, três marcadores concluídos, mensagem final e reinício verificados. Enter/Espaço preservados; nenhuma exceção de página.

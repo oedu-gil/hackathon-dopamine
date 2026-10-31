@@ -13,7 +13,7 @@ const motion = matchMedia('(prefers-reduced-motion: reduce)');
 reduced.checked = motion.matches;
 const onMotion = event => { reduced.checked = event.matches; if (reduced.checked) scene?.finishMotion(); };
 motion.addEventListener('change', onMotion);
-let scene, game, failed = false, previousPairs = 0;
+let scene, game, failed = false;
 reduced.addEventListener('change', () => { if (reduced.checked) scene?.finishMotion(); });
 const buttons = Array.from({ length: 6 }, (_, index) => {
   const button = document.createElement('button'); button.type = 'button'; button.className = 'card-button'; button.disabled = true;
@@ -23,8 +23,8 @@ const buttons = Array.from({ length: 6 }, (_, index) => {
 function fail(text) {
   failed = true; board.hidden = true; board.setAttribute('aria-busy', 'false');
   document.querySelector('#error').hidden = false; document.querySelector('#error').textContent = text;
-  message.textContent = 'Vamos preparar as imagens antes de começar.';
-  action.hidden = false; action.disabled = false; action.textContent = 'Tentar carregar novamente';
+  message.textContent = 'As figuras ainda não estão prontas.';
+  action.hidden = false; action.disabled = false; action.textContent = 'Tentar de novo';
 }
 function update(state, layout, width, height) {
   board.setAttribute('aria-busy', String(state.interactionLocked || state.phase === 'mismatch'));
@@ -38,11 +38,20 @@ function update(state, layout, width, height) {
     // The visible label is inside the Phaser card so it turns with the picture.
     button.firstChild.textContent = '';
   });
-  const messages = { ready: 'Vamos descobrir os três pares?', playing: state.selected.length ? 'Agora, escolha outra carta.' : state.pairs > previousPairs ? 'Você encontrou um par! Escolha outra carta.' : 'Escolha uma carta.', mismatch: 'São diferentes. Observe as imagens por um momento.', completed: 'Você encontrou todos os pares!' };
-  const actions = { ready: 'Começar', completed: 'Jogar novamente' };
-  message.textContent = messages[state.phase]; progress.textContent = `${state.pairs} de 3 pares`;
+  const messages = {
+    ready: 'Vire duas cartas e encontre as figuras iguais.',
+    playing: state.selected.length ? 'Agora, encontre a figura igual!' : state.pairs ? 'Um par! Vamos achar os outros?' : 'Escolha uma carta!',
+    mismatch: 'São diferentes. Vamos tentar de novo!',
+    completed: 'Você achou os 3 pares! Muito bem!'
+  };
+  const actions = { ready: 'Vamos brincar!', completed: 'Brincar de novo' };
+  message.textContent = state.interactionLocked && state.phase === 'playing' ? 'Olha a carta virando!' : messages[state.phase];
+  document.querySelector('#progress-text').textContent = `${state.pairs} de 3 pares`;
+  progress.setAttribute('aria-label', `${state.pairs} de 3 pares encontrados`);
+  progress.querySelectorAll('.pair-markers > span').forEach((marker, index) => {
+    marker.classList.toggle('found', index < state.pairs);
+  });
   action.hidden = state.interactionLocked || !actions[state.phase]; action.disabled = false; action.textContent = actions[state.phase] || '';
-  previousPairs = state.pairs;
 }
 action.addEventListener('click', () => {
   if (failed) { location.reload(); return; }

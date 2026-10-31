@@ -4,14 +4,14 @@
 <body>
 <main class="album" aria-labelledby="title">
   <header><span class="brand"><span aria-hidden="true">▱</span> Álbum de descobertas</span><span id="theme"></span></header>
-  <section class="heading"><p class="eyebrow">JOGO DA MEMÓRIA</p><h1 id="title">Encontre as imagens iguais</h1><p id="message" role="status" aria-live="polite" aria-atomic="true">Preparando as imagens…</p></section>
+  <section class="heading"><p class="eyebrow">Jogo da memória</p><h1 id="title">Cadê o par?</h1><p id="message" role="status" aria-live="polite" aria-atomic="true">Preparando a brincadeira…</p></section>
   <div id="error" role="alert" hidden></div>
   <div id="board" class="board" role="group" aria-label="Tabuleiro com seis cartas" aria-busy="true">
     <div id="canvas-host" aria-hidden="true"></div>
     <div id="cards"></div>
   </div>
-  <footer><span id="progress">0 de 3 pares</span><button id="action" type="button" disabled>Carregando…</button></footer>
-  <div class="preferences"><label><input id="reduced-motion" type="checkbox"> Reduzir movimento</label></div>
+  <footer><span id="progress"><span class="pair-markers" aria-hidden="true"><span></span><span></span><span></span></span><span id="progress-text">0 de 3 pares</span></span><button id="action" type="button" disabled>Só um instante…</button></footer>
+  <div class="preferences"><label><input id="reduced-motion" type="checkbox"> Menos movimento</label></div>
   <noscript>Ative o JavaScript para jogar.</noscript>
 </main>
 <script type="module" src="/src/main.js"></script>

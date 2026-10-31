@@ -39,7 +39,7 @@ export class MemoryScene extends Phaser.Scene {
     const paper = this.add.graphics();
     const image = this.add.image(0, 0, card.id);
     const label = this.add.text(0, 0, card.description, {
-      fontFamily: 'Trebuchet MS, Arial, sans-serif', fontSize: '15px', color: '#273f50', align: 'center'
+      fontFamily: 'Arial Rounded MT Bold, Trebuchet MS, Arial, sans-serif', fontSize: '17px', color: '#273f50', align: 'center'
     }).setOrigin(.5);
     const check = this.add.graphics();
     const shade = this.add.graphics();
@@ -162,7 +162,7 @@ export class MemoryScene extends Phaser.Scene {
       view.paper.fillRoundedRect(left, top, w, h, 19).strokeRoundedRect(left, top, w, h, 19);
       view.image.setPosition(0, -h * .08);
       view.image.setScale(Math.min(w * .72 / view.image.width, h * .66 / view.image.height));
-      view.label.setPosition(0, h * .36).setFontSize(w < 145 ? 13 : 15).setWordWrapWidth(w * .86);
+      view.label.setPosition(0, h * .36).setFontSize(w < 145 ? 15 : 17).setWordWrapWidth(w * .86);
       view.check.clear();
       if (view.matched) {
         const cx = w / 2 - 18, cy = -h / 2 + 18;
