@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api.js'
+import { cenarioDoTema } from '@hub/compartilhado/arte/cenarios.js'
 import { TEMAS, XP_POR_ITEM, estiloTema, itensGanhos, temaPorId } from '../temas.js'
-import Cenario from './Cenario.jsx'
 import Icone, { ICONE_JOGO } from './Icones.jsx'
+
+// O mesmo cenário "papel recortado" dos jogos, para o site e o jogo ficarem iguais.
+const urlCenario = (temaId) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(cenarioDoTema(temaId))}`
 
 function EscolherTema({ escolher, voltar }) {
   return (
@@ -32,7 +35,7 @@ function Palco({ tema, nome, xp }) {
   const resto = xp % XP_POR_ITEM
   return (
     <section className="palco">
-      <Cenario tema={tema} />
+      <img className="palco-cenario" src={urlCenario(tema.id)} alt="" />
       <div className="palco-conteudo">
         <img className="palco-personagem" src={tema.personagem} alt="" />
         <div className="palco-balao">

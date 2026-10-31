@@ -67,19 +67,27 @@ function aranha(f) {
 
 // ---------------------------------------------------------------- AVIÃO
 function aviao(f) {
-  const helice = f % 2 ? 18 : 9
+  const helice = f % 2 ? 16 : 8
+  // Cada parte ocupa o seu lugar, sem traço cruzando o rosto: cauda atrás, asa na metade
+  // de trás do corpo, rosto na frente e rodas embaixo do nariz.
   return svg(
-    // asa de trás, cauda e corpo
-    cam('M20 52 L8 30 L24 30 L36 50 Z', '#d94a3d', C) +
-      elipse(50, 54, 38, 15, '#ff6f61', C) +
-      cam('M44 56 L30 82 L52 82 L66 58 Z', '#e8554e', TRACO, 2.5) +
-      circulo(60, 50, 8, '#bfe3ff', C) +
-      olhoFofo(58, 49, 4) +
-      cam('M52 62 Q62 68 70 62', 'none', TRACO, 2) +
-      ret(86, 40, 6, 28, '#37474f', 2) +
-      elipse(90, 54, 4, helice, '#cfd8dc', 'opacity="0.7"') +
-      circulo(34, 72, 5, '#37474f', C) + circulo(56, 74, 5, '#37474f', C) +
-      cam('M10 54 H30', 'none', '#fff', 2.5, 'opacity="0.5"'),
+    // trem de pouso (atrás do corpo)
+    cam('M60 62 V74 M74 60 V73', 'none', '#37474f', 3) +
+      circulo(60, 76, 5.5, '#37474f', C) + circulo(74, 75, 5.5, '#37474f', C) +
+      // cauda
+      cam('M22 48 L12 26 Q11 22 15 22 L24 22 L38 44 Z', '#d94a3d', C) +
+      // corpo e brilho
+      elipse(52, 50, 38, 16, '#ff6f61', C) +
+      cam('M26 42 Q38 36 52 36', 'none', '#fff', 3, 'opacity="0.55"') +
+      // asa
+      cam('M28 52 L20 72 Q19 76 23 76 L36 76 L48 54 Z', '#e8554e', C) +
+      // janela com o olho e o sorriso
+      circulo(68, 46, 8, '#bfe3ff', C) +
+      olhoFofo(67, 46, 4.5) +
+      cam('M62 57 Q68 61 74 57', 'none', TRACO, 2.5) +
+      // hélice
+      elipse(95, 50, 3, helice, '#cfd8dc', 'opacity="0.8"') +
+      circulo(91, 50, 4, '#37474f', C),
   )
 }
 
@@ -250,9 +258,10 @@ const ARANHA = [
 const AVIAO = [
   () =>
     svg(
-      cam('M6 50 L94 20 L66 80 L50 56 Z', '#ffffff', TRACO, 3) +
-        cam('M50 56 L94 20 M50 56 L56 82', 'none', '#9aa7b0', 2.5) +
-        cam('M6 50 L50 56', 'none', '#9aa7b0', 2.5),
+      // aviãozinho de papel: três faces fechadas que só se tocam nas dobras
+      cam('M42 56 L94 22 L62 84 L52 64 Z', '#dbe5ec', TRACO, 3) +
+        cam('M42 56 L94 22 L52 64 Z', '#b9c8d2', TRACO, 3) +
+        cam('M6 46 L94 22 L42 56 Z', '#ffffff', TRACO, 3),
     ),
   () =>
     svg(
