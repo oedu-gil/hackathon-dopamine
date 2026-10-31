@@ -3,6 +3,7 @@ export const HABILIDADES = [
   { id: 'resposta-social', nome: 'Resposta social' },
   { id: 'empatia', nome: 'Empatia' },
   { id: 'causa-efeito-social', nome: 'Causa e efeito social' },
+  { id: 'relacao-parte-todo', nome: 'Relação entre parte e todo' },
 ]
 
 export const idsPermitidos = () => HABILIDADES.map((h) => h.id)

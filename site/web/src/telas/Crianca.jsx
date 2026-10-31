@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api.js'
 import { TEMAS, temaPorId } from '../temas.js'
+import { jogoDoHub } from '../jogos/integracao.js'
 
 const XP_POR_ITEM = 20 // igual a site/server/src/regras.js
 
@@ -76,7 +77,9 @@ export default function Crianca({ usuario, sair }) {
               <div className="grade-jogos">
                 {dados.jogos.map((j) => (
                   <button key={j.id} className="cartao-jogo" onClick={() => navegar(`/crianca/jogo/${j.id}`)}>
-                    <span className="emoji" aria-hidden="true">▶️</span>
+                    {jogoDoHub(j.id)?.icone
+                      ? <img className="cartao-jogo-icone" src={jogoDoHub(j.id).icone} alt="" width="64" height="64" />
+                      : <span className="emoji" aria-hidden="true">▶️</span>}
                     {j.nome}
                   </button>
                 ))}

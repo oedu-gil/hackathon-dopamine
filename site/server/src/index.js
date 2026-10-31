@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import { bancoConfigurado } from './db.js'
 import { rotas } from './rotas.js'
+import { sincronizarJogos, completarSugestoes } from './catalogo.js'
 
 const PORT = Number(process.env.PORT) || 3001
 const WEB_ORIGIN = process.env.WEB_ORIGIN || 'http://127.0.0.1:5180'
@@ -27,5 +28,13 @@ app.use((err, req, res, _next) => {
 
 app.listen(PORT, '127.0.0.1', () => {
   console.log(`site-server em http://127.0.0.1:${PORT}`)
-  if (!bancoConfigurado) console.warn('Aviso: Supabase não configurado (veja site/server/.env.example).')
+  if (!bancoConfigurado) return console.warn('Aviso: Supabase não configurado (veja site/server/.env.example).')
+  // O catálogo do banco sempre acompanha os manifestos do hub, sem passo manual.
+  sincronizarJogos()
+    .then((jogos) => {
+      console.log(`Catálogo de jogos sincronizado: ${jogos.map((j) => j.id).join(', ')}`)
+      return completarSugestoes()
+    })
+    .then((novas) => novas.length && console.log(`Novas sugestões de jogos para PDIs existentes: ${novas.map((n) => `${n.aluno_id}/${n.jogo_id}`).join(', ')}`))
+    .catch((e) => console.warn(`Não consegui sincronizar o catálogo de jogos: ${e.message}`))
 })
