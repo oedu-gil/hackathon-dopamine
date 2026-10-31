@@ -29,6 +29,10 @@ const CAMINHOS = {
   lupa: 'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14Zm5-2 4 4',
   folha: 'M5 19c0-8 5-14 15-14 0 10-6 15-14 15m-1-1 7-7',
   info: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0-10v5m0-8h.01',
+  subir: 'M4 17l6-6 4 4 6-7m0 0h-5m5 0v5',
+  descer: 'M4 7l6 6 4-4 6 7m0 0h-5m5 0v-5',
+  historico: 'M3 12a9 9 0 1 0 3-6.7M3 4v4h4m5-1v5l3 2',
+  pausar: 'M8 5v14m8-14v14',
 }
 
 export default function Icone({ nome, tamanho = 24 }) {

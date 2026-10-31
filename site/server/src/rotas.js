@@ -168,3 +168,21 @@ rotas.get('/alunos/:alunoId/desempenho', async (req, res) => {
   ])
   res.json({ porJogo: resumirDesempenho(resultados, jogos), totalPartidas: resultados.length, xp: calcularXp(resultados) })
 })
+
+// Histórico para a escola e a família: todos os PDIs (só os tópicos) e todas as partidas com data.
+// O site recorta por bimestre, semestre ou ano e resume com resumirDesempenho().
+rotas.get('/alunos/:alunoId/historico', async (req, res) => {
+  if (req.usuario.perfil === 'crianca') return res.status(403).json({ erro: 'Sem acesso.' })
+  const { alunoId } = req.params
+  const [jogos, pdis, resultados] = await Promise.all([
+    q(db.from('jogos').select('id, nome').order('nome')),
+    q(db.from('pdis').select('id, arquivo, itens, erro, criado_em').eq('aluno_id', alunoId).order('criado_em')),
+    q(db.from('resultados').select('jogo_id, status, attempts, correct, hints, criado_em').eq('aluno_id', alunoId).order('criado_em')),
+  ])
+  const nome = (id) => HABILIDADES.find((h) => h.id === id)?.nome ?? id
+  res.json({
+    jogos,
+    pdis: pdis.filter((p) => !p.erro).map((p) => ({ id: p.id, arquivo: p.arquivo, criado_em: p.criado_em, topicos: p.itens.map((i) => nome(i.habilidade)) })),
+    resultados,
+  })
+})

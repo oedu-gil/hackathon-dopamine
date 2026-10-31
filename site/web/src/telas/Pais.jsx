@@ -3,7 +3,7 @@ import { api } from '../api.js'
 import { itensGanhos, temaPorId } from '../temas.js'
 import AvatarAluno from './AvatarAluno.jsx'
 import Cabecalho from './Cabecalho.jsx'
-import { PainelDesempenho } from './Desempenho.jsx'
+import Historico from './Historico.jsx'
 import Icone, { ICONE_HABILIDADE, ICONE_JOGO } from './Icones.jsx'
 
 const CORES = ['verde', 'rubi', 'pessego']
@@ -45,16 +45,10 @@ function Topico({ item, nome, cor }) {
 
 export default function Pais({ usuario, sair }) {
   const [dados, setDados] = useState(null)
-  const [desempenho, setDesempenho] = useState(null)
   const [erro, setErro] = useState('')
 
   useEffect(() => {
-    Promise.all([api(`/alunos/${usuario.aluno_id}`), api(`/alunos/${usuario.aluno_id}/desempenho`)])
-      .then(([d, des]) => {
-        setDados(d)
-        setDesempenho(des)
-      })
-      .catch((e) => setErro(e.message))
+    api(`/alunos/${usuario.aluno_id}`).then(setDados).catch((e) => setErro(e.message))
   }, [usuario.aluno_id])
 
   const nome = dados?.aluno.nome ?? 'a criança'
@@ -132,7 +126,8 @@ export default function Pais({ usuario, sair }) {
 
         <section className="bloco">
           <h2>Como {nome} está indo</h2>
-          {desempenho && <PainelDesempenho desempenho={desempenho} />}
+          <p>Escolha o período para ver os tópicos que a escola trabalhou e como {nome} foi nos jogos.</p>
+          <Historico alunoId={usuario.aluno_id} nome={nome} />
         </section>
       </main>
     </div>

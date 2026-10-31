@@ -2,7 +2,7 @@
 
 O site que integra a escola, a família e a criança. Os jogos ficam em `hub/` e a leitura do PDI fica em `pdi/`. O site usa os dois.
 
-- `site/web`: React + Vite (porta 5180). Áreas: login, escola, desempenho, família e criança.
+- `site/web`: React + Vite (porta 5180). Áreas: página inicial (vitrine dos jogos), login, escola (novo PDI e histórico), família e criança.
 - `site/server`: Node + Express (porta 3001). Fala com o Supabase e chama `pdi/` para ler o PDI. As chaves ficam só aqui.
 
 ## Configurar (uma vez)
@@ -31,12 +31,16 @@ cd site/web && npm run dev      # http://127.0.0.1:5180
 
 Contas de demonstração (senha `demo`): `escola@demo.com`, `familia@demo.com`, `ana@demo.com`. O login é simulado e as senhas ficam em texto puro: **serve só para a demo**.
 
+## Histórico de exemplo
+
+Para os filtros de bimestre, semestre e ano terem o que mostrar, rode `cd site/server && npm run dados-demo`. O script apaga os PDIs, as aprovações e as partidas da Ana e cria 4 PDIs (2025 e 2026) e partidas semanais com acerto subindo aos poucos. Os outros dados não mudam.
+
 ## Fluxo da demo
 
 1. **Escola:** envia um PDI em PDF (por exemplo `pdi/test/fixtures/pdi-pequeno.pdf`), vê os tópicos de lacunas e aprova ou recusa os jogos sugeridos.
 2. **Família:** vê os tópicos e o incentivo para pesquisar (sem sugestões de ação), os jogos aprovados e o desempenho.
 3. **Criança:** escolhe o tema de hiperfoco, joga só os jogos aprovados, ganha XP e desbloqueia itens da coleção.
-4. **Escola > Ver desempenho:** relatório simplificado por jogo.
+4. **Escola > Histórico e desempenho:** PDIs e partidas por bimestre, semestre ou ano, com a evolução da taxa de acerto. A família vê o mesmo, só do filho.
 
 ## Jogos e tags do PDI
 
@@ -62,4 +66,6 @@ Os temas de hiperfoco (trem, aranha, avião, dinossauro) vêm do hub (`hub/src/c
 - Referência de interface: PBS Kids (pbskids.org), adaptada ao `DESIGN.md`: sem carrossel, sem cores saturadas e sem animação além de feedback curto.
 - **Área da criança:** um cenário do tema no topo, com o personagem, o XP e o próximo item; depois, cartões grandes de jogo e a estante da coleção (itens bloqueados aparecem como silhueta). Antes de cada jogo aparece um aviso com o botão Começar. No fim, a comemoração mostra o item novo.
 - **Temas e arte:** vêm do hub de jogos (`hub/src/compartilhado/temas.js` e `arte/`), para o site e os jogos ficarem iguais. O site só acrescenta as cores do cenário em `site/web/src/temas.js`. O cenário de cada tema está em `site/web/src/telas/Cenario.jsx`.
-- **Adultos:** login com escolha de perfil (escola, família, criança), cabeçalho fixo, resumo completo do PDI para a família (para observar, atividades de estímulo, links curados, prazo de revisão) e desempenho com números de resumo e barras.
+- **Página inicial:** vitrine com uma fileira de capas por tema rolando devagar (com botão de pausar) e o botão Entrar.
+- **Login:** cartão sobre o cenário, com abas de perfil (escola, família, criança) e os personagens dos temas no chão.
+- **Adultos:** texto maior, escola com menu à esquerda (novo PDI, histórico e desempenho), resumo completo do PDI para a família e histórico por período (bimestres do calendário: jan–fev, mar–abr…).

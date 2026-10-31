@@ -10,7 +10,7 @@ Antes de qualquer tela, identifique o **público**:
 ## Regras da área da criança
 
 1. **Sensorial:** cores calmas e pouco saturadas, sem neon e sem fundos muito vibrantes. Contraste WCAG AA. Nada piscando (máximo de 3 flashes por segundo).
-2. **Movimento:** só como feedback curto (≤ 300 ms). Nada de parallax, autoplay ou carrossel. Respeitar `prefers-reduced-motion`.
+2. **Movimento:** só como feedback curto (≤ 300 ms). Nada de parallax, autoplay ou carrossel. Respeitar `prefers-reduced-motion`. Única exceção: a vitrine da página inicial (para adultos), com as capas dos jogos rolando devagar, botão de pausar e parada com `prefers-reduced-motion`.
 3. **Previsibilidade:** mesma estrutura em todas as telas e temas, com os botões sempre no mesmo lugar e uma tarefa por tela. Avisar antes de qualquer mudança de tela (por exemplo, ao sair do site para o jogo e voltar).
 4. **Leitura:** pouco texto, sempre acompanhado de ícone ou imagem. Fonte grande e arredondada. Instruções em passos curtos e, se possível, também em áudio.
 5. **Interação:** alvos de toque de pelo menos 48 px (64 px para os menores), espaçados entre si. Sem arrastar com precisão nem limite de tempo por padrão.
