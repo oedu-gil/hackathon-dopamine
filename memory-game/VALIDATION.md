@@ -56,3 +56,9 @@ As falhas de recurso foram simuladas apenas por interceptação no navegador, se
 - Três marcadores de pares com confirmação por símbolo, texto e cor; reset confirmado ao iniciar outra partida.
 - Build concluído, larguras 320, 390, 460, 736 e 1000 px sem overflow horizontal. Em 390 × 844, o botão inicial ficou inteiro no viewport após compactar o tabuleiro mobile.
 - Partida completa no preview: progresso 3 de 3, três marcadores concluídos, mensagem final e reinício verificados. Enter/Espaço preservados; nenhuma exceção de página.
+
+## Atualização: retirada do controle de movimento
+
+- Controle “Menos movimento” e seu espaço removidos da tela infantil. A preferência de movimento reduzido do sistema permanece automática, sem controles extras.
+- Build concluído. No navegador: nenhum elemento do antigo controle; virada ativa por padrão; mudança da preferência do sistema durante o giro concluiu a animação sem travar.
+- Estudos do novo verso foram preparados fora do código do jogo; a arte atual aguarda escolha da direção pelo usuário.

@@ -8,13 +8,10 @@ const cards = document.querySelector('#cards');
 const message = document.querySelector('#message');
 const progress = document.querySelector('#progress');
 const action = document.querySelector('#action');
-const reduced = document.querySelector('#reduced-motion');
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
-reduced.checked = motion.matches;
-const onMotion = event => { reduced.checked = event.matches; if (reduced.checked) scene?.finishMotion(); };
+const onMotion = event => { if (event.matches) scene?.finishMotion(); };
 motion.addEventListener('change', onMotion);
 let scene, game, failed = false;
-reduced.addEventListener('change', () => { if (reduced.checked) scene?.finishMotion(); });
 const buttons = Array.from({ length: 6 }, (_, index) => {
   const button = document.createElement('button'); button.type = 'button'; button.className = 'card-button'; button.disabled = true;
   const label = document.createElement('span'); label.className = 'card-label'; label.setAttribute('aria-hidden', 'true'); button.append(label);
@@ -71,7 +68,7 @@ try {
   if (!response.ok) throw new Error('Não foi possível carregar a configuração da atividade.');
   const activity = validateActivity(await response.json(), configUrl.href);
   document.querySelector('#theme').textContent = activity.theme;
-  scene = new MemoryScene(activity, { update, fail, reducedMotion: () => reduced.checked });
+  scene = new MemoryScene(activity, { update, fail, reducedMotion: () => motion.matches });
   const rect = board.getBoundingClientRect();
   game = new Phaser.Game({ type: Phaser.AUTO, parent: 'canvas-host', width: Math.round(rect.width), height: Math.round(rect.height), transparent: true, antialias: true, audio: { noAudio: true }, input: { keyboard: false }, scale: { mode: Phaser.Scale.NONE }, scene: [scene] });
 } catch (error) { fail(error instanceof Error ? error.message : 'Não foi possível preparar a atividade.'); }
