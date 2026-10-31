@@ -5,6 +5,7 @@ import { TEMAS } from '../temas.js'
 import Cenario from './Cenario.jsx'
 import Logo from './Logo.jsx'
 import Icone from './Icones.jsx'
+import TurmaAnimada from './TurmaAnimada.jsx'
 
 // Cartão de login sobre o cenário, com os personagens dos temas no chão.
 // As abas de perfil só mudam o texto e a conta de demonstração: quem decide a área
@@ -21,6 +22,7 @@ export default function Login({ entrar }) {
   const [senha, setSenha] = useState('')
   const [erro, setErro] = useState('')
   const [enviando, setEnviando] = useState(false)
+  const [pausado, setPausado] = useState(false)
 
   async function enviar(ev) {
     ev.preventDefault()
@@ -42,9 +44,12 @@ export default function Login({ entrar }) {
   }
 
   return (
-    <main className="login">
+    <main className={`login ${pausado ? 'pausado' : ''}`}>
       <Cenario />
       <Link className="login-voltar" to="/"><Icone nome="voltar" tamanho={20} /> Início</Link>
+      <button type="button" className="login-pausa" onClick={() => setPausado(!pausado)} aria-pressed={pausado}>
+        <Icone nome={pausado ? 'jogar' : 'pausar'} tamanho={20} /> {pausado ? 'Continuar' : 'Pausar'}
+      </button>
 
       <form className={`login-cartao ${perfil.id === 'crianca' ? 'login-crianca' : ''}`} onSubmit={enviar}>
         <Logo tamanho={52} />
@@ -85,9 +90,7 @@ export default function Login({ entrar }) {
         </div>
       </form>
 
-      <div className="login-turma" aria-hidden="true">
-        {TEMAS.map((t) => <img key={t.id} src={t.personagem} alt="" />)}
-      </div>
+      <TurmaAnimada temas={TEMAS} />
     </main>
   )
 }
