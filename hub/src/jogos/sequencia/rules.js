@@ -1,4 +1,4 @@
-// Regras puras da sequência ABAB (sem Phaser), testadas em tests/sequence.test.js.
+// Regras puras da sequência (ABAB e outros modelos) (sem Phaser), testadas em tests/sequence.test.js.
 
 const MAX_LABEL = 24;
 const MAX_CONTEXT = 120;
@@ -16,10 +16,32 @@ export function wordFor(image) {
   return (image.label ?? image.description).trim();
 }
 
-// A é a primeira imagem e sempre a resposta certa; as opções são sorteadas.
-export function createRound(images, random = Math.random) {
-  const [a, b] = images;
-  return { pattern: [a, b, a, b], answer: a, options: random() < 0.5 ? [a, b] : [b, a] };
+// Cada modelo tem 5 letras: as 4 primeiras formam a fileira e a 5ª é a resposta (A e B são as duas imagens).
+const FIRST_TEMPLATE = 'ABABA';
+const OTHER_TEMPLATES = ['AABAA', 'ABBAB', 'AABBA', 'ABAAB', 'BAABB'];
+export const ROUNDS = 5;
+
+function shuffle(list, random) {
+  const out = [...list];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+// Uma rodada: o modelo escolhe a ordem; as opções (as duas imagens) são sorteadas.
+export function createRound(images, random = Math.random, template = FIRST_TEMPLATE) {
+  const swap = random() < 0.5;
+  const pick = letter => images[(letter === 'A') !== swap ? 0 : 1];
+  const cells = [...template].map(pick);
+  return { template, pattern: cells.slice(0, 4), answer: cells[4], options: random() < 0.5 ? [images[0], images[1]] : [images[1], images[0]] };
+}
+
+// A primeira rodada é a mais simples (ABAB); as outras vêm em ordem sorteada, sem repetir modelo.
+export function createRounds(images, random = Math.random, total = ROUNDS) {
+  const templates = [FIRST_TEMPLATE, ...shuffle(OTHER_TEMPLATES, random).slice(0, total - 1)];
+  return templates.map(template => createRound(images, random, template));
 }
 
 export function hintText(round, solved) {
