@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 
-// Personagens dos temas no chão do login, cada um com uma ação curta, um de cada vez
-// (ciclo de 16 s, 4 s para cada um): o trem gira as rodas e solta fumaça, a aranha joga uma
+// Personagens dos temas no chão do login, todos se mexendo juntos e sem parar:
+// o trem gira as rodas e solta fumaça, a aranha joga uma
 // teia no cartão de login e se pendura, o avião liga a hélice e dá uma volta no ar, o
 // dinossauro dá um grito sem som. O estilo.css anima trem, avião e dinossauro; a aranha
 // depende de onde está o cartão, então é movida aqui, pelo relógio da animação `turma-relogio`
@@ -157,7 +157,7 @@ function Dinossauro() {
 
 const PERSONAGENS = { trem: Trem, aranha: Aranha, aviao: Aviao, dinossauro: Dinossauro }
 
-// Linha do tempo da aranha, em ms dentro da vez dela (4 s).
+// Linha do tempo da aranha, em ms dentro do ciclo dela (3,5 s, igual ao turma-relogio).
 const AR = { agacha: 300, teia: 700, sobe: 1400, balanca: 2800, desce: 3300 }
 const suave = (x) => (x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x))
 const fase = (t, de, ate) => suave((t - de) / (ate - de))
@@ -171,11 +171,11 @@ function useAranha(refs) {
       const { cena, lugar, corpo, fio, linha, gota } = refs
       const relogio = corpo.current?.getAnimations?.().find((a) => a.animationName === 'turma-relogio')
       if (!relogio || !cena.current || !lugar.current) return
-      const t = ((relogio.currentTime ?? 0) - 4000) % 16000 // vez da aranha: de 4 s a 8 s
+      const t = (relogio.currentTime ?? 0) % 3500
       const cartao = cena.current.querySelector('.login-cartao')?.getBoundingClientRect()
       const base = cena.current.getBoundingClientRect()
       const s = lugar.current.getBoundingClientRect()
-      if (!cartao || t < 0 || t > AR.desce + 200) {
+      if (!cartao) {
         corpo.current.style.transform = ''
         fio.current.style.opacity = 0
         return
