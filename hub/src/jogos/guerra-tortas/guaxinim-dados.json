@@ -1,0 +1,89 @@
+{
+  "idle": {
+    "frameWidth": 340,
+    "frameHeight": 340,
+    "frame_count": 64,
+    "frameRate": 24,
+    "events": []
+  },
+  "ataque": {
+    "frameWidth": 340,
+    "frameHeight": 340,
+    "frame_count": 40,
+    "frameRate": 24,
+    "events": [
+      {
+        "name": "release",
+        "frame_index": 21
+      }
+    ]
+  },
+  "defesa": {
+    "frameWidth": 340,
+    "frameHeight": 340,
+    "frame_count": 9,
+    "frameRate": 24,
+    "events": [],
+    "raise_frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "hold_frame": 8,
+    "lower_frames": [
+      7,
+      6,
+      5,
+      4,
+      3,
+      2,
+      1,
+      0
+    ]
+  },
+  "reacao": {
+    "frameWidth": 340,
+    "frameHeight": 340,
+    "frame_count": 73,
+    "frameRate": 24,
+    "events": [
+      {
+        "name": "impact",
+        "frame_index": 0
+      },
+      {
+        "name": "wipe_start",
+        "frame_index": 32
+      },
+      {
+        "name": "wipe_finish",
+        "frame_index": 53
+      }
+    ]
+  },
+  "final": {
+    "frameWidth": 340,
+    "frameHeight": 340,
+    "frame_count": 58,
+    "frameRate": 24,
+    "events": [
+      {
+        "name": "seated",
+        "frame_index": 39
+      },
+      {
+        "name": "tray_down",
+        "frame_index": 51
+      },
+      {
+        "name": "sleep",
+        "frame_index": 57
+      }
+    ]
+  }
+}

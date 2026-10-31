@@ -1,11 +1,13 @@
 import Phaser from 'phaser'
 import dadosGatinho from './gatinho-dados.json'
 import { AnimadorGatinho } from './animador.js'
-import { cenario, gatinho } from './assets.js'
+import dadosGuaxinim from './guaxinim-dados.json'
+import { AnimadorGuaxinim } from './animador-guaxinim.js'
+import { cenario, gatinho, guaxinim } from './assets.js'
 import { RAIO, caixaTexto } from '../../compartilhado/kit-phaser/ui.js'
 import { sons } from '../../compartilhado/kit-phaser/audio.js'
 import { pequenoSalto as estourar, criarInterface, mostrarInicio, mostrarFinal } from './interface.js'
-import { carregarArteTortas, chaveTorta, criarAnimacoesTortas, desenhar } from './arte.js'
+import { carregarArteTortas, chaveTorta, criarAnimacoesTortas } from './arte.js'
 import { AVISO, TORTAS_PARA_ENCHER, configDoNivel, deveAbrirGuarda, duracaoGuarda, proximaAcao } from './regras.js'
 
 const GATO = { x: 190, y: 290 }
@@ -32,6 +34,9 @@ export default class GuerraTortas extends Phaser.Scene {
     for (const nome of Object.keys(dadosGatinho)) {
       this.load.spritesheet(`gato_${nome}`, gatinho[nome], { frameWidth: 384, frameHeight: 384 })
     }
+    for (const [nome, meta] of Object.entries(dadosGuaxinim)) {
+      this.load.spritesheet(`guaxinim_${nome}`, guaxinim[nome], { frameWidth: meta.frameWidth, frameHeight: meta.frameHeight, endFrame: meta.frame_count - 1 })
+    }
   }
 
   create() {
@@ -51,6 +56,9 @@ export default class GuerraTortas extends Phaser.Scene {
     this.comidas = 0
     this.estadoGuaxinim = 'aberto'
     this.timerGuaxinim = null
+    this.zzz = null
+    this.respingoGuaxinim = null
+    this.respingo = null
 
     this.criarPersonagens()
     this.comandosDefesa = new Set()
@@ -94,7 +102,7 @@ export default class GuerraTortas extends Phaser.Scene {
     }
     // Sombras de contato estáticas, sem movimento decorativo no cenário.
     this.add.ellipse(GATO.x, CHAO - 9, 112, 18, 0x40513c, 0.16).setDepth(-1)
-    this.add.ellipse(GUAXINIM.x, GUAXINIM.y + 72, 116, 18, 0x40513c, 0.16).setDepth(-1)
+    this.add.ellipse(GUAXINIM.x, CHAO - 9, 116, 18, 0x40513c, 0.16).setDepth(-1)
   }
 
   criarPersonagens() {
@@ -102,15 +110,12 @@ export default class GuerraTortas extends Phaser.Scene {
     // Célula e pivô comuns: não recentralizar a silhueta de cada desenho.
     this.gato = this.add.sprite(GATO.x, CHAO - 100, 'gato_idle', 0).setDisplaySize(220, 220).setDepth(2)
     this.movimentoGato = this.ctx.efeitos && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    this.guaxinim = this.add.sprite(GUAXINIM.x, GUAXINIM.y, chaveTorta('guaxinim')).setDisplaySize(170, 170).setDepth(2)
-    desenhar(this.guaxinim, 'guaxinim', this.ctx.efeitos)
-    this.escalaGuaxinim = this.guaxinim.scaleX
+    this.animadorGuaxinim = new AnimadorGuaxinim(dadosGuaxinim, nome => this.eventoGuaxinim(nome))
+    this.guaxinim = this.add.sprite(GUAXINIM.x, CHAO - 96, 'guaxinim_idle', 0).setDisplaySize(240, 240).setDepth(2)
 
     this.bandejaGato = this.add.image(0, 0, chaveTorta('bandeja')).setDepth(4)
-    this.bandejaGuaxinim = this.add.image(0, 0, chaveTorta('bandeja')).setDepth(4)
     this.posicionarBandeja(this.bandejaGato, GATO, 1, false, false)
     this.bandejaGato.setVisible(false) // já desenhada na mão esquerda em todos os quadros
-    this.posicionarBandeja(this.bandejaGuaxinim, GUAXINIM, -1, false, false)
 
     // apoiada na pata livre do gatinho (a outra segura a bandeja)
     this.tortaNaMao = this.add.image(GATO.x - 26, GATO.y + 4, chaveTorta('torta')).setDisplaySize(54, 54).setDepth(5).setVisible(false)
@@ -152,6 +157,7 @@ export default class GuerraTortas extends Phaser.Scene {
   // ---------- guaxinim ----------
 
   decidir() {
+    if (this.animadorGuaxinim.ocupado) return this.agendar(100, () => this.decidir())
     const acao = proximaAcao({
       agora: this.time.now,
       ultimoLancamento: this.ultimoLancamento,
@@ -171,10 +177,7 @@ export default class GuerraTortas extends Phaser.Scene {
   mostrarBalao(icone) {
     this.iconeBalao.setTexture(chaveTorta(icone)).setDisplaySize(54, 54)
     this.balao.setVisible(true)
-    // leve balanço do guaxinim junto com o balão; sem piscar
-    if (this.ctx.efeitos) {
-      this.tweens.add({ targets: this.guaxinim, angle: { from: -5, to: 5 }, duration: 150, yoyo: true, repeat: 1, onComplete: () => this.guaxinim.setAngle(0) })
-    }
+
   }
 
   avisarLancamento() {
@@ -185,18 +188,45 @@ export default class GuerraTortas extends Phaser.Scene {
 
   lancarDoGuaxinim() {
     this.balao.setVisible(false)
-    this.ultimoLancamento = this.time.now
-    const torta = this.add.image(GUAXINIM.x - 60, GUAXINIM.y - 10, chaveTorta('torta')).setDisplaySize(70, 70).setDepth(7)
-    this.voar(torta, GATO.x + 78, GATO.y - 8, this.cfg.voo, () => this.tortaChegouNoGato(torta))
-    // logo depois de lançar, o guaxinim fica desprotegido
-    this.ficarAberto()
+    this.estadoGuaxinim = 'atacando'
+    this.animadorGuaxinim.iniciar('ataque')
+  }
+
+  eventoGuaxinim(nome) {
+    if (nome === 'release' && !this.fim) {
+      this.ultimoLancamento = this.time.now
+      // Pata esquerda estendida no quadro de soltura, sem torta desenhada no sprite.
+      const torta = this.add.image(GUAXINIM.x - 62, CHAO - 115, chaveTorta('torta')).setDisplaySize(64, 64).setDepth(7)
+      this.voar(torta, GATO.x + 78, GATO.y - 8, this.cfg.voo, () => this.tortaChegouNoGato(torta))
+    }
+    if (nome === 'complete_raise' && !this.fim) {
+      this.guardaErguida = true
+      this.agendar(duracaoGuarda(), () => this.avisarAbertura())
+    }
+    if (['complete_ataque', 'complete_reacao', 'complete_lower'].includes(nome) && !this.fim) this.ficarAberto()
+    if (nome === 'wipe_start' && this.respingoGuaxinim) {
+      if (this.ctx.efeitos) this.tweens.add({ targets: this.respingoGuaxinim, alpha: 0, duration: 875 })
+      else this.respingoGuaxinim.setVisible(false)
+    }
+    if (nome === 'wipe_finish') {
+      this.respingoGuaxinim?.destroy()
+      this.respingoGuaxinim = null
+    }
+    if (nome === 'sleep' && this.fim) this.mostrarSono()
+    if (nome === 'complete_final') this.time.delayedCall(800, () => mostrarFinal(this))
+  }
+
+  mostrarSono() {
+    if (this.zzz) return
+    const sono = caixaTexto(this, GUAXINIM.x + 34, CHAO - 160, 'Zzz', { fontSize: '24px', color: '#4a3624' }, { px: 10, py: 4, cor: 0xfff6df, alpha: 0.95 })
+    this.zzz = this.add.container(0, 0, [sono.f, sono.t]).setDepth(6)
+    if (this.ctx.efeitos) this.tweens.add({ targets: this.zzz, y: this.zzz.y - 8, duration: 1800, yoyo: true, repeat: -1, ease: 'Sine.InOut' })
   }
 
   erguerGuarda() {
     this.estadoGuaxinim = 'guarda'
-    this.guardaErguida = true
-    this.posicionarBandeja(this.bandejaGuaxinim, GUAXINIM, -1, true)
-    this.agendar(duracaoGuarda(), () => this.avisarAbertura())
+    this.guardaErguida = false
+    this.animadorGuaxinim.iniciar('raise')
   }
 
   avisarAbertura() {
@@ -205,8 +235,8 @@ export default class GuerraTortas extends Phaser.Scene {
     this.agendar(AVISO, () => {
       this.balao.setVisible(false)
       this.guardaErguida = false
-      this.posicionarBandeja(this.bandejaGuaxinim, GUAXINIM, -1, false)
-      this.ficarAberto()
+      this.estadoGuaxinim = 'baixando'
+      this.animadorGuaxinim.iniciar('lower')
     })
   }
 
@@ -244,6 +274,15 @@ export default class GuerraTortas extends Phaser.Scene {
   update(_, delta) {
     if (!this.animador) return
     this.hud?.atualizar()
+    this.animadorGuaxinim.atualizar(delta)
+    this.guardaErguida = !this.fim && this.animadorGuaxinim.protegido
+    let quadroGuaxinim = this.animadorGuaxinim.quadro
+    if (!this.ctx.efeitos) {
+      const a = this.animadorGuaxinim.arte
+      quadroGuaxinim = a === 'final' ? 57 : a === 'defesa' ? (this.guardaErguida ? 8 : 0)
+        : a === 'ataque' ? (quadroGuaxinim < 21 ? 0 : 21) : a === 'reacao' ? 40 : 0
+    }
+    this.guaxinim.setTexture(`guaxinim_${this.animadorGuaxinim.arte}`, quadroGuaxinim)
     if (this.fim) return
     if (this.estadoGuaxinim === 'guarda' && deveAbrirGuarda({ agora: this.time.now, esperandoDesde: this.esperandoDesde, config: this.cfg })) this.avisarAbertura()
     this.animador.atualizar(delta)
@@ -310,10 +349,8 @@ export default class GuerraTortas extends Phaser.Scene {
   tortaChegouNoGuaxinim(torta) {
     this.tortaDaCriancaVoando = false
     if (this.guardaErguida) {
-      // bateu na bandeja: cai no chão e o guaxinim faz careta
+      // Bateu na bandeja: a torta cai e a pose de guarda permanece.
       this.hud.erro()
-      const idCareta = this.comidas >= 3 ? 'guaxinim_cheio_careta' : 'guaxinim_careta'
-      desenhar(this.guaxinim, idCareta, this.ctx.efeitos)
       this.tweens.add({
         targets: torta,
         x: torta.x - 50,
@@ -322,38 +359,36 @@ export default class GuerraTortas extends Phaser.Scene {
         ease: 'Quad.In',
         onComplete: () => this.tweens.add({ targets: torta, alpha: 0, delay: 500, duration: 300, onComplete: () => torta.destroy() }),
       })
-      this.time.delayedCall(900, () => !this.fim && desenhar(this.guaxinim, this.desenhoDoGuaxinim(), this.ctx.efeitos))
       return
     }
-    // acertou: o guaxinim come a torta e a barriga enche um pouco
+    // Acertou: registra a torta e toca a reação; o corpo cheio aparece no final.
     torta.destroy()
     this.hud.acerto({ x: GUAXINIM.x, y: GUAXINIM.y - 40 })
     this.comidas++
     this.hud.progresso(this.comidas)
     if (this.comidas >= TORTAS_PARA_ENCHER) return this.terminar()
-    desenhar(this.guaxinim, this.desenhoDoGuaxinim(), this.ctx.efeitos)
-    estourar(this, this.guaxinim, 1.12)
+    this.timerGuaxinim?.remove()
+    this.balao.setVisible(false)
+    this.estadoGuaxinim = 'reagindo'
+    this.animadorGuaxinim.iniciar('reacao')
+    this.respingoGuaxinim?.destroy()
+    this.respingoGuaxinim = this.add.image(GUAXINIM.x, CHAO - 70, chaveTorta('chantili')).setDisplaySize(38, 38).setDepth(6)
   }
 
-  desenhoDoGuaxinim() {
-    return this.comidas >= 3 ? 'guaxinim_cheio' : 'guaxinim'
-  }
-
-  // Final: o guaxinim fica cheio, deita e dorme; os dois comemoram.
+  // Finalização única; o último desenho permanece sentado e cochilando.
   terminar() {
     this.fim = true
+    this.jogando = false
     this.timerGuaxinim?.remove()
     this.balao.setVisible(false)
     this.guardaErguida = false
-    this.posicionarBandeja(this.bandejaGuaxinim, GUAXINIM, -1, false)
-    this.bandejaGuaxinim.setVisible(false)
-    desenhar(this.guaxinim, 'guaxinim_dormindo', false)
-    const deitado = { angle: -80, y: CHAO - 40 }
-    if (this.ctx.efeitos) this.tweens.add({ targets: this.guaxinim, ...deitado, duration: 300, ease: 'Quad.Out' })
-    else this.guaxinim.setAngle(deitado.angle).setY(deitado.y)
-    caixaTexto(this, GUAXINIM.x + 40, GUAXINIM.y - 110, 'Zzz', { fontSize: '30px', color: '#ffffff' }, { px: 12, py: 4, alpha: 0.35 })
+    this.respingoGuaxinim?.destroy()
+    this.respingoGuaxinim = null
+    this.respingo?.destroy()
+    this.tortaNaMao.setVisible(false)
+    this.animadorGuaxinim.iniciar('final')
+    if (!this.ctx.efeitos) this.mostrarSono()
     estourar(this, this.gato, 1.25)
     sons.estrela()
-    this.time.delayedCall(2200, () => mostrarFinal(this))
   }
 }
