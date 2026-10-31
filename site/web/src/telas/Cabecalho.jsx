@@ -1,4 +1,5 @@
 import Logo from './Logo.jsx'
+import Icone from './Icones.jsx'
 
 // Cabeçalho das áreas de adulto (escola e pais). `children` entra no meio (ex.: escolha do aluno).
 export default function Cabecalho({ usuario, sair, titulo, children }) {
@@ -10,8 +11,8 @@ export default function Cabecalho({ usuario, sair, titulo, children }) {
       </div>
       {children && <div className="cabecalho-meio">{children}</div>}
       <div className="cabecalho-acoes">
-        <span className="quem">{usuario.nome}</span>
-        <button onClick={sair}>Sair</button>
+        <span className="quem"><span className="quem-inicial" aria-hidden="true">{usuario.nome[0]}</span>{usuario.nome}</span>
+        <button onClick={sair}><Icone nome="sair" tamanho={20} /> Sair</button>
       </div>
     </header>
   )

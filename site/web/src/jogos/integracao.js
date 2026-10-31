@@ -3,8 +3,7 @@
 import { JOGOS, jogoPorId } from '@hub/jogos/registro.js'
 import { HIPERFOCOS } from '@hub/compartilhado/temas.js'
 
-// Os temas do site e os do hub ainda não são os mesmos (o site tem navio, o hub tem aranha).
-// Sem figuras no hub para o tema, o jogo usa o primeiro tema do hub.
+// O site usa os mesmos temas do hub (temas.js). Aluno sem tema ou com um id antigo cai no primeiro.
 export const temaDoHub = (temaId) => HIPERFOCOS.find((h) => h.id === temaId) ?? HIPERFOCOS[0]
 
 export const jogoDoHub = jogoPorId

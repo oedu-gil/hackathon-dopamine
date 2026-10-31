@@ -7,7 +7,7 @@ drop table if exists resultados, aprovacoes, pdis, usuarios, jogos, alunos casca
 create table alunos (
   id text primary key,
   nome text not null,
-  hiperfoco text            -- id do tema (trem, dinossauro, aviao, navio); null = ainda não escolheu
+  hiperfoco text            -- id do tema (trem, aranha, aviao, dinossauro; os mesmos do hub); null = ainda não escolheu
 );
 
 create table usuarios (

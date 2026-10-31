@@ -2,9 +2,9 @@ import { StrictMode, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import { salvarUsuario, usuarioSalvo } from './api.js'
+import Inicio from './telas/Inicio.jsx'
 import Login from './telas/Login.jsx'
 import Escola from './telas/Escola.jsx'
-import Desempenho from './telas/Desempenho.jsx'
 import Pais from './telas/Pais.jsx'
 import Crianca from './telas/Crianca.jsx'
 import Jogo from './telas/Jogo.jsx'
@@ -14,7 +14,7 @@ import './estilo.css'
 const INICIO = { escola: '/escola', responsavel: '/pais', crianca: '/crianca' }
 
 function Protegida({ usuario, perfis, children }) {
-  if (!usuario) return <Navigate to="/" replace />
+  if (!usuario) return <Navigate to="/entrar" replace />
   if (!perfis.includes(usuario.perfil)) return <Navigate to={INICIO[usuario.perfil]} replace />
   return children
 }
@@ -37,9 +37,9 @@ function App() {
   const p = { usuario, sair }
   return (
     <Routes>
-      <Route path="/" element={usuario ? <Navigate to={INICIO[usuario.perfil]} replace /> : <Login entrar={entrar} />} />
-      <Route path="/escola" element={<Protegida usuario={usuario} perfis={['escola']}><Escola {...p} /></Protegida>} />
-      <Route path="/escola/desempenho/:alunoId" element={<Protegida usuario={usuario} perfis={['escola']}><Desempenho {...p} /></Protegida>} />
+      <Route path="/" element={<Inicio areaDoUsuario={usuario && INICIO[usuario.perfil]} />} />
+      <Route path="/entrar" element={usuario ? <Navigate to={INICIO[usuario.perfil]} replace /> : <Login entrar={entrar} />} />
+      <Route path="/escola/*" element={<Protegida usuario={usuario} perfis={['escola']}><Escola {...p} /></Protegida>} />
       <Route path="/pais" element={<Protegida usuario={usuario} perfis={['responsavel']}><Pais {...p} /></Protegida>} />
       <Route path="/crianca" element={<Protegida usuario={usuario} perfis={['crianca']}><Crianca {...p} /></Protegida>} />
       <Route path="/crianca/jogo/:jogoId" element={<Protegida usuario={usuario} perfis={['crianca']}><Jogo {...p} /></Protegida>} />

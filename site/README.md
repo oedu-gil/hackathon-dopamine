@@ -2,7 +2,7 @@
 
 O site que integra a escola, a família e a criança. Os jogos ficam em `hub/` e a leitura do PDI fica em `pdi/`. O site usa os dois.
 
-- `site/web`: React + Vite (porta 5180). Áreas: login, escola, desempenho, família e criança.
+- `site/web`: React + Vite (porta 5180). Áreas: página inicial (vitrine dos jogos), login, escola (novo PDI e histórico), família e criança.
 - `site/server`: Node + Express (porta 3001). Fala com o Supabase e chama `pdi/` para ler o PDI. As chaves ficam só aqui.
 
 ## Configurar (uma vez)
@@ -31,12 +31,16 @@ cd site/web && npm run dev      # http://127.0.0.1:5180
 
 Contas de demonstração (senha `demo`): `escola@demo.com`, `familia@demo.com`, `ana@demo.com`. O login é simulado e as senhas ficam em texto puro: **serve só para a demo**.
 
+## Histórico de exemplo
+
+Para os filtros de bimestre, semestre e ano terem o que mostrar, rode `cd site/server && npm run dados-demo`. O script apaga os PDIs, as aprovações e as partidas da Ana e cria 4 PDIs (2025 e 2026) e partidas semanais com acerto subindo aos poucos. Os outros dados não mudam.
+
 ## Fluxo da demo
 
 1. **Escola:** envia um PDI em PDF (por exemplo `pdi/test/fixtures/pdi-pequeno.pdf`), vê os tópicos de lacunas e aprova ou recusa os jogos sugeridos.
 2. **Família:** vê os tópicos e o incentivo para pesquisar (sem sugestões de ação), os jogos aprovados e o desempenho.
 3. **Criança:** escolhe o tema de hiperfoco, joga só os jogos aprovados, ganha XP e desbloqueia itens da coleção.
-4. **Escola > Ver desempenho:** relatório simplificado por jogo.
+4. **Escola > Histórico e desempenho:** PDIs e partidas por bimestre, semestre ou ano, com a evolução da taxa de acerto. A família vê o mesmo, só do filho.
 
 ## Jogos e tags do PDI
 
@@ -52,11 +56,16 @@ Como as tags do PDI viram jogos:
 
 **Catálogo automático:** ao subir, o servidor copia os manifestos do hub para a tabela `jogos` do Supabase e acrescenta, como "sugerido", os jogos novos para quem já tem PDI (decisões da escola não mudam). Também dá para rodar à mão com `cd site/server && npm run sincronizar-jogos`.
 
-Limitação: os temas do site (trem, dinossauro, avião, navio) e os do hub (trem, aranha, avião, dinossauro) ainda são diferentes. Para o navio, os jogos usam o tema trem.
+Os temas de hiperfoco (trem, aranha, avião, dinossauro) vêm do hub (`hub/src/compartilhado/temas.js`), junto com o personagem e os itens da coleção, para o site e os jogos ficarem iguais.
 
 ## Identidade visual (Gump)
 
 - Nome do produto: **Gump**. Mascote: beija-flor (`site/web/public/gump-beija-flor.svg`); ícone da aba: `site/web/public/favicon.svg`. No código, use o componente `site/web/src/telas/Logo.jsx`.
 - Paleta (tokens em `site/web/src/estilo.css`): verde esmeralda `#2E9E6B`, verde forte `#1F7A50` (botões e texto), rosa rubi `#D9406E`, pêssego `#FF9F6B`, texto `#1E3B2F`, fundo creme rosado `#FFF6F0`.
 - Fontes: Fredoka (logo e títulos) e Atkinson Hyperlegible (texto).
-- Já redesenhados: login (tela dividida) e área da escola. Faltam família, desempenho e criança.
+- Referência de interface: PBS Kids (pbskids.org), adaptada ao `DESIGN.md`: sem carrossel, sem cores saturadas e sem animação além de feedback curto.
+- **Área da criança:** um cenário do tema no topo, com o personagem, o XP e o próximo item; depois, cartões grandes de jogo e a estante da coleção (itens bloqueados aparecem como silhueta). Antes de cada jogo aparece um aviso com o botão Começar. No fim, a comemoração mostra o item novo.
+- **Temas e arte:** vêm do hub de jogos (`hub/src/compartilhado/temas.js` e `arte/`), para o site e os jogos ficarem iguais. O site só acrescenta as cores do cenário em `site/web/src/temas.js`. O cenário de cada tema está em `site/web/src/telas/Cenario.jsx`.
+- **Página inicial:** vitrine com uma fileira de capas por tema rolando devagar (com botão de pausar) e o botão Entrar.
+- **Login:** cartão sobre o cenário, com abas de perfil (escola, família, criança) e os personagens dos temas no chão.
+- **Adultos:** texto maior, escola com menu à esquerda (novo PDI, histórico e desempenho), resumo completo do PDI para a família e histórico por período (bimestres do calendário: jan–fev, mar–abr…).
