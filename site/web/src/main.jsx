@@ -8,6 +8,7 @@ import Escola from './telas/Escola.jsx'
 import Pais from './telas/Pais.jsx'
 import Crianca from './telas/Crianca.jsx'
 import Jogo from './telas/Jogo.jsx'
+import DemoTortas from './telas/DemoTortas.jsx'
 import '@fontsource/fredoka/400.css'
 import './estilo.css'
 
@@ -38,6 +39,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Inicio areaDoUsuario={usuario && INICIO[usuario.perfil]} />} />
+      <Route path="/experimentar/guerra-tortas" element={usuario?.perfil === 'crianca' ? <Navigate to="/crianca" replace /> : <DemoTortas />} />
       <Route path="/entrar" element={usuario ? <Navigate to={INICIO[usuario.perfil]} replace /> : <Login entrar={entrar} />} />
       <Route path="/escola/*" element={<Protegida usuario={usuario} perfis={['escola']}><Escola {...p} /></Protegida>} />
       <Route path="/pais" element={<Protegida usuario={usuario} perfis={['responsavel']}><Pais {...p} /></Protegida>} />

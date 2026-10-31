@@ -763,3 +763,7 @@ button.grande { min-height: 72px; padding: 0 32px; font-size: 1.25rem; }
   75.2% { opacity: 0; transform: translateX(8px) scale(1.25) }
   100% { opacity: 0; transform: translateX(8px) scale(1.25) }
 }
+
+/* Entrada de demonstração na vitrine adulta, com jogo dentro do site. */
+.vitrine-convite { position: relative; z-index: 2; display: grid; justify-items: center; gap: 24px; padding: 16px; }
+.demo-tortas-entrada { background: var(--papel); color: var(--verde-forte); border-color: var(--verde-forte); min-height: 64px; box-shadow: var(--sombra); text-align: center; }
