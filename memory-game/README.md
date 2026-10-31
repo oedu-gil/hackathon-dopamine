@@ -29,6 +29,10 @@ O preview fica em http://127.0.0.1:4181 . Publique o conteúdo de `dist/` em um 
 
 Não inclua nome, foto ou outros dados pessoais se não forem necessários. O jogo não transmite resultados nem salva informações da criança. Não há API de geração de imagens ou tela de upload nesta versão. Os SVGs de transportes foram desenhados como demonstração local e podem ser substituídos. Cada arquivo é usado duas vezes, sem cortes ou distorção; IDs e caminhos repetidos são rejeitados. Não é feita análise visual do conteúdo para identificar arquivos distintos com a mesma imagem.
 
+## Direção visual
+
+Mesa de madeira clara fosca, vista de cima, com veios discretos e iluminação uniforme. A textura SVG local `public/assets/light-oak.svg` foi desenhada para esta demonstração e não depende de imagens remotas. Cartas mantêm frente e verso claros; título e controles usam superfícies de papel para preservar a leitura sobre a madeira. O fundo é estático e não acrescenta movimento contínuo.
+
 ## Interações
 
 - Começar deixa as cartas disponíveis; toque/clique ou Tab e Enter/Espaço escolhem uma carta.

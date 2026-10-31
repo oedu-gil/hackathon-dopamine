@@ -41,3 +41,10 @@ As falhas de recurso foram simuladas apenas por interceptação no navegador, se
 - Resize para 320 px durante uma virada manteve alinhamento e desbloqueio (duas colunas, sem overflow). Preferência reduzida pode ser ativada no meio do giro para concluir imediatamente.
 - Toque emulado confirmou bloqueio durante a virada e alteração da preferência durante animação sem travar a partida.
 - Oito testes Node e build passaram. Verificação em aparelho físico permanece pendente.
+
+## Atualização: mesa de madeira clara fosca
+
+- Fundo SVG local de madeira clara com veios pouco contrastados; etiquetas de papel para título e controles. Cor de tema do navegador alinhada à mesa.
+- Build concluído. No preview, SVG respondeu HTTP 200; larguras 320, 390, 736 e 1000 px sem overflow e com apenas um canvas.
+- Inspeção visual em desktop e captura mobile; clique abriu a carta e a animação terminou normalmente com o novo enquadramento.
+- Mudança restrita à apresentação, sem alteração nas regras ou no tempo das comparações.
