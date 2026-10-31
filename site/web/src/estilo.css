@@ -425,15 +425,37 @@ label { display: flex; flex-direction: column; gap: 6px; font-weight: 700; }
 /* Sequência: o "?" some e o item certo aparece no lugar = 260 ms. */
 .capa-sequencia .capa-pergunta { transition: opacity 120ms var(--ease-out), transform 120ms var(--ease-out) 60ms; }
 .capa-sequencia .capa-resposta { opacity: 0; transform: scale(0.9); transition: opacity 120ms var(--ease-out), transform 120ms var(--ease-out); }
+/* Quebra-cabeça: a peça desliza e encaixa no buraco = 260 ms. */
+.capa-quebra .capa-peca { transform-box: fill-box; transform-origin: center; transform: translate(70px, 6px) rotate(10deg); transition: transform 260ms var(--ease-out); }
+/* Chuva de emoções: o rosto alegre cai dentro do balde = 240 ms. */
+.capa-chuva .capa-rosto-cai { transition: transform 240ms var(--ease-in-out); }
+/* Cuidar do amigo: o coração vai até o amigo (220 ms) e ele dá um pulinho no fim = 280 ms. */
+.capa-cuidar .capa-coracao { transition: transform 220ms var(--ease-in-out); }
+.capa-cuidar .capa-amigo { transition: transform 120ms var(--ease-out); }
+/* Plataforma do amigo: o personagem pula para o degrau; X e Y com curvas diferentes fazem o arco = 260 ms. */
+.capa-plataforma .capa-pulo-x { transition: transform 260ms var(--ease-in-out); }
+.capa-plataforma .capa-pulo-y { transition: transform 260ms var(--ease-out); }
 .cartao-jogo:focus-visible .capa-memoria .capa-verso { transform: scaleX(0); transition-delay: 0ms; }
 .cartao-jogo:focus-visible .capa-memoria .capa-frente { transform: scaleX(1); transition-delay: 130ms; }
 .cartao-jogo:focus-visible .capa-sequencia .capa-pergunta { opacity: 0; transform: scale(0.9); transition-delay: 0ms; }
 .cartao-jogo:focus-visible .capa-sequencia .capa-resposta { opacity: 1; transform: scale(1); transition: opacity 180ms var(--ease-out) 80ms, transform 180ms var(--ease-out) 80ms; }
+.cartao-jogo:focus-visible .capa-quebra .capa-peca { transform: none; }
+.cartao-jogo:focus-visible .capa-chuva .capa-rosto-cai { transform: translateY(44px); }
+.cartao-jogo:focus-visible .capa-cuidar .capa-coracao { transform: translate(76px, -26px); }
+.cartao-jogo:focus-visible .capa-cuidar .capa-amigo { transform: translateY(-6px); transition-delay: 160ms; }
+.cartao-jogo:focus-visible .capa-plataforma .capa-pulo-x { transform: translateX(76px); }
+.cartao-jogo:focus-visible .capa-plataforma .capa-pulo-y { transform: translateY(-28px); }
 @media (hover: hover) and (pointer: fine) {
   .cartao-jogo:hover .capa-memoria .capa-verso { transform: scaleX(0); transition-delay: 0ms; }
   .cartao-jogo:hover .capa-memoria .capa-frente { transform: scaleX(1); transition-delay: 130ms; }
   .cartao-jogo:hover .capa-sequencia .capa-pergunta { opacity: 0; transform: scale(0.9); transition-delay: 0ms; }
   .cartao-jogo:hover .capa-sequencia .capa-resposta { opacity: 1; transform: scale(1); transition: opacity 180ms var(--ease-out) 80ms, transform 180ms var(--ease-out) 80ms; }
+  .cartao-jogo:hover .capa-quebra .capa-peca { transform: none; }
+  .cartao-jogo:hover .capa-chuva .capa-rosto-cai { transform: translateY(44px); }
+  .cartao-jogo:hover .capa-cuidar .capa-coracao { transform: translate(76px, -26px); }
+  .cartao-jogo:hover .capa-cuidar .capa-amigo { transform: translateY(-6px); transition-delay: 160ms; }
+  .cartao-jogo:hover .capa-plataforma .capa-pulo-x { transform: translateX(76px); }
+  .cartao-jogo:hover .capa-plataforma .capa-pulo-y { transform: translateY(-28px); }
 }
 
 .crianca-vazio { display: flex; align-items: center; gap: 16px; margin: 0; padding: 20px; border-radius: 20px; background: var(--papel-creme); border: 3px solid var(--contorno); box-shadow: var(--sombra-papel); }
