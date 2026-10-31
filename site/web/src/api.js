@@ -1,4 +1,6 @@
 const CHAVE = 'dopamine-usuario'
+// Em produção (GitHub Pages) o servidor está em outro endereço; em desenvolvimento o proxy do Vite cuida do /api.
+const API_URL = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '')
 
 export function usuarioSalvo() {
   try {
@@ -32,7 +34,7 @@ export async function api(caminho, { metodo = 'GET', corpo, arquivo } = {}) {
     body = JSON.stringify(corpo)
   }
 
-  const resposta = await fetch(`/api${caminho}`, { method: metodo, headers, body })
+  const resposta = await fetch(`${API_URL}/api${caminho}`, { method: metodo, headers, body })
   const dados = await resposta.json().catch(() => ({}))
   if (!resposta.ok && resposta.status !== 422) throw new Error(dados.erro || 'Não foi possível falar com o servidor.')
   return dados

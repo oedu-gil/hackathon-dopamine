@@ -1,6 +1,6 @@
 import { StrictMode, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom'
+import { HashRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom'
 import { salvarUsuario, usuarioSalvo } from './api.js'
 import Inicio from './telas/Inicio.jsx'
 import Login from './telas/Login.jsx'
@@ -50,8 +50,8 @@ function App() {
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
+    <HashRouter>
       <App />
-    </BrowserRouter>
+    </HashRouter>
   </StrictMode>,
 )
