@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api.js'
 import { temaPorId } from '../temas.js'
+import AvatarAluno from './AvatarAluno.jsx'
 import Cabecalho from './Cabecalho.jsx'
 import Icone, { ICONE_HABILIDADE, ICONE_JOGO } from './Icones.jsx'
 
@@ -102,7 +103,7 @@ export default function Escola({ usuario, sair }) {
       <main className="conteudo">
         {dados && (
           <section className="aluno-topo">
-            <span className="aluno-avatar" aria-hidden="true">{dados.aluno.nome[0]}</span>
+            <AvatarAluno aluno={dados.aluno} tema={tema} />
             <div>
               <h1>{dados.aluno.nome}</h1>
               <p className="ajuda">{tema ? `Hiperfoco: ${tema.nome}` : 'Ainda não escolheu o tema de hiperfoco'}</p>
@@ -119,7 +120,7 @@ export default function Escola({ usuario, sair }) {
 
         {pendentes.length > 0 && (
           <p className="aviso-acao">
-            {pendentes.length} {pendentes.length === 1 ? 'jogo aguarda' : 'jogos aguardam'} sua decisão.
+            <Icone nome="info" tamanho={20} /> {pendentes.length} {pendentes.length === 1 ? 'jogo aguarda' : 'jogos aguardam'} sua decisão.
           </p>
         )}
 

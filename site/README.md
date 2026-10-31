@@ -49,4 +49,7 @@ O catálogo de jogos e as habilidades que cada um trabalha estão em `schema.sql
 - Nome do produto: **Gump**. Mascote: beija-flor (`site/web/public/gump-beija-flor.svg`); ícone da aba: `site/web/public/favicon.svg`. No código, use o componente `site/web/src/telas/Logo.jsx`.
 - Paleta (tokens em `site/web/src/estilo.css`): verde esmeralda `#2E9E6B`, verde forte `#1F7A50` (botões e texto), rosa rubi `#D9406E`, pêssego `#FF9F6B`, texto `#1E3B2F`, fundo creme rosado `#FFF6F0`.
 - Fontes: Fredoka (logo e títulos) e Atkinson Hyperlegible (texto).
-- Já redesenhados: login (tela dividida) e área da escola. Faltam família, desempenho e criança.
+- Referência de interface: PBS Kids (pbskids.org), adaptada ao `DESIGN.md`: sem carrossel, sem cores saturadas e sem animação além de feedback curto.
+- **Área da criança:** um cenário do tema no topo, com o personagem, o XP e o próximo item; depois, cartões grandes de jogo e a estante da coleção (itens bloqueados aparecem como silhueta). Antes de cada jogo aparece um aviso com o botão Começar. No fim, a comemoração mostra o item novo.
+- **Temas e arte:** vêm do hub de jogos (`hub/src/compartilhado/temas.js` e `arte/`), para o site e os jogos ficarem iguais. O site só acrescenta as cores do cenário em `site/web/src/temas.js`. O cenário de cada tema está em `site/web/src/telas/Cenario.jsx`.
+- **Adultos:** login com escolha de perfil (escola, família, criança), cabeçalho fixo, resumo completo do PDI para a família (para observar, atividades de estímulo, links curados, prazo de revisão) e desempenho com números de resumo e barras.
