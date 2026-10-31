@@ -7,7 +7,6 @@ import chuvaEmocoes from './chuva-emocoes/manifesto.js'
 import cuidarAmigo from './cuidar-amigo/manifesto.js'
 import plataformaAmigo from './plataforma-amigo/manifesto.js'
 import quebraCabeca from './quebra-cabeca/manifesto.js'
-import guerraTortas from './guerra-tortas/manifesto.js'
 
 // `carregar` só baixa o código do jogo quando a criança abre ele.
 export const JOGOS = [
@@ -17,7 +16,6 @@ export const JOGOS = [
   { ...cuidarAmigo, carregar: () => import('./cuidar-amigo/index.js') },
   { ...plataformaAmigo, carregar: () => import('./plataforma-amigo/index.js') },
   { ...quebraCabeca, carregar: () => import('./quebra-cabeca/index.js') },
-  { ...guerraTortas, carregar: () => import('./guerra-tortas/index.js') },
 ]
 
 JOGOS.forEach(validarManifesto)
