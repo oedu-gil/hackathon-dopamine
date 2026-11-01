@@ -69,3 +69,11 @@ Os temas de hiperfoco (trem, aranha, avião, dinossauro) vêm do hub (`hub/src/c
 - **Página inicial:** vitrine com uma fileira de capas por tema rolando devagar (com botão de pausar) e o botão Entrar.
 - **Login:** cartão sobre o cenário, com abas de perfil (escola, família, criança) e os personagens dos temas no chão.
 - **Adultos:** texto maior, escola com menu à esquerda (novo PDI, histórico e desempenho), resumo completo do PDI para a família e histórico por período (bimestres do calendário: jan–fev, mar–abr…).
+
+## Guerra de Tortas no fluxo do site
+
+A habilidade `cooperacao` (Cooperação) é aceita pela leitura do PDI e corresponde ao manifesto da Guerra de Tortas. O jogo já integra o registro do hub e é empacotado no site; ao iniciar, o servidor sincroniza esse catálogo.
+
+Para testar o percurso completo, entre como escola, envie um PDF fictício que descreva explicitamente um objetivo de cooperação em dupla (texto de exemplo em `docs/cooperativo/PDI-COOPERACAO-EXEMPLO.txt`), revise o resultado e aprove Guerra de tortas. Depois entre como criança para abrir o jogo. PDIs antigos não são reclassificados automaticamente e jogos não são liberados sem aprovação da escola. O envio de um novo PDI reinicia as aprovações do aluno, conforme o fluxo existente.
+
+Teste automatizado `site/server/src/cooperacao.test.js` liga o catálogo de habilidades, o prompt, o processamento de resposta simulada da LLM e o manifesto real do jogo. Não usa a API paga nem modifica dados de alunos.
