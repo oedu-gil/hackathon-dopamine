@@ -1,0 +1,13 @@
+# Animações do guaxinim no jogo
+
+Implementação isolada em codex/miguel/guaxinim-animacoes, baseada em codex/miguel/guerra-tortas (158d984), pois a implementação do jogo ainda não está em main. A worktree da outra frente foi preservada.
+
+Spritesheets RGBA copiados sem alterações dos resultados de arte locais, células 340×340. Idle tentativa-02/idle-ciclo-v1: 64 quadros (2720×2720). Ataque tentativa-02/ataque-selecao-v1: 40 quadros (2720×1700), cadência padrão 24fps, release no índice 21/875ms. Defesa tentativa-02/defesa-salvamento-v1: 9 desenhos (1020×1020), subida 0–7, hold 8, descida 7–0 reconstruída em reverso conforme seleção aceita. Reação tentativa-01/reacao-original-v1: 73 quadros (2720×3400), 3041,667ms. Final tentativa-02/final-sentado-v1: 58 quadros (2720×2720), 2416,667ms; último quadro 57 sustentado.
+
+Controlador separado usa delta da cena, portanto pausa congela o relógio. Defesa só protege em hold; aviso de abertura conserva a guarda até iniciar a descida. Ataque cria uma única torta no release. Acerto interrompe a agenda do inimigo e toca a reação, com chantili separado que some durante limpeza. Final continua atualizando após fim da partida, sem girar o sprite; evento sleep inicia Zzz separados, e complete_final aguarda 800ms antes da tela final. Reinício limpa referências. Movimento reduzido exibe poses essenciais, idle parado e Zzz estáticos.
+
+Limitações herdadas: ataque omite fonte 39–42 que desenhava torta indevida; a descida da defesa é reversa. Os estados de jogo usam corpo normal até a finalização cheia; não há animações intermediárias de barriga cheia disponíveis. A pose terminal da finalização vem do próprio vídeo, sem trocar por uma imagem independente. Não foram gerados novos desenhos nem alteradas as seleções nesta integração.
+
+Validação: 67 testes Node aprovados; build Vite aprovado (aviso já existente de chunk da engine >500kB). Chrome headless: início por botão real, defesa por Espaço e lançamento por clique; release, reação ao impacto e limpeza, bloqueio em guarda, abertura, pausa/resume, final sustentado e Zzz, botão real de reinício e movimento reduzido. Cenários de IA/final isolados via hook DEV já existente para retirar a aleatoriedade. Sem erros de página/rede. Capturas locais em .playwright-mcp/; não comprovam sozinhas fluidez percebida nem desempenho em tablet físico. Revisão visual final do grupo no jogo continua disponível.
+
+Executar: npm --prefix hub test; npm --prefix hub run build; node tools/verificar-guaxinim.cjs <caminho-do-modulo-playwright>. O script usa Chrome já instalado, porta 31988 e permite a raiz real das dependências se reutilizadas por junction. Não instala ferramentas. Validar também no tablet de destino.
