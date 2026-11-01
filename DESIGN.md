@@ -28,6 +28,14 @@ Decisão do grupo em 31/10/2026, na página da criança:
 - Depois fica "vivo" com um movimento contínuo sutil: só sobe e desce 2 px, devagar (ciclo de cerca de 3 s), com o desenho parado. Sem piscar e sem mudar de cor.
 - Vale só para esses dois personagens. Capas de jogos e o resto da página continuam só com feedback curto (≤ 300 ms) à ação da criança.
 - Com `prefers-reduced-motion`, os personagens e a barra aparecem parados (primeiro quadro, na posição final).
+## Exceção de movimento — Guerra de Tortas
+
+Decisão do grupo em 31/10/2026, registrada na preparação das animações do gatinho:
+
+- Idle pode usar respiração suave e piscadas naturais, com pés apoiados.
+- Ataque, defesa e reação podem ultrapassar 300 ms para preservar a leitura. Defesa mantém uma pose estática enquanto o comando está pressionado.
+- Sem flashes, balanço exagerado ou movimento decorativo contínuo no cenário.
+- Movimento reduzido usa idle estático e poses essenciais das ações. As demais regras continuam válidas.
 
 ## Escola e pais
 
